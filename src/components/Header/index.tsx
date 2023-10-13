@@ -1,47 +1,54 @@
 import { Burger, Container, Group, Image, Tabs } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
+import { useState } from "react";
 import classes from "./index.module.css";
-
-const tabs = [
-  "Home",
-  "Orders",
-  "Education",
-  "Community",
-  "Forums",
-  "Support",
-  "Account",
-  "Helpdesk",
-];
 
 export default function Header() {
   const [opened, { toggle }] = useDisclosure(false);
 
-  const items = tabs.map((tab) => (
-    <Tabs.Tab value={tab} key={tab}>
-      {tab}
-    </Tabs.Tab>
-  ));
+  const [productTabHovering, setProductTabHovering] = useState(false);
 
   return (
     <div className={classes.header}>
-      <Container className={classes.mainSection} size="md">
+      <Container className={classes.mainSection}>
         <Group justify="space-between">
-          <Image src={"/full_logo.svg"} h={"10vh"} w={"auto"} />
+          <Image src={"/full_logo.svg"} h={"9vh"} w={"auto"} />
           <Burger opened={opened} onClick={toggle} hiddenFrom="xs" size="sm" />
         </Group>
       </Container>
-      <Container size="md">
+      <Container>
         <Tabs
           defaultValue="Home"
           variant="outline"
-          visibleFrom="sm"
           classNames={{
             root: classes.tabs,
             list: classes.tabsList,
             tab: classes.tab,
           }}
         >
-          <Tabs.List>{items}</Tabs.List>
+          <Tabs.List>
+            <Tabs.Tab
+              value="products"
+              key={"products"}
+              onMouseEnter={() => {
+                console.log("hover");
+                setProductTabHovering(true);
+              }}
+              onMouseLeave={() => {
+                if (!productTabHovering) return;
+                console.log("leave");
+                setProductTabHovering(false);
+              }}
+            >
+              All Products
+            </Tabs.Tab>
+            <Tabs.Tab value="gallery" key={"gallery"}>
+              Gallery
+            </Tabs.Tab>
+            <Tabs.Tab value="contact" key={"contact"}>
+              Contact
+            </Tabs.Tab>
+          </Tabs.List>
         </Tabs>
       </Container>
     </div>
