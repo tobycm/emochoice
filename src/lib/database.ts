@@ -7,9 +7,7 @@ export default pocketbase;
 export async function getGallery(name: string): Promise<string[]> {
   const result = await pocketbase
     .collection("gallery")
-    .getOne<{ pictures: string[] } & RecordModel>("gallery", {
-      filter: `name = ${name}`,
-    });
+    .getFirstListItem<{ pictures: string[] } & RecordModel>(`name = "${name}"`);
 
   const images = result.pictures.map((picture) =>
     pocketbase.getFileUrl(result, picture)

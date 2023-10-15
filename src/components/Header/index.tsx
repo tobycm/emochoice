@@ -1,12 +1,21 @@
-import { Burger, Container, Group, Image, Menu, Tabs } from "@mantine/core";
+import {
+  Box,
+  Burger,
+  Container,
+  Group,
+  Image,
+  Menu,
+  Tabs,
+} from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
+import { Link } from "react-router-dom";
 import classes from "./index.module.css";
 
 export default function Header() {
   const [opened, { toggle }] = useDisclosure(false);
 
   return (
-    <div className={classes.header}>
+    <Box className={classes.header}>
       <Container className={classes.mainSection}>
         <Group justify="space-between">
           <Image src={"/full_logo.svg"} h={"9vh"} w={"auto"} />
@@ -35,16 +44,19 @@ export default function Header() {
                 <Menu.Item>Settings</Menu.Item>
               </Menu.Dropdown>
 
-              <Tabs.Tab value="gallery" onClick={() => {}}>
-                Gallery
+              <Tabs.Tab value="gallery">
+                <Link
+                  to="/gallery"
+                  style={{ textDecoration: "none", color: "black" }}
+                >
+                  Gallery
+                </Link>
               </Tabs.Tab>
-              <Tabs.Tab value="contact" onClick={() => {}}>
-                Contact
-              </Tabs.Tab>
+              <Tabs.Tab value="contact">Contact</Tabs.Tab>
             </Tabs.List>
           </Tabs>
         </Menu>
       </Container>
-    </div>
+    </Box>
   );
 }

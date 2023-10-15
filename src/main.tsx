@@ -12,11 +12,16 @@ import {
 
 import ReactDOM from "react-dom/client";
 import App from "./App";
+import Gallery from "./pages/Gallery";
 
 const routes: RouteObject[] = [
   {
     path: "/",
     element: <App />,
+  },
+  {
+    path: "/gallery",
+    element: <Gallery />,
   },
 ];
 const router = createBrowserRouter(routes);
