@@ -3,7 +3,7 @@ import { MantineProvider } from "@mantine/core";
 import { RouteObject, RouterProvider } from "react-router";
 import { createBrowserRouter } from "react-router-dom";
 import Content from "./components/Content/content";
-import Gallery from "./pages/gallery/gallery";
+import Gallery from "./pages/Gallery";
 import { Product } from "./pages/product";
 
 const routes: RouteObject[] = [
