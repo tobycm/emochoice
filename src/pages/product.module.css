@@ -1,0 +1,38 @@
+.image {
+  width: auto;
+  height: 60vh;
+
+  @media screen and (max-width: $mantine-breakpoint-xs) {
+    width: 80vw;
+    height: auto;
+  }
+}
+
+.overview {
+  display: flex;
+  align-items: center;
+  @media screen and (max-width: $mantine-breakpoint-xs) {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    flex-direction: column;
+  }
+}
+
+.textarea {
+  width: 400px;
+  @media screen and (max-width: $mantine-breakpoint-xs) {
+    width: 80vw;
+  }
+}
+
+.input {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+  margin-top: 15px;
+}
+
+.information {
+  margin-top: 3vh;
+  margin-bottom: 3vh;
+}
