@@ -1,5 +1,12 @@
 import { Box, Text, ThemeIcon, Title } from "@mantine/core";
-import { IconMail, IconMapPin, IconPhone } from "@tabler/icons-react";
+import {
+  IconBrandFacebook,
+  IconBrandInstagram,
+  IconMail,
+  IconMapPin,
+  IconPhone,
+} from "@tabler/icons-react";
+import { Link } from "react-router-dom";
 import classes from "./footer.module.css";
 
 export default function Footer() {
@@ -17,7 +24,7 @@ export default function Footer() {
     var(--mantine-color-dark-6)
   )"
             >
-              <IconMapPin style={{ width: "90%", color: "black" }} />
+              <IconMapPin style={{ width: "120%", color: "black" }} />
             </ThemeIcon>
             <Text ml={5}>
               Unit 101-737 Main St, Penticton, British Columbia, Canada V2A 5E1
@@ -30,7 +37,7 @@ export default function Footer() {
     var(--mantine-color-dark-6)
   )"
             >
-              <IconPhone style={{ width: "90%", color: "black" }} />
+              <IconPhone style={{ width: "120%", color: "black" }} />
             </ThemeIcon>
             <Text ml={5}>
               Hotline:{" "}
@@ -49,7 +56,7 @@ export default function Footer() {
     var(--mantine-color-dark-6)
   )"
             >
-              <IconMail style={{ width: "90%", color: "black" }} />
+              <IconMail style={{ width: "120%", color: "black" }} />
             </ThemeIcon>
             <Text ml={5}>
               Email:{" "}
@@ -63,10 +70,24 @@ export default function Footer() {
           </Box>
         </Box>
         <Box className={classes.information}>
-          <Title order={4} mb={7}>
+          <Title order={4} mb={15}>
             Connect with us!
           </Title>
-          <Text>[fb page goes here]</Text>
+          <Box display={"flex"} style={{ alignItems: "center" }}>
+            <Link to="https://www.facebook.com/emochoicecanada" target="_blank">
+              <IconBrandFacebook
+                style={{ color: "black", scale: "130%", marginRight: "20px" }}
+              />
+            </Link>
+            <Link
+              to="https://www.instagram.com/emochoicecanada/"
+              target="_blank"
+            >
+              <IconBrandInstagram
+                style={{ color: "black", scale: "130%", marginRight: "20px" }}
+              />
+            </Link>
+          </Box>
         </Box>
       </Box>
       <Box className={classes.innerFooter}>
