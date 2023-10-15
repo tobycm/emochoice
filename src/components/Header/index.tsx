@@ -1,12 +1,9 @@
-import { Burger, Container, Group, Image, Tabs } from "@mantine/core";
+import { Burger, Container, Group, Image, Menu, Tabs } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { useState } from "react";
 import classes from "./index.module.css";
 
 export default function Header() {
   const [opened, { toggle }] = useDisclosure(false);
-
-  const [productTabHovering, setProductTabHovering] = useState(false);
 
   return (
     <div className={classes.header}>
@@ -17,39 +14,36 @@ export default function Header() {
         </Group>
       </Container>
       <Container>
-        <Tabs
-          defaultValue="Home"
-          variant="outline"
-          classNames={{
-            root: classes.tabs,
-            list: classes.tabsList,
-            tab: classes.tab,
-          }}
-        >
-          <Tabs.List>
-            <Tabs.Tab
-              value="products"
-              key={"products"}
-              onMouseEnter={() => {
-                console.log("hover");
-                setProductTabHovering(true);
-              }}
-              onMouseLeave={() => {
-                if (!productTabHovering) return;
-                console.log("leave");
-                setProductTabHovering(false);
-              }}
-            >
-              All Products
-            </Tabs.Tab>
-            <Tabs.Tab value="gallery" key={"gallery"}>
-              Gallery
-            </Tabs.Tab>
-            <Tabs.Tab value="contact" key={"contact"}>
-              Contact
-            </Tabs.Tab>
-          </Tabs.List>
-        </Tabs>
+        <Menu trigger="hover">
+          <Tabs
+            variant="outline"
+            classNames={{
+              root: classes.tabs,
+              list: classes.tabsList,
+              tab: classes.tab,
+            }}
+          >
+            <Tabs.List>
+              <Menu.Target>
+                <Tabs.Tab value="products" key={"products"}>
+                  All Products
+                </Tabs.Tab>
+              </Menu.Target>
+
+              <Menu.Dropdown>
+                <Menu.Label>Application</Menu.Label>
+                <Menu.Item>Settings</Menu.Item>
+              </Menu.Dropdown>
+
+              <Tabs.Tab value="gallery" onClick={() => {}}>
+                Gallery
+              </Tabs.Tab>
+              <Tabs.Tab value="contact" onClick={() => {}}>
+                Contact
+              </Tabs.Tab>
+            </Tabs.List>
+          </Tabs>
+        </Menu>
       </Container>
     </div>
   );
