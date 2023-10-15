@@ -15,9 +15,9 @@ import {
   Title,
 } from "@mantine/core";
 import { useState } from "react";
-import classes from "./product.module.css";
+import classes from "./index.module.css";
 
-export function Product() {
+export default function Product() {
   const [size, setSize] = useState("react");
 
   const data = {

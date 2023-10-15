@@ -7,7 +7,7 @@ import {
   IconPhone,
 } from "@tabler/icons-react";
 import { Link } from "react-router-dom";
-import classes from "./footer.module.css";
+import classes from "./index.module.css";
 
 export default function Footer() {
   return (
@@ -27,7 +27,13 @@ export default function Footer() {
               <IconMapPin style={{ width: "120%", color: "black" }} />
             </ThemeIcon>
             <Text ml={5}>
-              Unit 101-737 Main St, Penticton, British Columbia, Canada V2A 5E1
+              <Link
+                to={"https://maps.app.goo.gl/16tGjRFdEP8ecdr27"}
+                target="_blank"
+              >
+                Unit 101-737 Main St, Penticton, British Columbia, Canada V2A
+                5E1
+              </Link>
             </Text>
           </Box>
           <Box display={"flex"} style={{ alignItems: "center" }} mb={3}>
@@ -40,13 +46,7 @@ export default function Footer() {
               <IconPhone style={{ width: "120%", color: "black" }} />
             </ThemeIcon>
             <Text ml={5}>
-              Hotline:{" "}
-              <a
-                href="tel:1-778-531-6161"
-                style={{ color: "black", textDecoration: "none" }}
-              >
-                +1 778 531 6161
-              </a>
+              Hotline: <Link to="tel:1-778-531-6161">+1 (778) 531-6161</Link>
             </Text>
           </Box>
           <Box display={"flex"} style={{ alignItems: "center" }} mb={3}>
@@ -60,12 +60,7 @@ export default function Footer() {
             </ThemeIcon>
             <Text ml={5}>
               Email:{" "}
-              <a
-                href="mailto:sales@emochoice.ca"
-                style={{ color: "black", textDecoration: "none" }}
-              >
-                sales@emochoice.ca
-              </a>
+              <Link to="mailto:sales@emochoice.ca">sales@emochoice.ca</Link>
             </Text>
           </Box>
         </Box>
@@ -92,7 +87,7 @@ export default function Footer() {
       </Box>
       <Box className={classes.innerFooter}>
         <Text>
-          Copyright © {new Date().getFullYear()} <strong>EmoChoice</strong>. All
+          Copyright © {new Date().getFullYear()} <strong>Emochoice</strong>. All
           rights reserved.
         </Text>
       </Box>

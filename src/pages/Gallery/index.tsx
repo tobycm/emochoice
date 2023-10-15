@@ -2,7 +2,7 @@ import { Carousel } from "@mantine/carousel";
 import { Box, Container, Image, Title } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { getGallery } from "../../lib/database";
-import classes from "./gallery.module.css";
+import classes from "./index.module.css";
 
 export default function Gallery() {
   const [gallery, setGallery] = useState<string[]>([]);
@@ -42,9 +42,10 @@ export default function Gallery() {
         <Carousel
           className={classes.carousel}
           mx="auto"
-          withIndicators
+          loop
+          draggable
           slideSize="70%"
-          slideGap="md"
+          slideGap="lg"
         >
           {slides}
         </Carousel>
@@ -61,9 +62,10 @@ export default function Gallery() {
           className={classes.carousel}
           style={{ maxWidth: "40vw" }}
           mx="auto"
-          withIndicators
+          loop
+          draggable
           slideSize="70%"
-          slideGap="md"
+          slideGap="lg"
         >
           {eggunoslides}
         </Carousel>
