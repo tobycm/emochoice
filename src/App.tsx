@@ -5,6 +5,7 @@ import { createBrowserRouter } from "react-router-dom";
 import Content from "./components/Content";
 import Gallery from "./pages/Gallery";
 import Product from "./pages/Product";
+import Contact from "./pages/contact/contact";
 
 const routes: RouteObject[] = [
   {
@@ -18,6 +19,10 @@ const routes: RouteObject[] = [
       {
         path: "/gallery",
         element: <Gallery />,
+      },
+      {
+        path: "/contact",
+        element: <Contact />,
       },
     ],
   },

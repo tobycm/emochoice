@@ -1,27 +1,42 @@
 import {
+  ActionIcon,
   Box,
-  Burger,
   Container,
   Group,
   Image,
   Menu,
   Tabs,
+  TextInput,
 } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
+import { IconSearch } from "@tabler/icons-react";
 import { Link } from "react-router-dom";
 import classes from "./index.module.css";
 
 export default function Header() {
-  const [opened, { toggle }] = useDisclosure(false);
-
   return (
     <Box className={classes.header}>
       <Container className={classes.mainSection}>
         <Group justify="space-between">
           <Link to={"/"}>
-            <Image src={"/full_logo.svg"} h={"9vh"} w={"auto"} mih={60} />
+            <Image
+              src={"/full_logo.svg"}
+              h={"9vh"}
+              w={"auto"}
+              mih={30}
+              mah={70}
+            />
           </Link>
-          <Burger opened={opened} onClick={toggle} hiddenFrom="xs" size="sm" />
+          {/* <Burger opened={opened} onClick={toggle} hiddenFrom="xs" size="sm" /> */}
+          <Box display={"flex"} style={{ alignItems: "center" }}>
+            <TextInput
+              radius="xl"
+              mr={10}
+              placeholder="What are you looking for?"
+            />
+            <ActionIcon variant="filled" radius="lg" size="lg">
+              <IconSearch style={{ width: "60%", height: "60%" }} stroke={3} />
+            </ActionIcon>
+          </Box>
         </Group>
       </Container>
       <Container>
@@ -40,21 +55,22 @@ export default function Header() {
                   All Products
                 </Tabs.Tab>
               </Menu.Target>
-
               <Menu.Dropdown>
                 <Menu.Label>Application</Menu.Label>
                 <Menu.Item>Settings</Menu.Item>
               </Menu.Dropdown>
-
-              <Tabs.Tab value="gallery">
-                <Link
-                  to="/gallery"
-                  style={{ textDecoration: "none", color: "black" }}
-                >
-                  Gallery
-                </Link>
-              </Tabs.Tab>
-              <Tabs.Tab value="contact">Contact</Tabs.Tab>
+              <Link
+                to="/gallery"
+                style={{ textDecoration: "none", color: "black" }}
+              >
+                <Tabs.Tab value="gallery">Gallery</Tabs.Tab>
+              </Link>
+              <Link
+                to="/contact"
+                style={{ textDecoration: "none", color: "black" }}
+              >
+                <Tabs.Tab value="contact">Contact</Tabs.Tab>
+              </Link>
             </Tabs.List>
           </Tabs>
         </Menu>
