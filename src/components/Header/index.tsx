@@ -18,7 +18,9 @@ export default function Header() {
     <Box className={classes.header}>
       <Container className={classes.mainSection}>
         <Group justify="space-between">
-          <Image src={"/full_logo.svg"} h={"9vh"} w={"auto"} />
+          <Link to={"/"}>
+            <Image src={"/full_logo.svg"} h={"9vh"} w={"auto"} mih={60} />
+          </Link>
           <Burger opened={opened} onClick={toggle} hiddenFrom="xs" size="sm" />
         </Group>
       </Container>

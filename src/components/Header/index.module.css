@@ -1,5 +1,5 @@
 .header {
-  width: 100vw;
+  width: 100%;
   padding-top: var(--mantine-spacing-sm);
   background-color: light-dark(
     var(--mantine-color-gray-0),
