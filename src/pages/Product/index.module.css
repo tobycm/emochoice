@@ -1,10 +1,12 @@
 .image {
-  width: auto;
-  height: 500px;
+  width: 50%;
+  height: auto;
+  display: block;
 
   @media screen and (max-width: $mantine-breakpoint-xs) {
     width: 80vw;
     height: auto;
+    margin-bottom: 15px;
   }
 }
 
@@ -20,7 +22,8 @@
 }
 
 .textarea {
-  width: 400px;
+  width: 20vw;
+  min-width: 220px;
   @media screen and (max-width: $mantine-breakpoint-xs) {
     width: 70vw;
   }
