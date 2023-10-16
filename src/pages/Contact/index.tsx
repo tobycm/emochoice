@@ -1,14 +1,6 @@
-import {
-  Box,
-  Button,
-  Space,
-  Text,
-  TextInput,
-  Textarea,
-  Title,
-} from "@mantine/core";
+import { Box, Button, Space, Text, TextInput, Textarea, Title } from "@mantine/core";
 import { isEmail, isNotEmpty, useForm } from "@mantine/form";
-import classes from "./contact.module.css";
+import classes from "./index.module.css";
 
 export default function Contact() {
   const form = useForm({
@@ -35,19 +27,10 @@ export default function Contact() {
       <Box component="form" onSubmit={form.onSubmit(() => {})}>
         <Title>Get in Touch with Us</Title>
         <Space h="md" />
-        <Text>
-          If you'd like to contact us about a general inquiry, please fill out
-          the form below, or contact our location directly.
-        </Text>
+        <Text>If you'd like to contact us about a general inquiry, please fill out the form below, or contact our location directly.</Text>
         <Space h="md" />
         <Box className={classes.input}>
-          <TextInput
-            withAsterisk
-            label="Full name"
-            placeholder="John Smith"
-            {...form.getInputProps("name")}
-            id="name"
-          />
+          <TextInput withAsterisk label="Full name" placeholder="John Smith" {...form.getInputProps("name")} id="name" />
         </Box>
         <Space h="md" />
         <Box className={classes.input}>
@@ -55,13 +38,7 @@ export default function Contact() {
         </Box>
         <Space h="md" />
         <Box className={classes.input}>
-          <TextInput
-            withAsterisk
-            label="Email"
-            placeholder="johnsmith@email.com"
-            {...form.getInputProps("email")}
-            id="email"
-          />
+          <TextInput withAsterisk label="Email" placeholder="johnsmith@email.com" {...form.getInputProps("email")} id="email" />
         </Box>
         <Space h="md" />
         <Box className={classes.input}>

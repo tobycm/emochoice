@@ -1,8 +1,8 @@
 .carousel {
-  max-width: 40vw;
-  min-width: 320px;
+  max-width: 90vw;
+  min-width: 20vw;
 
   @media screen and (max-width: $mantine-breakpoint-xs) {
-    max-width: 80vw;
+    max-width: 90vw;
   }
 }
