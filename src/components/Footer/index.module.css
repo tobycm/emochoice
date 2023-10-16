@@ -1,35 +1,31 @@
 .footer {
-    width: 100%;
-    padding-top: var(--mantine-spacing-sm);
-    background-color: light-dark(
-        var(--mantine-color-gray-0),
-        var(--mantine-color-dark-6)
-    );
-    border-bottom: rem(1px) solid
-        light-dark(var(--mantine-color-gray-2), transparent);
-    margin-top: 5vh;
-    padding: 3vh 5vw 3vh 5vw;
-    border-top:rgb(230, 230, 230) 1px solid;
-    display: flex;
-    justify-content: space-between;
+  width: 100%;
+  padding-top: var(--mantine-spacing-sm);
+  background-color: light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-6));
+  border-bottom: rem(1px) solid light-dark(var(--mantine-color-gray-2), transparent);
+  margin-top: 5vh;
+  padding: 3vh 5vw 3vh 5vw;
+  border-top: rgb(230, 230, 230) 1px solid;
+  display: flex;
+  justify-content: space-between;
 
-    @media screen and (max-width: $mantine-breakpoint-xs) {
-        flex-direction: column;
-    }
+  @media screen and (max-width: $mantine-breakpoint-xs) {
+    flex-direction: column;
+  }
 }
 
 .innerFooter {
-    width: 100%;
-    padding: 2vh 5vw 2vh 5vw;
-    background-color: rgb(200, 200, 200);
+  width: 100%;
+  padding: 2vh 5vw 2vh 5vw;
+  background-color: rgb(200, 200, 200);
 }
 
 .information {
-    max-width: calc(90vw / 2 - 20px);
+  max-width: calc(90vw / 2 - 20px);
 
-    @media screen and (max-width: $mantine-breakpoint-xs) {
-        margin-top: 1vh;
-        margin-bottom: 1vh;
-        max-width: 80vw;
-    }
+  @media screen and (max-width: $mantine-breakpoint-xs) {
+    margin-top: 1vh;
+    margin-bottom: 1vh;
+    max-width: 80vw;
+  }
 }

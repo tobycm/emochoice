@@ -31,42 +31,19 @@ export default function Gallery() {
 
   return (
     <Container style={{ alignItems: "center" }}>
-      <Box
-        mb={20}
-        display={"flex"}
-        style={{ flexDirection: "column", alignItems: "center" }}
-      >
+      <Box mb={20} display={"flex"} style={{ flexDirection: "column", alignItems: "center" }}>
         <Title order={2} mb={20}>
           tobycm
         </Title>
-        <Carousel
-          className={classes.carousel}
-          mx="auto"
-          loop
-          draggable
-          slideSize="70%"
-          slideGap="lg"
-        >
+        <Carousel className={classes.carousel} mx="auto" loop draggable slideSize="70%" slideGap="lg">
           {slides}
         </Carousel>
       </Box>
-      <Box
-        mb={20}
-        display={"flex"}
-        style={{ flexDirection: "column", alignItems: "center" }}
-      >
+      <Box mb={20} display={"flex"} style={{ flexDirection: "column", alignItems: "center" }}>
         <Title order={2} mb={20}>
           eggu
         </Title>
-        <Carousel
-          className={classes.carousel}
-          style={{ maxWidth: "40vw" }}
-          mx="auto"
-          loop
-          draggable
-          slideSize="70%"
-          slideGap="lg"
-        >
+        <Carousel className={classes.carousel} style={{ maxWidth: "40vw" }} mx="auto" loop draggable slideSize="70%" slideGap="lg">
           {eggunoslides}
         </Carousel>
       </Box>

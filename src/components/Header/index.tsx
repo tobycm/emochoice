@@ -1,12 +1,4 @@
-import {
-  Box,
-  Burger,
-  Container,
-  Group,
-  Image,
-  Menu,
-  Tabs,
-} from "@mantine/core";
+import { Box, Burger, Container, Group, Image, Menu, Tabs } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { Link } from "react-router-dom";
 import classes from "./index.module.css";
@@ -47,10 +39,7 @@ export default function Header() {
               </Menu.Dropdown>
 
               <Tabs.Tab value="gallery">
-                <Link
-                  to="/gallery"
-                  style={{ textDecoration: "none", color: "black" }}
-                >
+                <Link to="/gallery" style={{ textDecoration: "none", color: "black" }}>
                   Gallery
                 </Link>
               </Tabs.Tab>

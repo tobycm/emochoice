@@ -39,9 +39,7 @@ export default function Product() {
         <Image
           fit="cover"
           className={classes.image}
-          src={
-            "https://static.contrado.com/resources/images/2021-2/171266/design-your-own-mug-1116513_l.jpg"
-          }
+          src={"https://static.contrado.com/resources/images/2021-2/171266/design-your-own-mug-1116513_l.jpg"}
         ></Image>
         <Box ml={30} mt={15}>
           <Title>The Most Beautiful Mug in Canada!</Title>
@@ -63,32 +61,17 @@ export default function Product() {
           <Box className={classes.input}>
             <Text>Quantity</Text>
             <Space w="md" />
-            <NumberInput
-              placeholder="Between 1 and 99"
-              clampBehavior="strict"
-              min={1}
-              max={99}
-            />
+            <NumberInput placeholder="Between 1 and 99" clampBehavior="strict" min={1} max={99} />
           </Box>
           <Box className={classes.input}>
             <Text>Upload image</Text>
             <Space w="md" />
-            <FileInput
-              accept="image/png,image/jpeg"
-              variant="filled"
-              placeholder="Your image"
-            />
+            <FileInput accept="image/png,image/jpeg" variant="filled" placeholder="Your image" />
           </Box>
           <Box className={classes.input}>
             <Text>Request</Text>
             <Space w="md" />
-            <Textarea
-              autosize
-              className={classes.textarea}
-              minRows={2}
-              maxRows={4}
-              placeholder="Feel free to ask!"
-            />
+            <Textarea autosize className={classes.textarea} minRows={2} maxRows={4} placeholder="Feel free to ask!" />
           </Box>
           <Box className={classes.input}>
             <Text>Phone number or Email</Text>
@@ -129,9 +112,7 @@ export default function Product() {
             {Object.entries(data.custom_data).map(([key, value]) => (
               <Table.Tr>
                 <Table.Td>{toTitleCase(key)}</Table.Td>
-                <Table.Td>
-                  {typeof value == "string" ? value : value.join(", ")}
-                </Table.Td>
+                <Table.Td>{typeof value == "string" ? value : value.join(", ")}</Table.Td>
               </Table.Tr>
             ))}
           </Table.Tbody>
