@@ -20,11 +20,11 @@ import classes from "./index.module.css";
 export default function Product() {
   const data = {
     id: "messikimochi",
-    name: "The Most Beautiful Mug in Canada!",
+    name: "Sui-chan wa kyou mo Kawaii~ Mug",
     price: 7.27,
     category: "Mug",
     description:
-      "Introducing the ultimate companion for your morning ritual - The Most Beautiful Mug in Canada! Elevate your coffee or tea experience with this exquisite, handcrafted vessel designed to cradle your favorite brew. Crafted from high-quality, lead-free ceramic, it ensures your beverage's purity and taste remain untarnished. The ergonomic handle provides a comfortable grip, while the wide base offers stability. Its double-walled insulation keeps drinks at the perfect temperature, whether piping hot or refreshingly cool. The elegant, minimalist design complements any kitchen or office space. Dishwasher and microwave safe, it's a breeze to clean and maintain. Indulge in your daily dose of comfort and style with this exceptional mug!",
+      "Introducing the ultimate companion for your morning ritual - Sui-chan wa kyou mo Kawaii~ Mug. Elevate your coffee or tea experience with this exquisite, handcrafted vessel designed to cradle your favorite brew. Crafted from high-quality, lead-free ceramic, it ensures your beverage's purity and taste remain untarnished. The ergonomic handle provides a comfortable grip, while the wide base offers stability. Its double-walled insulation keeps drinks at the perfect temperature, whether piping hot or refreshingly cool. The elegant, minimalist design complements any kitchen or office space. Dishwasher and microwave safe, it's a breeze to clean and maintain. Indulge in your daily dose of comfort and style with this exceptional mug!",
     custom_data: {
       size: ["11oz", "15oz"],
       "Material Type": "Ceramic",
@@ -43,7 +43,7 @@ export default function Product() {
       <Container className={classes.overview}>
         <Image className={classes.image} src={"https://m.media-amazon.com/images/I/71wjKdsRbLL.jpg"}></Image>
         <Box ml={30} mt={10}>
-          <Title>The Most Beautiful Mug in Canada!</Title>
+          <Title>{data.name}</Title>
           <Space h="md" />
           <Title style={{ color: "#228be6" }}>${data.price}</Title>
           <form onSubmit={form.onSubmit((values) => console.log(values))}>
@@ -83,7 +83,7 @@ export default function Product() {
             <Box className={classes.input}>
               <Text>Phone number or Email</Text>
               <Space w="md" />
-              <TextInput placeholder="your@email.com" />
+              <TextInput w={"20vw"} miw={200} placeholder="your@email.com" />
             </Box>
             <Button variant="filled" className={classes.input} type="submit">
               Buy

@@ -13,7 +13,7 @@ export default function Header() {
           </Link>
           {/* <Burger opened={opened} onClick={toggle} hiddenFrom="xs" size="sm" /> */}
           <Box display={"flex"} style={{ alignItems: "center" }}>
-            <TextInput radius="xl" mr={10} placeholder="What are you looking for?" />
+            <TextInput radius="xl" w={250} mr={10} placeholder="What are you looking for?" />
             <ActionIcon variant="filled" radius="lg" size="lg">
               <IconSearch style={{ width: "60%", height: "60%" }} stroke={3} />
             </ActionIcon>
