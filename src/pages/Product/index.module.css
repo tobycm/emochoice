@@ -1,6 +1,6 @@
 .image {
   width: 50%;
-  height: auto;
+  height: 100%;
   display: block;
 
   @media screen and (max-width: $mantine-breakpoint-xs) {
@@ -22,7 +22,7 @@
 }
 
 .textarea {
-  width: 20vw;
+  width: 75%;
   min-width: 220px;
   @media screen and (max-width: $mantine-breakpoint-xs) {
     width: 70vw;

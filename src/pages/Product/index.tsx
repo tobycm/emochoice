@@ -83,7 +83,7 @@ export default function Product() {
             <Box className={classes.input}>
               <Text>Phone number or Email</Text>
               <Space w="md" />
-              <TextInput w={"20vw"} miw={200} placeholder="your@email.com" />
+              <TextInput w={215} placeholder="your@email.com" />
             </Box>
             <Button variant="filled" className={classes.input} type="submit">
               Buy
