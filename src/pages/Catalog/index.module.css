@@ -1,0 +1,7 @@
+.container {
+  display: flex;
+
+  @media screen and (max-width: $mantine-breakpoint-xs) {
+    flex-direction: column;
+  }
+}

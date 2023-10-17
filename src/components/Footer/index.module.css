@@ -29,3 +29,9 @@
     max-width: 80vw;
   }
 }
+
+.icon {
+  color: "black";
+  marginright: "5px";
+  minwidth: "24px";
+}

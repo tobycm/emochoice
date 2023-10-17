@@ -9,7 +9,7 @@ export default function Header() {
       <Container className={classes.mainSection}>
         <Group justify="space-between">
           <Link to={"/"}>
-            <Image src={"/full_logo.svg"} h={70} w={"auto"} style={{pointerEvents: "none"}} />
+            <Image src={"/images/full_logo.svg"} h={70} w={"auto"} style={{ pointerEvents: "none" }} />
           </Link>
           {/* <Burger opened={opened} onClick={toggle} hiddenFrom="xs" size="sm" /> */}
           <Box display={"flex"} style={{ alignItems: "center" }}>
@@ -32,19 +32,21 @@ export default function Header() {
           >
             <Tabs.List>
               <Menu.Target>
-                <Link to="/product" style={{ textDecoration: "none", color: "black" }}>
-                  <Tabs.Tab value="products" key={"products"}>
+                <Link to="/catalog" style={{ textDecoration: "none", color: "black" }}>
+                  <Tabs.Tab value="catalog" key={"catalog"}>
                     All Products
                   </Tabs.Tab>
                 </Link>
               </Menu.Target>
               <Menu.Dropdown>
                 <Menu.Label>Clothing & Accessories Print</Menu.Label>
-                <Menu.Item rightSection={
-            <Text size="xs" c="dimmed">
-            {">"}
-            </Text>
-          }>
+                <Menu.Item
+                  rightSection={
+                    <Text size="xs" c="dimmed">
+                      {">"}
+                    </Text>
+                  }
+                >
                   <Menu trigger="hover" position="right-start" withArrow arrowPosition="center" offset={20} openDelay={250}>
                     <Menu.Target>
                       <Text size="sm">T-Shirts</Text>

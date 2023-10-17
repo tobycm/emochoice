@@ -3,10 +3,10 @@ import { MantineProvider } from "@mantine/core";
 import { RouteObject, RouterProvider } from "react-router";
 import { createBrowserRouter } from "react-router-dom";
 import Content from "./components/Content";
+import Catalog from "./pages/Catalog";
 import Contact from "./pages/Contact";
 import Gallery from "./pages/Gallery";
 import Home from "./pages/Home";
-import Product from "./pages/Product";
 
 const routes: RouteObject[] = [
   {
@@ -18,8 +18,8 @@ const routes: RouteObject[] = [
         element: <Home />,
       },
       {
-        path: "/product",
-        element: <Product />,
+        path: "/catalog",
+        element: <Catalog />,
       },
       {
         path: "/gallery",
