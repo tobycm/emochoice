@@ -15,49 +15,47 @@ import {
   Title,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
+import { useLoaderData } from "react-router-dom";
+import { Product } from "../../lib/database/models";
 import classes from "./index.module.css";
 
 export default function Product() {
-  const data = {
-    id: "messikimochi",
-    name: "Sui-chan wa kyou mo Kawaii~ Mug",
-    price: 7.27,
-    category: "Mug",
-    description:
-      "Introducing the ultimate companion for your morning ritual - Sui-chan wa kyou mo Kawaii~ Mug. Elevate your coffee or tea experience with this exquisite, handcrafted vessel designed to cradle your favorite brew. Crafted from high-quality, lead-free ceramic, it ensures your beverage's purity and taste remain untarnished. The ergonomic handle provides a comfortable grip, while the wide base offers stability. Its double-walled insulation keeps drinks at the perfect temperature, whether piping hot or refreshingly cool. The elegant, minimalist design complements any kitchen or office space. Dishwasher and microwave safe, it's a breeze to clean and maintain. Indulge in your daily dose of comfort and style with this exceptional mug!",
-    custom_data: {
-      size: ["11oz", "15oz"],
-      "Material Type": "Ceramic",
-    },
-  };
+  const { product, category } = useLoaderData() as { product: Product; category: string[] };
 
-  const form = useForm({
-    initialValues: {
-      quantity: "1",
-      size: "11oz",
-    },
-  });
+  console.log(product);
+  const initialValues: Record<string, any> = {};
+
+  let sizesAvailable = false;
+
+  if (product.custom_data) {
+    sizesAvailable = product.custom_data["sizes"] ? true : false;
+  }
+  if (sizesAvailable) initialValues["size"] = product.custom_data!["sizes"][0];
+
+  const form = useForm({ initialValues });
 
   return (
-    <>
+    <Box>
       <Container className={classes.overview}>
         <Image className={classes.image} src={"https://m.media-amazon.com/images/I/71wjKdsRbLL.jpg"}></Image>
         <Box ml={30} mt={10}>
-          <Title>{data.name}</Title>
+          <Title>{product.name}</Title>
           <Space h="md" />
-          <Title style={{ color: "#228be6" }}>${data.price}</Title>
+          {/* <Title style={{ color: "#228be6" }}>${data.price}</Title> */}
           <form onSubmit={form.onSubmit((values) => console.log(values))}>
-            <Box className={classes.input}>
-              <Text>Size</Text>
-              <Space w="md" />
-              <SegmentedControl
-                data={data.custom_data.size.map((size) => ({
-                  label: size,
-                  value: size,
-                }))}
-                {...form.getInputProps("size")}
-              />
-            </Box>
+            {sizesAvailable ? (
+              <Box className={classes.input}>
+                <Text>Size</Text>
+                <Space w="md" />
+                <SegmentedControl
+                  data={(product.custom_data!.size as string[]).map((size) => ({
+                    label: size,
+                    value: size,
+                  }))}
+                  {...form.getInputProps("size")}
+                />
+              </Box>
+            ) : null}
             <Box className={classes.input}>
               <Text>Quantity</Text>
               <Space w="md" />
@@ -94,7 +92,7 @@ export default function Product() {
       <Container className={classes.information}>
         <Title order={2}>Description</Title>
         <Divider my="xs" />
-        <Text>{data.description}</Text>
+        <Text>{product.description}</Text>
       </Container>
       <Container className={classes.information}>
         <Title order={2}>Technical Details</Title>
@@ -105,43 +103,40 @@ export default function Product() {
               <Table.Td>
                 <strong>Emochoice ID</strong>
               </Table.Td>
-              <Table.Td>{data.id}</Table.Td>
+              <Table.Td>{product.id}</Table.Td>
             </Table.Tr>
             <Table.Tr>
               <Table.Td>
                 <strong>Name</strong>
               </Table.Td>
-              <Table.Td>{data.name}</Table.Td>
+              <Table.Td>{product.name}</Table.Td>
             </Table.Tr>
-            <Table.Tr>
+            {/* <Table.Tr>
               <Table.Td>
                 <strong>Price</strong>
               </Table.Td>
               <Table.Td>${data.price}</Table.Td>
-            </Table.Tr>
-            <Table.Tr>
-              <Table.Td>
-                <strong>Category</strong>
-              </Table.Td>
-              <Table.Td>{data.category}</Table.Td>
-            </Table.Tr>
-            {Object.entries(data.custom_data).map(([key, value]) => (
+            </Table.Tr> */}
+            {product.category.length > 0 ? (
+              <Table.Tr>
+                <Table.Td>
+                  <strong>Category</strong>
+                </Table.Td>
+                <Table.Td>{category.join(", ")}</Table.Td>
+              </Table.Tr>
+            ) : null}
+
+            {/* {Object.entries(product.custom_data).map(([key, value]) => (
               <Table.Tr>
                 <Table.Td>
                   <strong>{toTitleCase(key)}</strong>
                 </Table.Td>
                 <Table.Td>{typeof value == "string" ? value : value.join(", ")}</Table.Td>
               </Table.Tr>
-            ))}
+            ))} */}
           </Table.Tbody>
         </Table>
       </Container>
-    </>
+    </Box>
   );
-
-  function toTitleCase(str: string) {
-    return str.replace(/\w\S*/g, function (txt) {
-      return txt.charAt(0).toUpperCase() + txt.substring(1).toLowerCase();
-    });
-  }
 }

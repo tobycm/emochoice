@@ -13,6 +13,10 @@ export async function getGallery(name: string) {
   return images;
 }
 
+export async function getCategory(id: string) {
+  return await pocketbase.collection("categories").getOne<{ name: string }>(id);
+}
+
 export async function getProducts(page: number = 0, filter: string = "") {
   return await pocketbase.collection("products").getList<Product>(page, 10, { filter });
 }
