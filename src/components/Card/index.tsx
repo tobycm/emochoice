@@ -1,4 +1,5 @@
-import { Badge, Card, Container, Group, Image, Text } from "@mantine/core";
+import { Badge, Box, Card, Container, Group, Image, Text, Title } from "@mantine/core";
+import classes from "./index.module.css";
 
 export default function ProductCard(props: {
   id: string;
@@ -15,19 +16,44 @@ export default function ProductCard(props: {
 
   return (
     <Container>
-      <Card href={productUrl} target="_blank" component="a" style={{ margin: "2vw" }}>
-        <Card.Section>
-          <Image src={image ?? "/images/no_image.png"} h={"100%"} w={"15vw"} miw={200} />
+      <Card
+        href={productUrl}
+        component="a"
+        style={{ margin: "1vw" }}
+        w={"5vw"}
+        h={"40vh"}
+        miw={250}
+        mih={400}
+        maw={750}
+        mah={1200}
+        shadow="sm"
+        padding="lg"
+        radius="md"
+        withBorder
+      >
+        <Card.Section h={"65%"}>
+          <Image src={image ?? "/images/no_image.png"} w={"100%"} mah={"100%"} />
         </Card.Section>
-        <Group justify="space-between" mt="md" mb="xs">
-          <Text fw={"bold"}>{brand}</Text>
-          {badge ? (
-            <Badge color="pink" variant="light">
-              {badge}
-            </Badge>
-          ) : null}
-        </Group>
-        <Text>{name}</Text>
+        <Card.Section h={"35%"}>
+          <Box m={"8%"}>
+            <Text mt="md" mb="xs" style={{ color: "#228be6" }} fw={"bold"}>
+              {brand}
+            </Text>
+            <Group justify="space-between">
+              <Title order={3} className={classes.title}>
+                {name}
+              </Title>
+              {badge ? (
+                <Badge color="pink" variant="light">
+                  {badge}
+                </Badge>
+              ) : null}
+            </Group>
+            <Text mt="xs" style={{ color: "grey" }}>
+              Category: {brand}
+            </Text>
+          </Box>
+        </Card.Section>
       </Card>
     </Container>
 

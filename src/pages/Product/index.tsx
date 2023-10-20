@@ -16,6 +16,7 @@ import {
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useLoaderData } from "react-router-dom";
+import pocketbase from "../../lib/database";
 import { Product } from "../../lib/database/models";
 import classes from "./index.module.css";
 
@@ -37,11 +38,14 @@ export default function Product() {
   return (
     <Box>
       <Container className={classes.overview}>
-        <Image className={classes.image} src={"https://m.media-amazon.com/images/I/71wjKdsRbLL.jpg"}></Image>
+        <Box className={classes.imagebox}>
+          <Image className={classes.image} src={product.image ? pocketbase.getFileUrl(product, product.image) : "/images/no_image.png"} />
+        </Box>
         <Box ml={30} mt={10}>
-          <Title>{product.name}</Title>
-          <Space h="md" />
-          {/* <Title style={{ color: "#228be6" }}>${data.price}</Title> */}
+          <Title mb={"xs"}>{product.name}</Title>
+          <Title mb={"xl"} style={{ color: "#228be6" }} order={4}>
+            {product.brand}
+          </Title>
           <form onSubmit={form.onSubmit((values) => console.log(values))}>
             {sizesAvailable ? (
               <Box className={classes.input}>
@@ -92,7 +96,7 @@ export default function Product() {
       <Container className={classes.information}>
         <Title order={2}>Description</Title>
         <Divider my="xs" />
-        <Text>{product.description}</Text>
+        <div dangerouslySetInnerHTML={{ __html: `${product.description}` }} />
       </Container>
       <Container className={classes.information}>
         <Title order={2}>Technical Details</Title>
@@ -104,6 +108,12 @@ export default function Product() {
                 <strong>Emochoice ID</strong>
               </Table.Td>
               <Table.Td>{product.id}</Table.Td>
+            </Table.Tr>
+            <Table.Tr>
+              <Table.Td>
+                <strong>Brand</strong>
+              </Table.Td>
+              <Table.Td>{product.brand}</Table.Td>
             </Table.Tr>
             <Table.Tr>
               <Table.Td>

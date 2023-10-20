@@ -43,7 +43,7 @@ export default function Gallery() {
         <Title order={2} mb={20}>
           eggu
         </Title>
-        <Carousel className={classes.carousel} mx="auto" loop draggable dragFree slideSize="70%" slideGap="lg">
+        <Carousel className={classes.carousel} mx="auto" loop draggable dragFree slideSize="30%" slideGap="sm">
           {eggunoslides}
         </Carousel>
       </Box>
