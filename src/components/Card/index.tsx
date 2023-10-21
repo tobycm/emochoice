@@ -1,6 +1,7 @@
-import { Badge, Box, Card, Group, Image, Text, Title } from "@mantine/core";
+import { Badge, Box, Card, Group, Image, Text, Title, Tooltip } from "@mantine/core";
 import pocketbase from "../../lib/database";
 import { Product } from "../../lib/database/models";
+import { toTitleCase } from "../../lib/utils";
 import classes from "./index.module.css";
 
 export default function ProductCard(props: { product: Product }) {
@@ -15,14 +16,13 @@ export default function ProductCard(props: { product: Product }) {
       w={"15vw"}
       h={"60vh"}
       miw={250}
-      mih={400}
+      mih={500}
       maw={750}
-      mah={1600} // very good ratio
+      mah={1600}
       shadow="sm"
       padding="lg"
       radius="md"
       withBorder
-      // yea make the box taller, remember to have a good ratio, dont make it tooooooo tall
     >
       <Card.Section h={"65%"}>
         <Image src={product.image ? pocketbase.getFileUrl(product, product.image) : "/images/no_image.png"} h={"100%"} maw={"100%"} />
@@ -47,9 +47,13 @@ export default function ProductCard(props: { product: Product }) {
               Category: {product.category.join(", ")}
             </Text>
           ) : null}
-          <Box mt={"xs"}>
+          <Box mt={"xs"} display={"flex"}>
             {product.custom_data?.["colors"]
-              ? Object.values<string>(product.custom_data?.["colors"]).map((hex) => <Box w={"2vw"} h={"2vh"} style={{ backgroundColor: hex }}></Box>)
+              ? Object.entries<string>(product.custom_data?.["colors"]).map(([colorName, hex]) => (
+                  <Tooltip label={toTitleCase(colorName)} openDelay={500}>
+                    <Box w={"2vh"} h={"2vh"} mr={5} style={{ backgroundColor: hex, border: "1px solid grey" }}></Box>
+                  </Tooltip>
+                ))
               : null}
           </Box>
         </Box>

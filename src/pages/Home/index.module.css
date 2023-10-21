@@ -1,6 +1,11 @@
 .cardsBox {
   display: flex;
   flex-direction: row;
+
+  @media screen and (max-width: $mantine-breakpoint-sm) {
+    flex-direction: column;
+    align-items: center;
+  }
 }
 
 .card {
@@ -12,4 +17,15 @@
   min-height: 400px;
   max-width: 600px;
   max-height: 1200px;
+
+  @media screen and (max-width: $mantine-breakpoint-sm) {
+    width: 80%;
+    margin: 0;
+    margin-bottom: 1.5%;
+    height: 50vh;
+    min-width: 200px;
+    min-height: 400px;
+    max-width: 600px;
+    max-height: 1200px;
+  }
 }
