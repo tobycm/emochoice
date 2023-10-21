@@ -17,6 +17,7 @@ import {
   Tooltip,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
+import React from "react";
 import { useLoaderData } from "react-router-dom";
 import pocketbase from "../../lib/database";
 import { Product } from "../../lib/database/models";
@@ -33,6 +34,8 @@ export default function Product() {
   let colorsAvailable;
   let uploadImage;
 
+  const [imageIndex, setImage] = React.useState<number>(0);
+
   if (product.custom_data) {
     sizesAvailable = !!product.custom_data["sizes"];
     colorsAvailable = !!product.custom_data["colors"];
@@ -40,7 +43,9 @@ export default function Product() {
   }
   if (sizesAvailable) initialValues["size"] = product.custom_data!["sizes"][0];
   initialValues["quantity"] = 1;
-  if (colorsAvailable) initialValues["color"] = Object.values<string>(product.custom_data?.["colors"])[0];
+  if (colorsAvailable) {
+    initialValues["color"] = Object.values<string>(product.custom_data?.["colors"])[imageIndex];
+  }
 
   const form = useForm({ initialValues });
 
@@ -48,7 +53,7 @@ export default function Product() {
     <Box>
       <Container className={classes.overview}>
         <Box className={classes.imagebox}>
-          <Image className={classes.image} src={product.image ? pocketbase.getFileUrl(product, product.image) : "/images/no_image.png"} />
+          <Image className={classes.image} src={product.image ? pocketbase.getFileUrl(product, product.image[imageIndex]) : "/images/no_image.png"} />
         </Box>
         <Box ml={30}>
           <Title mb={"xs"}>{product.name}</Title>
@@ -75,6 +80,10 @@ export default function Product() {
                   placeholder="Choose a color"
                   swatches={Object.values<string>(product.custom_data?.["colors"])}
                   {...form.getInputProps("color")}
+                  onChange={(color) => {
+                    setImage(Object.values<string>(product.custom_data?.["colors"]).indexOf(color));
+                    form.setFieldValue("color", color);
+                  }}
                 />
               </Box>
             ) : null}

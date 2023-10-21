@@ -25,7 +25,7 @@ export default function ProductCard(props: { product: Product }) {
       withBorder
     >
       <Card.Section h={"65%"}>
-        <Image src={product.image ? pocketbase.getFileUrl(product, product.image) : "/images/no_image.png"} h={"100%"} maw={"100%"} />
+        <Image src={product.image ? pocketbase.getFileUrl(product, product.image[0]) : "/images/no_image.png"} h={"100%"} maw={"100%"} />
       </Card.Section>
       <Card.Section h={"35%"}>
         <Box m={"8%"}>

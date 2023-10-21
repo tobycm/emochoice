@@ -5,6 +5,6 @@ export interface Product extends RecordModel {
   brand?: string;
   category: string[]; // category ids
   description?: string;
-  image?: string; // filename
+  image?: string[]; // filename
   custom_data: Record<string, any> | null;
 }
