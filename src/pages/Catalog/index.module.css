@@ -1,7 +1,16 @@
 .container {
+  @media screen and (min-width: $mantine-breakpoint-xl) {
+    padding: 0 10% 0 10%;
+  }
+
+  padding: 0 4% 0 4%;
   display: flex;
+  flex-wrap: wrap;
 
   @media screen and (max-width: $mantine-breakpoint-xs) {
     flex-direction: column;
+    flex-wrap: nowrap;
+    padding: 0;
+    align-items: center;
   }
 }

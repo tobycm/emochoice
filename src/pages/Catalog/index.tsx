@@ -1,8 +1,8 @@
-import { Container } from "@mantine/core";
+import { Box } from "@mantine/core";
 import { ListResult } from "pocketbase";
 import { useEffect, useState } from "react";
 import ProductCard from "../../components/Card";
-import pocketbase, { getProducts } from "../../lib/database";
+import { getCategory, getProducts } from "../../lib/database";
 import { Product } from "../../lib/database/models";
 import classes from "./index.module.css";
 
@@ -13,22 +13,25 @@ export default function Catalog() {
     (async () => {
       const products = await getProducts(); // all products
 
+      const items: Product[] = [];
+      for (const product of products.items) {
+        const category: string[] = [];
+        for (const categoryId of product.category) category.push((await getCategory(categoryId)).name);
+        product.category = category;
+
+        items.push(product);
+      }
+      products.items = items;
+
       setProducts(products);
     })();
   }, []);
 
   return (
-    <Container className={classes.container}>
+    <Box className={classes.container}>
       {products?.items.map((product) => {
-        return (
-          <ProductCard
-            id={product.id}
-            image={product.image ? pocketbase.getFileUrl(product, product.image) : undefined}
-            brand={product.brand}
-            name={product.name}
-          />
-        );
+        return <ProductCard product={product} />;
       })}
-    </Container>
+    </Box>
   );
 }

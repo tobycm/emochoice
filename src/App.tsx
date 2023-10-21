@@ -76,7 +76,16 @@ router;
 
 export default function App() {
   return (
-    <MantineProvider>
+    <MantineProvider
+      theme={{
+        primaryColor: "emochoice-yellow",
+        colors: {
+          "emochoice-yellow": ["#FCB918", "#FCB918", "#FCB918", "#FCB918", "#FCB918", "#FCB918", "#FCB918", "#FCB918", "#FCB918", "#FCB918"],
+          "emochoice-green": ["#B1CB35", "#B1CB35", "#B1CB35", "#B1CB35", "#B1CB35", "#B1CB35", "#B1CB35", "#B1CB35", "#B1CB35", "#B1CB35"],
+          "emochoice-blue": ["#0468B0", "#0468B0", "#0468B0", "#0468B0", "#0468B0", "#0468B0", "#0468B0", "#0468B0", "#0468B0", "#0468B0"],
+        },
+      }}
+    >
       <RouterProvider router={router} />
     </MantineProvider>
   );

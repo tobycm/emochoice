@@ -43,7 +43,7 @@ export default function Product() {
         </Box>
         <Box ml={30} mt={10}>
           <Title mb={"xs"}>{product.name}</Title>
-          <Title mb={"xl"} style={{ color: "#228be6" }} order={4}>
+          <Title mb={"xl"} c={"emochoice-blue"} order={4}>
             {product.brand}
           </Title>
           <form onSubmit={form.onSubmit((values) => console.log(values))}>
@@ -75,7 +75,7 @@ export default function Product() {
             <Box className={classes.input}>
               <Text>Your image</Text>
               <Space w="md" />
-              <FileInput accept="image/png,image/jpeg" variant="filled" placeholder="Upload" />
+              <FileInput accept="image/png,image/jpeg" variant="default" c={"emochoice-yellow"} placeholder="Upload" />
             </Box>
             <Box className={classes.input}>
               <Text>Request</Text>
