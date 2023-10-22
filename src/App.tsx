@@ -9,6 +9,7 @@ import Catalog from "./pages/Catalog";
 import Contact from "./pages/Contact";
 import Gallery from "./pages/Gallery";
 import Home from "./pages/Home";
+import List from "./pages/List";
 import Product from "./pages/Product";
 
 const routes: RouteObject[] = [
@@ -58,6 +59,10 @@ const routes: RouteObject[] = [
             };
           }
         },
+      },
+      {
+        path: "/list",
+        element: <List />,
       },
       {
         path: "/gallery",
