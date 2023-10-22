@@ -1,5 +1,5 @@
 import { ActionIcon, Box, Container, Group, Image, Menu, Tabs, Text, TextInput } from "@mantine/core";
-import { IconSearch } from "@tabler/icons-react";
+import { IconSearch, IconShoppingCart } from "@tabler/icons-react";
 import { Link } from "react-router-dom";
 import classes from "./index.module.css";
 
@@ -14,14 +14,19 @@ export default function Header() {
           {/* <Burger opened={opened} onClick={toggle} hiddenFrom="xs" size="sm" /> */}
           <Box display={"flex"} style={{ alignItems: "center" }}>
             <TextInput radius="xl" w={250} mr={10} placeholder="What are you looking for?" />
-            <ActionIcon variant="filled" radius="lg" size="lg">
+            <ActionIcon variant="filled" radius="lg" size="lg" mr={10}>
               <IconSearch style={{ width: "60%", height: "60%" }} stroke={3} />
             </ActionIcon>
+            <Link to="/list">
+              <ActionIcon variant="filled" radius="lg" size="lg">
+                <IconShoppingCart style={{ width: "60%", height: "60%" }} stroke={3} />
+              </ActionIcon>
+            </Link>
           </Box>
         </Group>
       </Container>
       <Container>
-        <Menu trigger="hover" openDelay={400}>
+        <Menu trigger="hover" openDelay={505}>
           <Tabs
             variant="outline"
             classNames={{
