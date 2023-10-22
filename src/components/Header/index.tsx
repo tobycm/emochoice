@@ -1,26 +1,31 @@
-import { ActionIcon, Box, Container, Group, Image, Menu, Tabs, Text, TextInput } from "@mantine/core";
+import { ActionIcon, Box, Burger, Container, Group, Image, Indicator, Menu, Tabs, Text, TextInput } from "@mantine/core";
+import { useDisclosure, useMediaQuery } from "@mantine/hooks";
 import { IconSearch, IconShoppingCart } from "@tabler/icons-react";
 import { Link } from "react-router-dom";
 import classes from "./index.module.css";
 
 export default function Header() {
+  const [opened, { toggle }] = useDisclosure(false);
+
   return (
     <Box className={classes.header}>
       <Container className={classes.mainSection}>
-        <Group justify="space-between">
-          <Link to={"/"}>
-            <Image src={"/images/full_logo.svg"} h={70} w={"auto"} style={{ pointerEvents: "none" }} />
+        <Group justify="space-between" display="flex">
+          <Burger opened={opened} onClick={toggle} hiddenFrom="xs" size="sm" style={{ flex: useMediaQuery(`(max-width: 36em)`) ? "1" : "none" }} />
+          <Link to={"/"} style={{ flex: useMediaQuery(`(max-width: 36em)`) ? "1" : "none" }}>
+            <Image src={"/images/full_logo.svg"} mih={50} mah={70} h="7vh" w={"auto"} style={{ pointerEvents: "none" }} />
           </Link>
-          {/* <Burger opened={opened} onClick={toggle} hiddenFrom="xs" size="sm" /> */}
-          <Box display={"flex"} style={{ alignItems: "center" }}>
-            <TextInput radius="xl" w={250} mr={10} placeholder="What are you looking for?" />
-            <ActionIcon variant="filled" radius="lg" size="lg" mr={10}>
+          <Box display={"flex"} style={{ flex: useMediaQuery(`(max-width: 36em)`) ? "1" : "none" }}>
+            <TextInput radius="xl" w={220} mr={10} placeholder="What are you looking for?" visibleFrom={"xs"} />
+            <ActionIcon variant="filled" radius="lg" size="lg" mr={10} ml={useMediaQuery(`(max-width: 36em)`) ? "auto" : "none"}>
               <IconSearch style={{ width: "60%", height: "60%" }} stroke={3} />
             </ActionIcon>
             <Link to="/list">
-              <ActionIcon variant="filled" radius="lg" size="lg">
-                <IconShoppingCart style={{ width: "60%", height: "60%" }} stroke={3} />
-              </ActionIcon>
+              <Indicator inline label="3" color="red" size={16}>
+                <ActionIcon variant="red" radius="lg" size="lg">
+                  <IconShoppingCart style={{ width: "60%", height: "60%" }} stroke={3} />
+                </ActionIcon>
+              </Indicator>
             </Link>
           </Box>
         </Group>
@@ -29,6 +34,7 @@ export default function Header() {
         <Menu trigger="hover" openDelay={505}>
           <Tabs
             variant="outline"
+            visibleFrom="xs"
             classNames={{
               root: classes.tabs,
               list: classes.tabsList,
@@ -59,7 +65,7 @@ export default function Header() {
                     <Menu.Dropdown>
                       <Menu.Item>Mens & Unisex</Menu.Item>
                       <Menu.Item>Womens</Menu.Item>
-                      <Menu.Item>Youths</Menu.Item>
+                      <Menu.Item>Youth</Menu.Item>
                       <Menu.Item>Infants & Toddlers</Menu.Item>
                     </Menu.Dropdown>
                   </Menu>

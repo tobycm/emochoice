@@ -6,6 +6,12 @@
   padding: 0 4% 0 4%;
   display: flex;
   flex-wrap: wrap;
+  min-height: 50vh;
+}
+
+.cardsBox {
+  display: flex;
+  flex-wrap: wrap;
 
   @media screen and (max-width: $mantine-breakpoint-xs) {
     flex-direction: column;

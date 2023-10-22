@@ -1,5 +1,5 @@
 import { Carousel } from "@mantine/carousel";
-import { Box, Image, Title } from "@mantine/core";
+import { Box, Image } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import { useEffect, useState } from "react";
 import { getGallery } from "../../lib/database";
@@ -33,9 +33,9 @@ export default function Gallery() {
   return (
     <Box style={{ alignItems: "center" }}>
       <Box mb={20} display={"flex"} style={{ flexDirection: "column", alignItems: "center" }}>
-        <Title order={2} mb={20}>
+        {/* <Title order={2} mb={20}>
           tobycm
-        </Title>
+        </Title> */}
         <Carousel
           className={classes.carousel}
           mx="auto"
@@ -49,9 +49,9 @@ export default function Gallery() {
         </Carousel>
       </Box>
       <Box mb={20} display={"flex"} style={{ flexDirection: "column", alignItems: "center" }}>
-        <Title order={2} mb={20}>
+        {/* <Title order={2} mb={20}>
           eggu
-        </Title>
+        </Title> */}
         <Carousel
           className={classes.carousel}
           mx="auto"

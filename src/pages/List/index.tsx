@@ -1,4 +1,4 @@
-import { Box, Container, NumberInput, Table, Text, Title } from "@mantine/core";
+import { Box, Container, Loader, NumberInput, Table, Text, Title, UnstyledButton } from "@mantine/core";
 import { IconShoppingCartSearch, IconX } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
@@ -45,7 +45,9 @@ export default function List() {
                   <Table.Td>
                     <Box display="flex" style={{ alignItems: "center" }}>
                       <NumberInput w={"12%"} miw={70} mr={10} clampBehavior="strict" min={1} max={99} />
-                      <IconX style={{ color: "red" }} stroke={1.234}></IconX>
+                      <UnstyledButton>
+                        <IconX style={{ color: "red" }} stroke={1.234}></IconX>
+                      </UnstyledButton>
                     </Box>
                   </Table.Td>
                 </Table.Tr>
@@ -66,7 +68,9 @@ export default function List() {
             </Text>
           </Box>
         )
-      ) : null}
+      ) : (
+        <Loader size="md" mt={"md"} />
+      )}
     </Container>
   );
 }
