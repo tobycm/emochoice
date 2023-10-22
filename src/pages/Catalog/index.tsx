@@ -3,7 +3,7 @@ import { IconCategory, IconColorFilter, IconIcons, IconShirt } from "@tabler/ico
 import { ListResult } from "pocketbase";
 import { useEffect, useState } from "react";
 import ProductCard from "../../components/Card";
-import { getCategory, getProducts } from "../../lib/database";
+import { getProducts } from "../../lib/database";
 import { Product } from "../../lib/database/models";
 import classes from "./index.module.css";
 
@@ -13,22 +13,10 @@ export default function Catalog() {
   const [filters, setFilters] = useState<string[]>([]);
 
   useEffect(() => {
-    (async () => {
-      const products = await getProducts(); // all products
-
-      const items: Product[] = [];
-      for (const product of products.items) {
-        const category: string[] = [];
-        for (const categoryId of product.category) category.push((await getCategory(categoryId)).name);
-        product.category = category;
-
-        items.push(product);
-      }
-      products.items = items;
-
+    getProducts().then((products) => {
       setProducts(products);
       setIsLoaded(true);
-    })();
+    });
   }, []);
 
   return (

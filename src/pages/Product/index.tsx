@@ -25,9 +25,8 @@ import { toTitleCase } from "../../lib/utils";
 import classes from "./index.module.css";
 
 export default function Product() {
-  const { product, category } = useLoaderData() as { product: Product; category: string[] };
+  const { product } = useLoaderData() as { product: Product };
 
-  console.log(product);
   const initialValues: Record<string, any> = {};
 
   let sizesAvailable;
@@ -161,7 +160,7 @@ export default function Product() {
                 <Table.Td>
                   <strong>Category</strong>
                 </Table.Td>
-                <Table.Td>{category.join(", ")}</Table.Td>
+                <Table.Td>{product.expand.category.map((category) => category.name).join(", ")}</Table.Td>
               </Table.Tr>
             ) : null}
             {product.custom_data ? (

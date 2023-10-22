@@ -42,9 +42,9 @@ export default function ProductCard(props: { product: Product }) {
               </Badge>
             ) : null}
           </Group>
-          {product.category ? (
+          {product.category.length > 0 ? (
             <Text mt="xs" style={{ color: "grey" }}>
-              Category: {product.category.join(", ")}
+              Category: {product.expand.category.map((category) => category.name).join(", ")}
             </Text>
           ) : null}
           <Box mt={"xs"} display={"flex"}>
