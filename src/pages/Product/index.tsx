@@ -155,14 +155,12 @@ export default function Product() {
               </Table.Td>
               <Table.Td>${data.price}</Table.Td>
             </Table.Tr> */}
-            {product.category.length > 0 ? (
-              <Table.Tr>
-                <Table.Td>
-                  <strong>Category</strong>
-                </Table.Td>
-                <Table.Td>{product.expand.category.map((category) => category.name).join(", ")}</Table.Td>
-              </Table.Tr>
-            ) : null}
+            <Table.Tr>
+              <Table.Td>
+                <strong>Category</strong>
+              </Table.Td>
+              <Table.Td>{product.expand.category.map((category) => category.name).join(", ")}</Table.Td>
+            </Table.Tr>
             {product.custom_data ? (
               <>
                 {Object.entries(product.custom_data!)

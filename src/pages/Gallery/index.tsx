@@ -1,4 +1,4 @@
-import { Carousel } from "@mantine/carousel";
+import { Carousel, Embla, useAnimationOffsetEffect } from "@mantine/carousel";
 import { Box, Image } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import { useEffect, useState } from "react";
@@ -7,9 +7,17 @@ import classes from "./index.module.css";
 
 export default function Gallery() {
   const [gallery, setGallery] = useState<string[]>([]);
+  const [eggunogallery, setEgguNoGallery] = useState<string[]>([]);
+  const [embla, setEmbla] = useState<Embla | null>(null);
+
+  useAnimationOffsetEffect(embla, 2000);
 
   useEffect(() => {
     getGallery("tobycm").then((gallery) => setGallery(gallery));
+  }, []);
+
+  useEffect(() => {
+    getGallery("eggu").then((gallery) => setEgguNoGallery(gallery));
   }, []);
 
   const slides = gallery.map((link) => (
@@ -18,12 +26,6 @@ export default function Gallery() {
     </Carousel.Slide>
   ));
 
-  const [eggunogallery, setEgguNoGallery] = useState<string[]>([]);
-
-  useEffect(() => {
-    getGallery("eggu").then((gallery) => setEgguNoGallery(gallery));
-  }, []);
-
   const eggunoslides = eggunogallery.map((link) => (
     <Carousel.Slide key={link}>
       <Image src={link} />
@@ -31,39 +33,31 @@ export default function Gallery() {
   ));
 
   return (
-    <Box style={{ alignItems: "center" }}>
-      <Box mb={20} display={"flex"} style={{ flexDirection: "column", alignItems: "center" }}>
-        {/* <Title order={2} mb={20}>
-          tobycm
-        </Title> */}
-        <Carousel
-          className={classes.carousel}
-          mx="auto"
-          loop
-          draggable
-          dragFree
-          slideSize={useMediaQuery(`(max-width: 48em)`) ? "100%" : "30%"}
-          slideGap="sm"
-        >
-          {slides}
-        </Carousel>
-      </Box>
-      <Box mb={20} display={"flex"} style={{ flexDirection: "column", alignItems: "center" }}>
-        {/* <Title order={2} mb={20}>
-          eggu
-        </Title> */}
-        <Carousel
-          className={classes.carousel}
-          mx="auto"
-          loop
-          draggable
-          dragFree
-          slideSize={useMediaQuery(`(max-width: 48em)`) ? "100%" : "30%"}
-          slideGap="sm"
-        >
-          {eggunoslides}
-        </Carousel>
-      </Box>
+    <Box mb={20} display={"flex"} style={{ flexDirection: "column", alignItems: "center" }} mih="50vh">
+      {/* <Carousel
+        className={classes.carousel}
+        getEmblaApi={setEmbla}
+        mx="auto"
+        loop
+        draggable
+        slideSize={useMediaQuery(`(max-width: 48em)`) ? "100%" : "30%"}
+        slideGap="sm"
+        mb="xl"
+      >
+        {slides}
+      </Carousel> */}
+      <Carousel
+        className={classes.carousel}
+        getEmblaApi={setEmbla}
+        mx="auto"
+        loop
+        draggable
+        slideSize={useMediaQuery(`(max-width: 48em)`) ? "100%" : "30%"}
+        slideGap="sm"
+        mb="xl"
+      >
+        {eggunoslides}
+      </Carousel>
     </Box>
   );
 }

@@ -39,7 +39,11 @@ export default function List() {
             <Table.Tbody>
               {list.map((item, index) => (
                 <Table.Tr key={index}>
-                  <Table.Td>{item.product.name}</Table.Td>
+                  <Table.Td>
+                    <Link to={`/product/${item.product.id}`} style={{ textDecoration: "none", color: "black" }}>
+                      {item.product.name}
+                    </Link>
+                  </Table.Td>
                   <Table.Td></Table.Td>
                   <Table.Td></Table.Td>
                   <Table.Td>
