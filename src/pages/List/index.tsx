@@ -4,11 +4,13 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { getProducts } from "../../lib/database";
 import list from "../../lib/list";
+import { setDocumentTitle } from "../../lib/utils";
 
 export default function List() {
   const [isDataLoaded, setIsDataLoaded] = useState(false);
 
   useEffect(() => {
+    setDocumentTitle("My List");
     getProducts().then((products) => {
       products.items.forEach((product) => {
         const existingItem = list.find((item) => item.product.id === product.id);

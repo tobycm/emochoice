@@ -3,6 +3,7 @@ import { Box, Image } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import { useEffect, useState } from "react";
 import { getGallery } from "../../lib/database";
+import { setDocumentTitle } from "../../lib/utils";
 import classes from "./index.module.css";
 
 export default function Gallery() {
@@ -13,10 +14,8 @@ export default function Gallery() {
   useAnimationOffsetEffect(embla, 2000);
 
   useEffect(() => {
+    setDocumentTitle("Gallery");
     getGallery("tobycm").then((gallery) => setGallery(gallery));
-  }, []);
-
-  useEffect(() => {
     getGallery("eggu").then((gallery) => setEgguNoGallery(gallery));
   }, []);
 

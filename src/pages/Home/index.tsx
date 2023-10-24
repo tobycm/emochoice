@@ -1,9 +1,15 @@
 import { Carousel } from "@mantine/carousel";
 import { Box, Card, Container, Divider, Image, Title } from "@mantine/core";
+import { useEffect } from "react";
+import { setDocumentTitle } from "../../lib/utils";
 import Gallery from "../Gallery";
 import classes from "./index.module.css";
 
 export default function Home() {
+  useEffect(() => {
+    setDocumentTitle();
+  }, []);
+
   return (
     <>
       <Box style={{ display: "flex", alignItems: "center", flexDirection: "column" }}>

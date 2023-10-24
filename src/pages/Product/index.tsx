@@ -17,11 +17,11 @@ import {
   Tooltip,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import React from "react";
+import React, { useEffect } from "react";
 import { useLoaderData } from "react-router-dom";
 import pocketbase from "../../lib/database";
 import { Product } from "../../lib/database/models";
-import { toTitleCase } from "../../lib/utils";
+import { setDocumentTitle, toTitleCase } from "../../lib/utils";
 import classes from "./index.module.css";
 
 export default function Product() {
@@ -47,6 +47,10 @@ export default function Product() {
   }
 
   const form = useForm({ initialValues });
+
+  useEffect(() => {
+    setDocumentTitle(product.name);
+  }, []);
 
   return (
     <Box>

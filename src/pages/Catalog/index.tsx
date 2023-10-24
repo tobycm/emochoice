@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import ProductCard from "../../components/Card";
 import { getProducts } from "../../lib/database";
 import { Product } from "../../lib/database/models";
+import { setDocumentTitle } from "../../lib/utils";
 import classes from "./index.module.css";
 
 export default function Catalog() {
@@ -13,6 +14,7 @@ export default function Catalog() {
   const [filters, setFilters] = useState<string[]>([]);
 
   useEffect(() => {
+    setDocumentTitle("Catalog");
     getProducts().then((products) => {
       setProducts(products);
       setIsLoaded(true);

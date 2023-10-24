@@ -1,5 +1,7 @@
 import { Box, Button, Space, Text, TextInput, Textarea, Title } from "@mantine/core";
 import { isEmail, isNotEmpty, useForm } from "@mantine/form";
+import { useEffect } from "react";
+import { setDocumentTitle } from "../../lib/utils";
 import classes from "./index.module.css";
 
 export default function Contact() {
@@ -16,6 +18,10 @@ export default function Contact() {
       email: isEmail("Invalid email"),
     },
   });
+
+  useEffect(() => {
+    setDocumentTitle("Contact");
+  }, []);
 
   return (
     <Box className={classes.container}>
