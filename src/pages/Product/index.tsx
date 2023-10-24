@@ -27,24 +27,24 @@ import classes from "./index.module.css";
 export default function Product() {
   const { product } = useLoaderData() as { product: Product };
 
-  const initialValues: Record<string, any> = {};
+  const initialValues: Record<string, any> = {
+    quantity: 1,
+  };
 
-  let sizesAvailable;
-  let colorsAvailable;
-  let uploadImage;
+  let sizesAvailable = false;
+  let colorsAvailable = false;
+  let uploadImage = false;
 
   const [imageIndex, setImage] = React.useState<number>(0);
 
   if (product.custom_data) {
-    sizesAvailable = !!product.custom_data["sizes"];
-    colorsAvailable = !!product.custom_data["colors"];
+    sizesAvailable = !!product.custom_data.sizes;
+    colorsAvailable = !!product.custom_data.colors;
     uploadImage = product.custom_data["upload_image"] == null;
   }
-  if (sizesAvailable) initialValues["size"] = product.custom_data!["sizes"][0];
-  initialValues["quantity"] = 1;
-  if (colorsAvailable) {
-    initialValues["color"] = Object.values<string>(product.custom_data?.["colors"])[imageIndex];
-  }
+
+  if (sizesAvailable) initialValues["size"] = product.custom_data!.sizes![0];
+  if (colorsAvailable) initialValues["color"] = Object.values(product.custom_data!.colors!)[imageIndex];
 
   const form = useForm({ initialValues });
 
@@ -56,7 +56,10 @@ export default function Product() {
     <Box>
       <Container className={classes.overview}>
         <Box className={classes.imagebox}>
-          <Image className={classes.image} src={product.image ? pocketbase.getFileUrl(product, product.image[imageIndex]) : "/images/no_image.png"} />
+          <Image
+            className={classes.image}
+            src={product.images ? pocketbase.getFileUrl(product, product.images[imageIndex]) : "/images/no_image.png"}
+          />
         </Box>
         <Box ml={30}>
           <Title mb={"xs"}>{product.name}</Title>
@@ -68,7 +71,7 @@ export default function Product() {
               <Box className={classes.input}>
                 <Text>Size</Text>
                 <Space w="md" />
-                <SegmentedControl data={product.custom_data!["sizes"]} {...form.getInputProps("size")} />
+                <SegmentedControl data={product.custom_data!.sizes!} {...form.getInputProps("size")} />
               </Box>
             ) : null}
             {colorsAvailable ? (
@@ -81,10 +84,10 @@ export default function Product() {
                   withPicker={false}
                   withEyeDropper={false}
                   placeholder="Choose a color"
-                  swatches={Object.values<string>(product.custom_data?.["colors"])}
+                  swatches={Object.values<string>(product.custom_data!.colors!)}
                   {...form.getInputProps("color")}
                   onChange={(color) => {
-                    setImage(Object.values<string>(product.custom_data?.["colors"]).indexOf(color));
+                    setImage(Object.values<string>(product.custom_data!.colors!).indexOf(color));
                     form.setFieldValue("color", color);
                   }}
                 />
@@ -179,14 +182,16 @@ export default function Product() {
                           value
                         ) : key == "colors" ? (
                           <Box display={"flex"}>
-                            {Object.entries<string>(product.custom_data?.["colors"]).map(([colorName, hex]) => (
+                            {Object.entries<string>(product.custom_data!.colors!).map(([colorName, hex]) => (
                               <Tooltip label={toTitleCase(colorName)} openDelay={500}>
                                 <Box w={"2vh"} h={"2vh"} mr={5} style={{ backgroundColor: hex, border: "1px solid grey" }}></Box>
                               </Tooltip>
                             ))}
                           </Box>
-                        ) : (
+                        ) : value instanceof Array ? (
                           value.join(", ")
+                        ) : (
+                          String(value)
                         )}
                       </Table.Td>
                     </Table.Tr>
