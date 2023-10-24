@@ -168,9 +168,8 @@ export default function Product() {
               </Table.Td>
               <Table.Td>{product.expand.category.map((category) => category.name).join(", ")}</Table.Td>
             </Table.Tr>
-            {product.custom_data ? (
-              <>
-                {Object.entries(product.custom_data!)
+            {product.custom_data
+              ? Object.entries(product.custom_data!)
                   .filter(([key]) => key != "upload_image")
                   .map(([key, value]) => (
                     <Table.Tr>
@@ -178,9 +177,7 @@ export default function Product() {
                         <strong>{toTitleCase(key)}</strong>
                       </Table.Td>
                       <Table.Td>
-                        {typeof value == "string" ? (
-                          value
-                        ) : key == "colors" ? (
+                        {key == "colors" ? (
                           <Box display={"flex"}>
                             {Object.entries<string>(product.custom_data!.colors!).map(([colorName, hex]) => (
                               <Tooltip label={toTitleCase(colorName)} openDelay={500}>
@@ -195,9 +192,8 @@ export default function Product() {
                         )}
                       </Table.Td>
                     </Table.Tr>
-                  ))}
-              </>
-            ) : null}
+                  ))
+              : null}
           </Table.Tbody>
         </Table>
       </Container>
