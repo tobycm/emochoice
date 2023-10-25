@@ -9,16 +9,21 @@ export interface Product extends RecordModel {
   brand: string;
   category: ID;
   description: string;
+  sizes: string; // comma separated
+  colors: ProductColor[];
   images: Filename[];
-  custom_data: {
-    sizes?: string[];
-    colors?: { [name: string]: HexColor };
-    upload_image?: boolean;
-  } | null;
+  custom_data: {} | null;
   expand: {
-    category: {
-      id: string;
-      name: string;
-    }[];
+    category?: ProductCategory[];
+    colors?: ProductColor[];
   };
+}
+
+interface ProductCategory extends RecordModel {
+  name: string;
+}
+
+interface ProductColor extends RecordModel {
+  name: string;
+  hex: HexColor;
 }

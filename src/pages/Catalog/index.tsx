@@ -8,10 +8,67 @@ import { Product } from "../../lib/database/models";
 import { setDocumentTitle } from "../../lib/utils";
 import classes from "./index.module.css";
 
+type FilterTypes = "color" | "size" | "category" | "brand";
+
+interface Filter {
+  type: FilterTypes;
+  value: string;
+}
+
 export default function Catalog() {
-  const [products, setProducts] = useState<ListResult<Product>>();
+  const [products, setProducts] = useState<ListResult<Product>>({
+    items: [],
+    page: 0,
+    perPage: 0,
+    totalItems: 0,
+    totalPages: 0,
+  });
   const [isLoaded, setIsLoaded] = useState(false);
-  const [filters, setFilters] = useState<string[]>([]);
+  const [filters, setFilters] = useState<Filter[]>([]);
+
+  console.log(products);
+
+  const updateFilters = (type: FilterTypes) => {
+    return (values: string[]) => {
+      const newFilters: Filter[] = [];
+      for (const filter of filters) if (filter.type !== type) newFilters.push(filter);
+
+      for (const value of values) newFilters.push({ type, value });
+
+      setFilters(newFilters);
+
+      const items = [];
+      // also update products
+      for (const item of products.items)
+        if (
+          newFilters.every((filter) => {
+            if (filter.type === "color" && item.expand.colors) return item.expand.colors.filter((color) => color.name === filter.value).length > 0;
+            if (filter.type === "size") return item.sizes.includes(filter.value);
+            if (filter.type === "category" && item.expand.category)
+              return item.expand.category.filter((category) => category.name === filter.value).length > 0;
+            if (filter.type === "brand") return item.brand == filter.value;
+          })
+        )
+          items.push(item);
+
+      let filterString = "";
+
+      for (const filter of newFilters) {
+        if (filter.type === "color") filterString += `&& colors.name ?= "${filter.value}"`;
+        if (filter.type === "size") filterString += `&& sizes ~ "${filter.value}"`;
+        if (filter.type === "category") filterString += `&& category.name ?= "${filter.value}"`;
+        if (filter.type === "brand") filterString += `&& brand = "${filter.value}"`;
+      }
+
+      if (filterString.slice(0, 3) === "&& ") filterString = filterString.slice(3);
+
+      getProducts(0, filterString).then((products) => {
+        setProducts(products);
+      });
+    };
+  };
+
+  const getFilterValues = (type: FilterTypes) => filters.filter((filter) => filter.type === type).map((value) => value.value);
 
   useEffect(() => {
     setDocumentTitle("Catalog");
@@ -25,42 +82,31 @@ export default function Catalog() {
     <Box className={classes.container}>
       <Box mih={"100%"} miw={200} style={{ flex: "0.5" }} visibleFrom="xs">
         <NavLink label="Category" leftSection={<IconCategory size="1rem" stroke={1.5} />} childrenOffset={28} defaultOpened>
-          <CheckboxGroup value={filters} onChange={setFilters}>
-            <Checkbox mb={5} mt={5} label="Hats" value="Hats" />
-            <Checkbox mb={5} mt={5} label="Jackets" value="Jackets" />
-            <Checkbox mb={5} mt={5} label="Onesies" value="Onesies" />
-            <Checkbox mb={5} mt={5} label="Shorts" value="Shorts" />
-            <Checkbox mb={5} mt={5} label="T-Shirts" value="T-Shirts" />
-            <Checkbox mb={5} mt={5} label="Pants" value="Pants" />
+          <CheckboxGroup value={getFilterValues("category")} onChange={updateFilters("category")}>
+            {products.items.map((product) => {
+              if (product.expand.category)
+                return product.expand.category.map((category) => <Checkbox mb={5} mt={5} label={category.name} value={category.name} />);
+            })}
           </CheckboxGroup>
         </NavLink>
         <NavLink label="Fit" leftSection={<IconShirt size="1rem" stroke={1.5} />} childrenOffset={28} defaultOpened>
-          <CheckboxGroup value={filters} onChange={setFilters}>
-            <Checkbox mb={5} mt={5} label="Infants / Toddlers" value="Infants / Toddlers" />
-            <Checkbox mb={5} mt={5} label="Mens & Unisex" value="Mens & Unisex" />
-            <Checkbox mb={5} mt={5} label="Womens" value="Womens" />
-            <Checkbox mb={5} mt={5} label="Youth" value="Youth" />
-            <Checkbox mb={5} mt={5} label="Adjustable" value="Adjustable" />
-            <Checkbox mb={5} mt={5} label="Fitted" value="Fitted" />
+          <CheckboxGroup value={getFilterValues("size")} onChange={updateFilters("size")}>
+            {products.items.map((product) => product.sizes.split(",").map((size) => <Checkbox mb={5} mt={5} label={size} value={size} />))}
           </CheckboxGroup>
         </NavLink>
         <NavLink label="Brand" leftSection={<IconIcons size="1rem" stroke={1.5} />} childrenOffset={28} defaultOpened>
-          <CheckboxGroup value={filters} onChange={setFilters}>
-            <Checkbox mb={5} mt={5} label="Toby Cm's Lab" value="Toby Cm's Lab" />
-            <Checkbox mb={5} mt={5} label="Emochoice" value="Emochoice" />
-            <Checkbox mb={5} mt={5} label="Hoshino Ai" value="Hoshino Ai" />
-            <Checkbox mb={5} mt={5} label="Boiz Gang" value="Boiz Gang" />
+          <CheckboxGroup value={getFilterValues("brand")} onChange={updateFilters("brand")}>
+            {products.items.map((product) => (
+              <Checkbox mb={5} mt={5} label={product.brand} value={product.brand} />
+            ))}
           </CheckboxGroup>
         </NavLink>
         <NavLink label="Colour" leftSection={<IconColorFilter size="1rem" stroke={1.5} />} childrenOffset={28} defaultOpened>
-          <CheckboxGroup value={filters} onChange={setFilters}>
-            <Checkbox mb={5} mt={5} label="Red" value="Red" />
-            <Checkbox mb={5} mt={5} label="Orange" value="Orange" />
-            <Checkbox mb={5} mt={5} label="Yellow" value="Yellow" />
-            <Checkbox mb={5} mt={5} label="Green" value="Green" />
-            <Checkbox mb={5} mt={5} label="Blue" value="Blue" />
-            <Checkbox mb={5} mt={5} label="Indigo" value="Indigo" />
-            <Checkbox mb={5} mt={5} label="Violet" value="Violet" />
+          <CheckboxGroup value={getFilterValues("color")} onChange={updateFilters("color")}>
+            {products.items.map((product) => {
+              if (product.expand.colors)
+                return product.expand.colors.map((color) => <Checkbox mb={5} mt={5} label={color.name} value={color.name} />);
+            })}
           </CheckboxGroup>
         </NavLink>
       </Box>
@@ -73,23 +119,17 @@ export default function Catalog() {
             <InputBase component="div" multiline>
               <Pill.Group>
                 {filters.map((filter) => (
-                  <Pill
-                    key={filter}
-                    withRemoveButton
-                    onRemove={() => {
-                      setFilters(filters.filter((f) => f !== filter));
-                    }}
-                  >
-                    {filter}
+                  <Pill key={filter.value} withRemoveButton onRemove={() => setFilters(filters.filter((f) => f !== filter))}>
+                    {filter.value}
                   </Pill>
                 ))}
               </Pill.Group>
             </InputBase>
           </Box>
           <Box className={classes.cardsBox}>
-            {products?.items.map((product) => {
-              return <ProductCard product={product} />;
-            })}
+            {products.items.map((product) => (
+              <ProductCard product={product} />
+            ))}
           </Box>
         </Box>
       ) : (
