@@ -11,7 +11,7 @@ export default function Gallery() {
   const [eggunogallery, setEgguNoGallery] = useState<string[]>([]);
   const [embla, setEmbla] = useState<Embla | null>(null);
 
-  useAnimationOffsetEffect(embla, 2000);
+  useAnimationOffsetEffect(embla, 750);
 
   useEffect(() => {
     setDocumentTitle("Gallery");

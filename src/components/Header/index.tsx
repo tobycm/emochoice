@@ -27,7 +27,7 @@ export default function Header() {
           </Box>
         </Modal>
         <Drawer opened={drawerOpened} onClose={toggleDrawer} title={"Menu"} size="xs">
-          <NavLink label="All Products" leftSection={<IconShirt size="1rem" stroke={1.5} />} opened childrenOffset={28}>
+          <NavLink label="All Products" leftSection={<IconShirt size="1rem" stroke={1.5} />} defaultOpened childrenOffset={28}>
             <Link to="/catalog" style={{ textDecoration: "none", color: "black" }} onClick={toggleDrawer}>
               <NavLink label="Catalog"></NavLink>
             </Link>

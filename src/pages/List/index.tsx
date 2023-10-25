@@ -51,8 +51,8 @@ export default function List() {
                   <Table.Td>
                     <Box display="flex" style={{ alignItems: "center" }}>
                       <NumberInput w={"12%"} miw={70} mr={10} clampBehavior="strict" min={1} max={99} />
-                      <UnstyledButton>
-                        <IconX style={{ color: "red" }} stroke={1.234}></IconX>
+                      <UnstyledButton style={{ display: "flex", alignItems: "center" }}>
+                        <IconX style={{ color: "red" }} stroke={1.5}></IconX>
                       </UnstyledButton>
                     </Box>
                   </Table.Td>

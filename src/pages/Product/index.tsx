@@ -6,6 +6,7 @@ import {
   Divider,
   FileInput,
   Image,
+  Modal,
   NumberInput,
   SegmentedControl,
   Space,
@@ -15,8 +16,10 @@ import {
   Textarea,
   Title,
   Tooltip,
+  UnstyledButton,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
+import { IconEye, IconX } from "@tabler/icons-react";
 import React, { useEffect } from "react";
 import { useLoaderData } from "react-router-dom";
 import pocketbase from "../../lib/database";
@@ -26,6 +29,10 @@ import classes from "./index.module.css";
 
 export default function Product() {
   const { product } = useLoaderData() as { product: Product };
+  const [imageIndex, setImage] = React.useState<number>(0);
+  const [customImage, setCustomImage] = React.useState<File | null>(null);
+  const [pendingImage, setPendingImage] = React.useState<File | null>(null);
+  const [modalOpened, setModalOpened] = React.useState<boolean>(false);
 
   const initialValues: Record<string, any> = {
     quantity: 1,
@@ -34,8 +41,6 @@ export default function Product() {
   let sizesAvailable = false;
   let colorsAvailable = false;
   let uploadImage = false;
-
-  const [imageIndex, setImage] = React.useState<number>(0);
 
   if (product.custom_data) {
     sizesAvailable = !!product.custom_data.sizes;
@@ -50,10 +55,72 @@ export default function Product() {
 
   useEffect(() => {
     setDocumentTitle(product.name);
-  }, []);
+
+    if (modalOpened) {
+      let userImage = document.createElement("img");
+      let backgroundImage = document.createElement("img");
+
+      if (customImage) {
+        userImage.src = URL.createObjectURL(customImage);
+        backgroundImage.src = product.images ? pocketbase.getFileUrl(product, product.images[imageIndex]) : "/images/no_image.png";
+        backgroundImage.onload = () => {
+          userImage.onload = () => {
+            const canvas = document.getElementById("previewCanvas") as HTMLCanvasElement;
+            if (canvas) {
+              const ctx = canvas.getContext("2d");
+              canvas.width = backgroundImage.width;
+              canvas.height = backgroundImage.height;
+              if (ctx) {
+                ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
+                ctx.drawImage(userImage, canvas.width / 6, canvas.height / 4.4, canvas.width / 2, canvas.height / 2);
+              }
+            }
+          };
+        };
+      }
+    }
+  }, [modalOpened, customImage, product.name]);
 
   return (
     <Box>
+      <Modal
+        opened={modalOpened}
+        onClose={() => {
+          setModalOpened(false);
+          setCustomImage(pendingImage);
+        }}
+        title={"Preview"}
+        size="lg"
+        centered
+      >
+        <Box>
+          <Box display={"flex"} style={{ justifyContent: "center" }} w="100%">
+            <canvas id="previewCanvas" style={{ maxWidth: "100%" }}></canvas>
+          </Box>
+          <Box display={"flex"} style={{ justifyContent: "center" }}>
+            <Button
+              variant="light"
+              onClick={() => {
+                setModalOpened(false);
+                setCustomImage(pendingImage);
+              }}
+              style={{ margin: "10px" }}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="filled"
+              onClick={() => {
+                setModalOpened(false);
+                setPendingImage(customImage);
+              }}
+              style={{ margin: "10px" }}
+            >
+              Submit
+            </Button>
+          </Box>
+        </Box>
+      </Modal>
       <Container className={classes.overview}>
         <Box className={classes.imagebox}>
           <Image
@@ -109,7 +176,44 @@ export default function Product() {
               <Box className={classes.input}>
                 <Text>Your image</Text>
                 <Space w="md" />
-                <FileInput accept="image/png,image/jpeg" variant="default" c={"emochoice-yellow"} placeholder="Upload" />
+                <FileInput
+                  id="fileInput"
+                  maw={250}
+                  accept="image/jpeg,image/png,image/gif,image/tiff,image/bmp,image/webp,image/svg+xml,image/vnd.microsoft.icon,image/heif,image/heic"
+                  variant="default"
+                  c={"emochoice-yellow"}
+                  placeholder="Upload"
+                  value={customImage}
+                  onChange={(value) => {
+                    setCustomImage(value);
+                    value ? setModalOpened(true) : null;
+                  }}
+                />
+                {pendingImage ? (
+                  <Box display={"flex"}>
+                    <Tooltip label="Remove image">
+                      <UnstyledButton
+                        style={{ marginLeft: "15%", display: "flex", alignItems: "center" }}
+                        onClick={() => {
+                          setCustomImage(null);
+                          setPendingImage(null);
+                        }}
+                      >
+                        <IconX style={{ color: "red" }} stroke={1.5}></IconX>
+                      </UnstyledButton>
+                    </Tooltip>
+                    <Tooltip label="Preview">
+                      <UnstyledButton
+                        style={{ marginLeft: "15%", display: "flex", alignItems: "center" }}
+                        onClick={() => {
+                          setModalOpened(true);
+                        }}
+                      >
+                        <IconEye style={{ color: "#FCB918" }} stroke={1.5}></IconEye>
+                      </UnstyledButton>
+                    </Tooltip>
+                  </Box>
+                ) : null}
               </Box>
             ) : null}
             <Box className={classes.input}>
