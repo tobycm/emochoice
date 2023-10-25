@@ -29,27 +29,18 @@ import classes from "./index.module.css";
 
 export default function Product() {
   const { product } = useLoaderData() as { product: Product };
-  const [imageIndex, setImage] = React.useState<number>(0);
   const [customImage, setCustomImage] = React.useState<File | null>(null);
-  const [pendingImage, setPendingImage] = React.useState<File | null>(null);
+  const [image, setImage] = React.useState<File | null>(null);
   const [modalOpened, setModalOpened] = React.useState<boolean>(false);
 
   const initialValues: Record<string, unknown> = {
     quantity: 1,
   };
 
-  let sizesAvailable = false;
-  let colorsAvailable = false;
-  let uploadImage = false;
+  const sizes = product.sizes.split(",");
 
-  if (product.custom_data) {
-    sizesAvailable = !!product.sizes.split(",");
-    colorsAvailable = !!product.expand.colors;
-    uploadImage = product.bounding !== "";
-  }
-
-  if (sizesAvailable) initialValues["size"] = product.sizes.split(",")[0];
-  if (colorsAvailable) initialValues["color"] = product.expand.colors![imageIndex];
+  if (sizes.length > 0) initialValues["size"] = sizes[0];
+  if (product.colors.length > 0) initialValues["color"] = product.expand.colors![0];
 
   const form = useForm({ initialValues });
 
@@ -62,7 +53,7 @@ export default function Product() {
 
       if (customImage) {
         userImage.src = URL.createObjectURL(customImage);
-        backgroundImage.src = product.images ? pocketbase.getFileUrl(product, product.images[imageIndex]) : "/images/no_image.png";
+        backgroundImage.src = product.images.length > 0 ? pocketbase.getFileUrl(product, product.images[0]) : "/images/no_image.png";
         backgroundImage.onload = () => {
           userImage.onload = () => {
             const canvas = document.getElementById("previewCanvas") as HTMLCanvasElement;
@@ -87,7 +78,7 @@ export default function Product() {
         opened={modalOpened}
         onClose={() => {
           setModalOpened(false);
-          setCustomImage(pendingImage);
+          setCustomImage(image);
         }}
         title={"Preview"}
         size="lg"
@@ -102,7 +93,7 @@ export default function Product() {
               variant="light"
               onClick={() => {
                 setModalOpened(false);
-                setCustomImage(pendingImage);
+                setCustomImage(image);
               }}
               style={{ margin: "10px" }}
             >
@@ -112,7 +103,7 @@ export default function Product() {
               variant="filled"
               onClick={() => {
                 setModalOpened(false);
-                setPendingImage(customImage);
+                setImage(customImage);
               }}
               style={{ margin: "10px" }}
             >
@@ -125,7 +116,7 @@ export default function Product() {
         <Box className={classes.imagebox}>
           <Image
             className={classes.image}
-            src={product.images ? pocketbase.getFileUrl(product, product.images[imageIndex]) : "/images/no_image.png"}
+            src={product.images.length > 0 ? pocketbase.getFileUrl(product, product.images[0]) : "/images/no_image.png"}
           />
         </Box>
         <Box ml={30}>
@@ -134,14 +125,14 @@ export default function Product() {
             {product.brand}
           </Title>
           <form onSubmit={form.onSubmit((values) => console.log(values))}>
-            {sizesAvailable ? (
+            {sizes.length > 0 ? (
               <Box className={classes.input}>
                 <Text>Size</Text>
                 <Space w="md" />
-                <SegmentedControl data={product.sizes.split(",")} {...form.getInputProps("size")} />
+                <SegmentedControl data={sizes} {...form.getInputProps("size")} />
               </Box>
             ) : null}
-            {colorsAvailable ? (
+            {product.colors.length > 0 ? (
               <Box className={classes.input}>
                 <Text>Color</Text>
                 <Space w="md" />
@@ -154,7 +145,6 @@ export default function Product() {
                   swatches={product.expand.colors!.map((color) => color.hex)}
                   {...form.getInputProps("color")}
                   onChange={(hex) => {
-                    setImage(product.expand.colors!.map((color) => color.hex).indexOf(hex));
                     form.setFieldValue("color", hex);
                   }}
                 />
@@ -172,7 +162,7 @@ export default function Product() {
                 {...form.getInputProps("quantity")}
               />
             </Box>
-            {uploadImage ? (
+            {product.bounding !== "" ? (
               <Box className={classes.input}>
                 <Text>Your image</Text>
                 <Space w="md" />
@@ -186,17 +176,17 @@ export default function Product() {
                   value={customImage}
                   onChange={(value) => {
                     setCustomImage(value);
-                    value ? setModalOpened(true) : null;
+                    if (value) setModalOpened(true);
                   }}
                 />
-                {pendingImage ? (
+                {image ? (
                   <Box display={"flex"}>
                     <Tooltip label="Remove image">
                       <UnstyledButton
                         style={{ marginLeft: "15%", display: "flex", alignItems: "center" }}
                         onClick={() => {
                           setCustomImage(null);
-                          setPendingImage(null);
+                          setImage(null);
                         }}
                       >
                         <IconX style={{ color: "red" }} stroke={1.5}></IconX>
@@ -264,7 +254,9 @@ export default function Product() {
               <Table.Td>
                 <strong>Category</strong>
               </Table.Td>
-              <Table.Td>{(product.expand.category ?? [{ name: "No category" }]).map((category) => category.name).join(", ")}</Table.Td>
+              <Table.Td>
+                {product.category.length > 0 ? product.expand.category!.map((category) => category.name).join(", ") : "No category"}
+              </Table.Td>
             </Table.Tr>
             {product.custom_data
               ? Object.entries(product.custom_data).map(([key, value]) => (
