@@ -34,7 +34,7 @@ export default function Product() {
   const [pendingImage, setPendingImage] = React.useState<File | null>(null);
   const [modalOpened, setModalOpened] = React.useState<boolean>(false);
 
-  const initialValues: Record<string, any> = {
+  const initialValues: Record<string, unknown> = {
     quantity: 1,
   };
 
@@ -43,13 +43,13 @@ export default function Product() {
   let uploadImage = false;
 
   if (product.custom_data) {
-    sizesAvailable = !!product.custom_data.sizes;
-    colorsAvailable = !!product.custom_data.colors;
-    uploadImage = product.custom_data["upload_image"] == null;
+    sizesAvailable = !!product.sizes.split(",");
+    colorsAvailable = !!product.expand.colors;
+    uploadImage = product.bounding !== "";
   }
 
-  if (sizesAvailable) initialValues["size"] = product.custom_data!.sizes![0];
-  if (colorsAvailable) initialValues["color"] = Object.values(product.custom_data!.colors!)[imageIndex];
+  if (sizesAvailable) initialValues["size"] = product.sizes.split(",")[0];
+  if (colorsAvailable) initialValues["color"] = product.expand.colors![imageIndex];
 
   const form = useForm({ initialValues });
 
@@ -57,8 +57,8 @@ export default function Product() {
     setDocumentTitle(product.name);
 
     if (modalOpened) {
-      let userImage = document.createElement("img");
-      let backgroundImage = document.createElement("img");
+      const userImage = document.createElement("img");
+      const backgroundImage = document.createElement("img");
 
       if (customImage) {
         userImage.src = URL.createObjectURL(customImage);
@@ -138,7 +138,7 @@ export default function Product() {
               <Box className={classes.input}>
                 <Text>Size</Text>
                 <Space w="md" />
-                <SegmentedControl data={product.custom_data!.sizes!} {...form.getInputProps("size")} />
+                <SegmentedControl data={product.sizes.split(",")} {...form.getInputProps("size")} />
               </Box>
             ) : null}
             {colorsAvailable ? (
@@ -151,11 +151,11 @@ export default function Product() {
                   withPicker={false}
                   withEyeDropper={false}
                   placeholder="Choose a color"
-                  swatches={Object.values<string>(product.custom_data!.colors!)}
+                  swatches={product.expand.colors!.map((color) => color.hex)}
                   {...form.getInputProps("color")}
-                  onChange={(color) => {
-                    setImage(Object.values<string>(product.custom_data!.colors!).indexOf(color));
-                    form.setFieldValue("color", color);
+                  onChange={(hex) => {
+                    setImage(product.expand.colors!.map((color) => color.hex).indexOf(hex));
+                    form.setFieldValue("color", hex);
                   }}
                 />
               </Box>
@@ -260,43 +260,21 @@ export default function Product() {
               </Table.Td>
               <Table.Td>{product.name}</Table.Td>
             </Table.Tr>
-            {/* <Table.Tr>
-              <Table.Td>
-                <strong>Price</strong>
-              </Table.Td>
-              <Table.Td>${data.price}</Table.Td>
-            </Table.Tr> */}
             <Table.Tr>
               <Table.Td>
                 <strong>Category</strong>
               </Table.Td>
-              <Table.Td>{product.expand.category.map((category) => category.name).join(", ")}</Table.Td>
+              <Table.Td>{(product.expand.category ?? [{ name: "No category" }]).map((category) => category.name).join(", ")}</Table.Td>
             </Table.Tr>
             {product.custom_data
-              ? Object.entries(product.custom_data!)
-                  .filter(([key]) => key != "upload_image")
-                  .map(([key, value]) => (
-                    <Table.Tr>
-                      <Table.Td>
-                        <strong>{toTitleCase(key)}</strong>
-                      </Table.Td>
-                      <Table.Td>
-                        {key == "colors" ? (
-                          <Box display={"flex"}>
-                            {Object.entries<string>(product.custom_data!.colors!).map(([colorName, hex]) => (
-                              <Tooltip label={toTitleCase(colorName)} openDelay={500}>
-                                <Box w={"2vh"} h={"2vh"} mr={5} style={{ backgroundColor: hex, border: "1px solid grey" }}></Box>
-                              </Tooltip>
-                            ))}
-                          </Box>
-                        ) : value instanceof Array ? (
-                          value.join(", ")
-                        ) : (
-                          String(value)
-                        )}
-                      </Table.Td>
-                    </Table.Tr>
-                  ))
+              ? Object.entries(product.custom_data).map(([key, value]) => (
+                  <Table.Tr>
+                    <Table.Td>
+                      <strong>{toTitleCase(key)}</strong>
+                    </Table.Td>
+                    <Table.Td>{value instanceof Array ? value.join(", ") : String(value)}</Table.Td>
+                  </Table.Tr>
+                ))
               : null}
           </Table.Tbody>
         </Table>

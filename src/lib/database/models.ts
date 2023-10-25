@@ -7,12 +7,13 @@ type ID = string;
 export interface Product extends RecordModel {
   name: string;
   brand: string;
-  category: ID;
+  category: ID[];
   description: string;
   sizes: string; // comma separated
-  colors: ProductColor[];
+  colors: ID[];
   images: Filename[];
-  custom_data: {} | null;
+  bounding: string;
+  custom_data: unknown;
   expand: {
     category?: ProductCategory[];
     colors?: ProductColor[];

@@ -42,14 +42,16 @@ export default function ProductCard(props: { product: Product }) {
               </Badge>
             ) : null}
           </Group>
-          <Text mt="xs" style={{ color: "grey" }}>
-            Category: {product.expand.category.map((category) => category.name).join(", ")}
-          </Text>
-          {product.custom_data?.colors ? (
+          {product.expand.category ? (
+            <Text mt="xs" style={{ color: "grey" }}>
+              Category: {product.expand.category.map((category) => category.name).join(", ")}
+            </Text>
+          ) : null}
+          {product.expand.colors ? (
             <Box mt={"xs"} display={"flex"}>
-              {Object.entries(product.custom_data.colors).map(([name, hex]) => (
-                <Tooltip label={toTitleCase(name)} openDelay={500}>
-                  <Box w={"2vh"} h={"2vh"} mr={5} style={{ backgroundColor: hex, border: "1px solid grey" }}></Box>
+              {product.expand.colors.map((color) => (
+                <Tooltip label={toTitleCase(color.name)} openDelay={500}>
+                  <Box w={"2vh"} h={"2vh"} mr={5} style={{ backgroundColor: color.hex, border: "1px solid grey" }}></Box>
                 </Tooltip>
               ))}
             </Box>
