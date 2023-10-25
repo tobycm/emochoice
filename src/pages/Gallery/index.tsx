@@ -7,7 +7,7 @@ import { setDocumentTitle } from "../../lib/utils";
 import classes from "./index.module.css";
 
 export default function Gallery() {
-  const [gallery, setGallery] = useState<string[]>([]);
+  const [tobyGallery, setTobyGallery] = useState<string[]>([]);
   const [eggunogallery, setEgguNoGallery] = useState<string[]>([]);
   const [embla, setEmbla] = useState<Embla | null>(null);
 
@@ -15,11 +15,11 @@ export default function Gallery() {
 
   useEffect(() => {
     setDocumentTitle("Gallery");
-    getGallery("tobycm").then((gallery) => setGallery(gallery));
+    getGallery("tobycm").then((gallery) => setTobyGallery(gallery));
     getGallery("eggu").then((gallery) => setEgguNoGallery(gallery));
   }, []);
 
-  const slides = gallery.map((link) => (
+  const tobySlides = tobyGallery.map((link) => (
     <Carousel.Slide key={link}>
       <Image src={link} />
     </Carousel.Slide>
@@ -33,7 +33,7 @@ export default function Gallery() {
 
   return (
     <Box mb={20} display={"flex"} style={{ flexDirection: "column", alignItems: "center" }} mih="50vh">
-      {/* <Carousel
+      <Carousel
         className={classes.carousel}
         getEmblaApi={setEmbla}
         mx="auto"
@@ -43,8 +43,8 @@ export default function Gallery() {
         slideGap="sm"
         mb="xl"
       >
-        {slides}
-      </Carousel> */}
+        {tobySlides}
+      </Carousel>
       <Carousel
         className={classes.carousel}
         getEmblaApi={setEmbla}
