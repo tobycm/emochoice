@@ -40,12 +40,13 @@ export default function Product() {
   const sizes = product.sizes.split(",");
 
   if (sizes.length > 0) initialValues["size"] = sizes[0];
-  if (product.colors.length > 0) initialValues["color"] = product.expand.colors![0];
+  if (product.colors.length > 0) initialValues["color"] = product.expand.colors![0].hex;
 
   const form = useForm({ initialValues });
 
   useEffect(() => {
     setDocumentTitle(product.name);
+    console.log(product.expand.colors![0].hex);
 
     if (modalOpened) {
       const userImage = document.createElement("img");
@@ -125,7 +126,7 @@ export default function Product() {
             {product.brand}
           </Title>
           <form onSubmit={form.onSubmit((values) => console.log(values))}>
-            {sizes.length > 0 ? (
+            {!!product.sizes ? (
               <Box className={classes.input}>
                 <Text>Size</Text>
                 <Space w="md" />
