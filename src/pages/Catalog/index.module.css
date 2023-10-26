@@ -7,6 +7,10 @@
   display: flex;
   flex-wrap: wrap;
   min-height: 50vh;
+
+  @media screen and (max-width: $mantine-breakpoint-xs) {
+    justify-content: center;
+  }
 }
 
 .cardsBox {

@@ -24,11 +24,11 @@ export default function List() {
         My List
       </Title>
       {deletedList.length > 0 ? (
-        <Box mb={20}>
+        <Box mb={20} style={{ textAlign: "center", fontWeight: "600" }} c={"emochoice-blue"}>
           {deletedList.length} item{`${deletedList.length != 1 ? "s" : ""}`} removed from list.{" "}
           <Link
+            style={{ color: "#0468B0" }}
             to="/list"
-            style={{ color: "black" }}
             onClick={() => {
               const newList = new ListClass(...list.concat(deletedList));
               updateList(newList);
@@ -100,7 +100,7 @@ export default function List() {
             </Table.Tbody>
           </Table>
         ) : (
-          <Box style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+          <Box style={{ display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center" }}>
             <IconShoppingCartSearch style={{ width: "30%", height: "30%", marginBottom: "1em" }} stroke={1} />
             <Text>
               Nothing here yet.{" "}

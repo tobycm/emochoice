@@ -19,7 +19,8 @@ import {
   UnstyledButton,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { IconEye, IconX } from "@tabler/icons-react";
+import { Notifications, notifications } from "@mantine/notifications";
+import { IconCheck, IconEye, IconX } from "@tabler/icons-react";
 import React, { useEffect } from "react";
 import { useLoaderData } from "react-router-dom";
 import pocketbase from "../../lib/database";
@@ -84,9 +85,9 @@ export default function Product() {
       }
     }
   }, [modalOpened, customImage, product.name]);
-
   return (
     <Box>
+      <Notifications />
       <Modal
         opened={modalOpened}
         onClose={() => {
@@ -135,19 +136,19 @@ export default function Product() {
         </Box>
         <Box ml={30}>
           <Title mb={"xs"}>{product.name}</Title>
-
           <form
             onSubmit={form.onSubmit((values) => {
+              notifications.show({
+                title: "Success",
+                message: "Item added to list!",
+                color: "emochoice-green",
+                icon: <IconCheck stroke={3}></IconCheck>,
+                autoClose: 5000,
+                withCloseButton: true,
+              });
               const { size, quantity, request, email, fileInput } = values;
               let color: ProductColor | undefined = undefined;
-              if (!!product.expand.colors) {
-                for (const c of product.expand.colors) {
-                  if (c.hex === values.color) {
-                    color = c;
-                    break;
-                  }
-                }
-              }
+              if (!!product.expand.colors) color = product.expand.colors.filter((color) => color.hex === values.color)[0];
               const item: Item = {
                 product: product as Product,
                 size: size as string,
@@ -263,9 +264,11 @@ export default function Product() {
               <Space w="md" />
               <TextInput {...form.getInputProps("email")} w={215} placeholder="your@email.com" required />
             </Box>
-            <Button variant="filled" className={classes.input} type="submit">
-              Buy
-            </Button>
+            <Box display="flex">
+              <Button variant="filled" className={classes.input} type="submit">
+                Add to List
+              </Button>
+            </Box>
           </form>
         </Box>
       </Container>

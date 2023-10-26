@@ -1,5 +1,6 @@
 import "@mantine/carousel/styles.css";
 import { MantineProvider } from "@mantine/core";
+import "@mantine/notifications/styles.css";
 import { RouteObject, RouterProvider } from "react-router";
 import { createBrowserRouter } from "react-router-dom";
 import Content from "./components/Content";
