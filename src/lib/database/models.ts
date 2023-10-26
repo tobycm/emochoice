@@ -12,7 +12,7 @@ export interface Product extends RecordModel {
   sizes: string; // comma separated
   colors: ID[];
   images: Filename[];
-  bounding: string;
+  boundary: string;
   custom_data: unknown;
   expand: {
     category?: ProductCategory[];
@@ -24,7 +24,7 @@ interface ProductCategory extends RecordModel {
   name: string;
 }
 
-interface ProductColor extends RecordModel {
+export default interface ProductColor extends RecordModel {
   name: string;
   hex: HexColor;
 }

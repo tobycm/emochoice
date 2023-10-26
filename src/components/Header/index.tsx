@@ -1,12 +1,20 @@
 import { ActionIcon, Box, Burger, Container, Drawer, Group, Image, Indicator, Menu, Modal, NavLink, Tabs, Text, TextInput } from "@mantine/core";
 import { useDisclosure, useMediaQuery } from "@mantine/hooks";
 import { IconPhone, IconPhoto, IconSearch, IconShirt, IconShoppingCart } from "@tabler/icons-react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { useList } from "../../lib/list";
 import classes from "./index.module.css";
 
 export default function Header() {
   const [drawerOpened, { toggle: toggleDrawer }] = useDisclosure(false);
   const [searchbarOpened, { toggle: toggleSearchbar }] = useDisclosure(false);
+  const [showIndicator, setShowIndicator] = useState(false);
+  const { list } = useList();
+
+  useEffect(() => {
+    setShowIndicator(list.length > 0);
+  }, [list]);
 
   return (
     <Box className={classes.header}>
@@ -87,11 +95,17 @@ export default function Header() {
               <IconSearch style={{ width: "60%", height: "60%" }} stroke={3} />
             </ActionIcon>
             <Link to="/list">
-              <Indicator inline label="3" color="red" size={16}>
+              {showIndicator ? (
+                <Indicator inline label={list.length} color="red" size={16}>
+                  <ActionIcon variant="red" radius="lg" size="lg">
+                    <IconShoppingCart style={{ width: "60%", height: "60%" }} stroke={3} />
+                  </ActionIcon>
+                </Indicator>
+              ) : (
                 <ActionIcon variant="red" radius="lg" size="lg">
                   <IconShoppingCart style={{ width: "60%", height: "60%" }} stroke={3} />
                 </ActionIcon>
-              </Indicator>
+              )}
             </Link>
           </Box>
         </Group>

@@ -23,7 +23,8 @@ import { IconEye, IconX } from "@tabler/icons-react";
 import React, { useEffect } from "react";
 import { useLoaderData } from "react-router-dom";
 import pocketbase from "../../lib/database";
-import { Product } from "../../lib/database/models";
+import ProductColor, { Product } from "../../lib/database/models";
+import { Item, List, useList } from "../../lib/list";
 import { setDocumentTitle, toTitleCase } from "../../lib/utils";
 import classes from "./index.module.css";
 
@@ -32,21 +33,26 @@ export default function Product() {
   const [customImage, setCustomImage] = React.useState<File | null>(null);
   const [image, setImage] = React.useState<File | null>(null);
   const [modalOpened, setModalOpened] = React.useState<boolean>(false);
+  const { list, updateList } = useList();
 
   const initialValues: Record<string, unknown> = {
     quantity: 1,
   };
 
   const sizes = product.sizes.split(",");
+  let boundaryPoints = new Array();
 
   if (sizes.length > 0) initialValues["size"] = sizes[0];
   if (product.colors.length > 0) initialValues["color"] = product.expand.colors![0].hex;
+  if (!!product.boundary) {
+    boundaryPoints = product.boundary.split(",");
+    initialValues["fileInput"] = null;
+  }
 
   const form = useForm({ initialValues });
 
   useEffect(() => {
     setDocumentTitle(product.name);
-    console.log(product.expand.colors![0].hex);
 
     if (modalOpened) {
       const userImage = document.createElement("img");
@@ -64,7 +70,13 @@ export default function Product() {
               canvas.height = backgroundImage.height;
               if (ctx) {
                 ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
-                ctx.drawImage(userImage, canvas.width / 6, canvas.height / 4.4, canvas.width / 2, canvas.height / 2);
+                ctx.drawImage(
+                  userImage,
+                  canvas.width / boundaryPoints[0],
+                  canvas.height / boundaryPoints[1],
+                  canvas.width / boundaryPoints[2],
+                  canvas.height / boundaryPoints[3],
+                );
               }
             }
           };
@@ -105,6 +117,7 @@ export default function Product() {
               onClick={() => {
                 setModalOpened(false);
                 setImage(customImage);
+                form.setFieldValue("fileInput", customImage);
               }}
               style={{ margin: "10px" }}
             >
@@ -122,10 +135,35 @@ export default function Product() {
         </Box>
         <Box ml={30}>
           <Title mb={"xs"}>{product.name}</Title>
-          <Title mb={"xl"} c={"emochoice-blue"} order={4}>
-            {product.brand}
-          </Title>
-          <form onSubmit={form.onSubmit((values) => console.log(values))}>
+
+          <form
+            onSubmit={form.onSubmit((values) => {
+              const { size, quantity, request, email, fileInput } = values;
+              let color: ProductColor | undefined = undefined;
+              if (!!product.expand.colors) {
+                for (const c of product.expand.colors) {
+                  if (c.hex === values.color) {
+                    color = c;
+                    break;
+                  }
+                }
+              }
+              const item: Item = {
+                product: product as Product,
+                size: size as string,
+                color: color as ProductColor,
+                quantity: quantity as number,
+                request: request as string,
+                email: email as string,
+                fileInput: fileInput as File,
+              };
+              const newList = new List(...list, item);
+              updateList(newList);
+            })}
+          >
+            <Title mb={"xl"} c={"emochoice-blue"} order={4}>
+              {product.brand}
+            </Title>
             {!!product.sizes ? (
               <Box className={classes.input}>
                 <Text>Size</Text>
@@ -163,7 +201,7 @@ export default function Product() {
                 {...form.getInputProps("quantity")}
               />
             </Box>
-            {product.bounding !== "" ? (
+            {product.boundary !== "" ? (
               <Box className={classes.input}>
                 <Text>Your image</Text>
                 <Space w="md" />
@@ -174,6 +212,7 @@ export default function Product() {
                   variant="default"
                   c={"emochoice-yellow"}
                   placeholder="Upload"
+                  {...form.getInputProps("fileInput")}
                   value={customImage}
                   onChange={(value) => {
                     setCustomImage(value);
@@ -210,12 +249,19 @@ export default function Product() {
             <Box className={classes.input}>
               <Text>Request</Text>
               <Space w="md" />
-              <Textarea autosize className={classes.textarea} minRows={2} maxRows={4} placeholder="Feel free to ask!" />
+              <Textarea
+                autosize
+                className={classes.textarea}
+                minRows={2}
+                maxRows={4}
+                placeholder="Feel free to ask!"
+                {...form.getInputProps("request")}
+              />
             </Box>
             <Box className={classes.input}>
               <Text>Phone number or Email</Text>
               <Space w="md" />
-              <TextInput w={215} placeholder="your@email.com" required />
+              <TextInput {...form.getInputProps("email")} w={215} placeholder="your@email.com" required />
             </Box>
             <Button variant="filled" className={classes.input} type="submit">
               Buy
