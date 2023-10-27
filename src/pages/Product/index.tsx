@@ -33,7 +33,7 @@ export default function Product() {
   const { product } = useLoaderData() as { product: Product };
   const [customImage, setCustomImage] = React.useState<File | null>(null);
   const [image, setImage] = React.useState<File | null>(null);
-  const [modalOpened, setModalOpened] = React.useState<boolean>(false);
+  const [modalState, setModalState] = React.useState<{ open: boolean; fileUploaded: boolean }>({ open: false, fileUploaded: false });
   const { list, updateList } = useList();
 
   const initialValues: Record<string, unknown> = {
@@ -55,7 +55,7 @@ export default function Product() {
   useEffect(() => {
     setDocumentTitle(product.name);
 
-    if (modalOpened) {
+    if (modalState.open) {
       const userImage = document.createElement("img");
       const backgroundImage = document.createElement("img");
 
@@ -84,14 +84,14 @@ export default function Product() {
         };
       }
     }
-  }, [modalOpened, customImage, product.name]);
+  }, [modalState, customImage, product.name]);
   return (
     <Box>
       <Notifications limit={5} />
       <Modal
-        opened={modalOpened}
+        opened={modalState.open}
         onClose={() => {
-          setModalOpened(false);
+          setModalState({ open: false, fileUploaded: modalState.fileUploaded });
           setCustomImage(image);
         }}
         title={"Preview"}
@@ -102,29 +102,31 @@ export default function Product() {
           <Box display={"flex"} style={{ justifyContent: "center" }} w="100%">
             <canvas id="previewCanvas" style={{ maxWidth: "100%" }}></canvas>
           </Box>
-          <Box display={"flex"} style={{ justifyContent: "center" }}>
-            <Button
-              variant="light"
-              onClick={() => {
-                setModalOpened(false);
-                setCustomImage(image);
-              }}
-              style={{ margin: "10px" }}
-            >
-              Cancel
-            </Button>
-            <Button
-              variant="filled"
-              onClick={() => {
-                setModalOpened(false);
-                setImage(customImage);
-                form.setFieldValue("fileInput", customImage);
-              }}
-              style={{ margin: "10px" }}
-            >
-              Submit
-            </Button>
-          </Box>
+          {modalState.fileUploaded ? (
+            <Box display={"flex"} style={{ justifyContent: "center" }}>
+              <Button
+                variant="light"
+                onClick={() => {
+                  setModalState({ open: false, fileUploaded: modalState.fileUploaded });
+                  setCustomImage(image);
+                }}
+                style={{ margin: "10px" }}
+              >
+                Cancel
+              </Button>
+              <Button
+                variant="filled"
+                onClick={() => {
+                  setModalState({ open: false, fileUploaded: modalState.fileUploaded });
+                  setImage(customImage);
+                  form.setFieldValue("fileInput", customImage);
+                }}
+                style={{ margin: "10px" }}
+              >
+                Submit
+              </Button>
+            </Box>
+          ) : null}
         </Box>
       </Modal>
       <Container className={classes.overview}>
@@ -217,7 +219,7 @@ export default function Product() {
                   value={customImage}
                   onChange={(value) => {
                     setCustomImage(value);
-                    if (value) setModalOpened(true);
+                    if (value) setModalState({ open: true, fileUploaded: true });
                   }}
                 />
                 {image ? (
@@ -237,7 +239,7 @@ export default function Product() {
                       <UnstyledButton
                         style={{ marginLeft: "15%", display: "flex", alignItems: "center" }}
                         onClick={() => {
-                          setModalOpened(true);
+                          setModalState({ open: true, fileUploaded: false });
                         }}
                       >
                         <IconEye style={{ color: "#FCB918" }} stroke={1.5}></IconEye>
