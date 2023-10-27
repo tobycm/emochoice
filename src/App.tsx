@@ -97,6 +97,9 @@ export default function App() {
           "emochoice-green": ["#B1CB35", "#B1CB35", "#B1CB35", "#B1CB35", "#B1CB35", "#B1CB35", "#B1CB35", "#B1CB35", "#B1CB35", "#B1CB35"],
           "emochoice-blue": ["#0468B0", "#0468B0", "#0468B0", "#0468B0", "#0468B0", "#0468B0", "#0468B0", "#0468B0", "#0468B0", "#0468B0"],
         },
+        breakpoints: {
+          mn: "402px",
+        },
       }}
     >
       <RouterProvider router={router} />

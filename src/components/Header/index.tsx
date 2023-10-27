@@ -1,4 +1,20 @@
-import { ActionIcon, Box, Burger, Container, Drawer, Group, Image, Indicator, Menu, Modal, NavLink, Tabs, Text, TextInput } from "@mantine/core";
+import {
+  ActionIcon,
+  Box,
+  Burger,
+  Container,
+  Drawer,
+  Group,
+  Image,
+  Indicator,
+  Menu,
+  Modal,
+  NavLink,
+  Space,
+  Tabs,
+  Text,
+  TextInput,
+} from "@mantine/core";
 import { useDisclosure, useMediaQuery } from "@mantine/hooks";
 import { IconPhone, IconPhoto, IconSearch, IconShirt, IconShoppingCart } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
@@ -12,6 +28,8 @@ export default function Header() {
   const [showIndicator, setShowIndicator] = useState(false);
   const { list } = useList();
 
+  const isMobile = useMediaQuery("(max-width: 36em)");
+
   useEffect(() => {
     setShowIndicator(list.length > 0);
   }, [list]);
@@ -22,19 +40,21 @@ export default function Header() {
         <Modal opened={searchbarOpened} onClose={toggleSearchbar} title={"Search"} size="md">
           <Box display={"flex"} style={{ justifyContent: "space-between" }}>
             <TextInput radius="xl" w={"80%"} mr={10} placeholder="What are you looking for?" id={"searchbarMobile"} />
-            <ActionIcon
-              variant="filled"
-              radius="lg"
-              size="lg"
-              mr={10}
-              ml={useMediaQuery(`(max-width: 36em)`) ? "auto" : "none"}
-              onClick={toggleSearchbar}
-            >
+            <ActionIcon variant="filled" radius="lg" size="lg" mr={10} ml={isMobile ? "auto" : "none"} onClick={toggleSearchbar}>
               <IconSearch style={{ width: "60%", height: "60%" }} stroke={3} />
             </ActionIcon>
           </Box>
         </Modal>
         <Drawer opened={drawerOpened} onClose={toggleDrawer} title={"Menu"} size="xs">
+          <NavLink
+            leftSection={<IconSearch size="1rem" stroke={1.5} />}
+            label="Search"
+            onClick={() => {
+              toggleDrawer();
+              toggleSearchbar();
+            }}
+            hiddenFrom="mn"
+          />
           <NavLink label="All Products" leftSection={<IconShirt size="1rem" stroke={1.5} />} defaultOpened childrenOffset={28}>
             <Link to="/catalog" style={{ textDecoration: "none", color: "black" }} onClick={toggleDrawer}>
               <NavLink label="Catalog"></NavLink>
@@ -71,26 +91,24 @@ export default function Header() {
             <NavLink label="Contact" leftSection={<IconPhone size="1rem" stroke={1.5} />} />
           </Link>
         </Drawer>
-        <Group justify="space-between" display="flex">
-          <Burger
-            opened={drawerOpened}
-            onClick={toggleDrawer}
-            hiddenFrom="xs"
-            size="sm"
-            style={{ flex: useMediaQuery(`(max-width: 36em)`) ? "1" : "none" }}
-          />
-          <Link to={"/"} style={{ flex: useMediaQuery(`(max-width: 36em)`) ? "1" : "none" }}>
+        <Group justify="space-between" display="flex" style={{ alignItems: "center" }}>
+          <Box display={"flex"} hiddenFrom="xs">
+            <Burger opened={drawerOpened} onClick={toggleDrawer} size="sm" maw={isMobile ? "28px" : "auto"} />
+            <Space w="44px" visibleFrom="mn" />
+          </Box>
+          <Link to={"/"} style={{ display: "flex", justifyContent: "center", marginLeft: "6px" }}>
             <Image src={"/images/full_logo.svg"} mih={50} mah={70} h="7vh" w={"auto"} style={{ pointerEvents: "none" }} />
           </Link>
-          <Box display={"flex"} style={{ flex: useMediaQuery(`(max-width: 36em)`) ? "1" : "none" }}>
+          <Box display={"flex"} style={{ justifyContent: "flex-end", maxWidth: isMobile ? "78px" : "min-content" }}>
             <TextInput radius="xl" w={220} mr={10} placeholder="What are you looking for?" id={"searchbarWide"} visibleFrom={"xs"} />
             <ActionIcon
               variant="filled"
               radius="lg"
               size="lg"
               mr={10}
-              ml={useMediaQuery(`(max-width: 36em)`) ? "auto" : "none"}
-              onClick={useMediaQuery(`(max-width: 36em)`) ? toggleSearchbar : () => {}}
+              ml={isMobile ? "auto" : "none"}
+              onClick={isMobile ? toggleSearchbar : () => {}}
+              visibleFrom="mn"
             >
               <IconSearch style={{ width: "60%", height: "60%" }} stroke={3} />
             </ActionIcon>

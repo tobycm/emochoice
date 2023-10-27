@@ -20,7 +20,7 @@ import {
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { Notifications, notifications } from "@mantine/notifications";
-import { IconCheck, IconEye, IconX } from "@tabler/icons-react";
+import { IconEye, IconShoppingCartPlus, IconX } from "@tabler/icons-react";
 import React, { useEffect } from "react";
 import { useLoaderData } from "react-router-dom";
 import pocketbase from "../../lib/database";
@@ -87,7 +87,7 @@ export default function Product() {
   }, [modalOpened, customImage, product.name]);
   return (
     <Box>
-      <Notifications />
+      <Notifications limit={5} />
       <Modal
         opened={modalOpened}
         onClose={() => {
@@ -142,8 +142,8 @@ export default function Product() {
                 title: "Success",
                 message: "Item added to list!",
                 color: "emochoice-green",
-                icon: <IconCheck stroke={3}></IconCheck>,
-                autoClose: 5000,
+                icon: <IconShoppingCartPlus stroke={2}></IconShoppingCartPlus>,
+                autoClose: 3000,
                 withCloseButton: true,
               });
               const { size, quantity, request, email, fileInput } = values;

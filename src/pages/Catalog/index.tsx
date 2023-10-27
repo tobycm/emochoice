@@ -1,7 +1,7 @@
-import { Box, Checkbox, CheckboxGroup, InputBase, Loader, NavLink, Pill, Text } from "@mantine/core";
-import { IconCategory, IconColorFilter, IconIcons, IconShirt } from "@tabler/icons-react";
+import { Box, Button, Checkbox, CheckboxGroup, InputBase, Loader, Modal, NavLink, Pill, Text, Title } from "@mantine/core";
+import { IconCategory, IconColorFilter, IconFilter, IconIcons, IconShirt } from "@tabler/icons-react";
 import { ListResult } from "pocketbase";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import ProductCard from "../../components/Card";
 import { getProducts } from "../../lib/database";
 import { Product } from "../../lib/database/models";
@@ -25,6 +25,7 @@ export default function Catalog() {
   });
   const [isLoaded, setIsLoaded] = useState(false);
   const [filters, setFilters] = useState<Filter[]>([]);
+  const [modalOpened, setModalOpened] = React.useState<boolean>(false);
 
   const getFilteredProducts = (newFilters: Filter[]) => {
     const items = [];
@@ -79,9 +80,9 @@ export default function Catalog() {
     });
   }, []);
 
-  return (
-    <Box className={classes.container}>
-      <Box mih={"100%"} miw={200} style={{ flex: "0.5" }} visibleFrom="xs">
+  function FilterNavBar() {
+    return (
+      <Box mih={"100%"} miw={200} style={{ flex: "0.5" }}>
         <NavLink label="Category" leftSection={<IconCategory size="1rem" stroke={1.5} />} childrenOffset={28} defaultOpened>
           <CheckboxGroup value={getFilterValues("category")} onChange={updateFilters("category")}>
             {(() => {
@@ -135,6 +136,39 @@ export default function Catalog() {
             })()}
           </CheckboxGroup>
         </NavLink>
+      </Box>
+    );
+  }
+
+  return (
+    <Box className={classes.container}>
+      <Modal
+        opened={modalOpened}
+        onClose={() => {
+          setModalOpened(false);
+        }}
+        title={"Filters"}
+        withCloseButton
+      >
+        <FilterNavBar />
+      </Modal>
+      <Box visibleFrom="xs">
+        <FilterNavBar />
+      </Box>
+      <Box w="80%" display={"flex"} style={{ alignItems: "center", flexDirection: "column" }} mb="5%" hiddenFrom="xs">
+        <Title order={2} mb="5%">
+          Catalog
+        </Title>
+        <Button
+          leftSection={<IconFilter size="1rem" stroke={1.5} />}
+          variant="light"
+          radius="xl"
+          onClick={() => {
+            setModalOpened(true);
+          }}
+        >
+          Filters
+        </Button>
       </Box>
       {isLoaded ? (
         <Box style={{ flex: "4.5" }}>
