@@ -20,6 +20,30 @@ export default function Gallery() {
 
   const isMobile = useMediaQuery(`(max-width: 48em)`);
 
+  const reInitEmblas = async () => {
+    const MAX_RETRIES = 10;
+    let retries = 0;
+
+    while (retries < MAX_RETRIES) {
+      try {
+        if (embla.hoodies) embla.hoodies.reInit();
+        if (embla.keychains) embla.keychains.reInit();
+        if (embla.posters) embla.posters.reInit();
+
+        break;
+      } catch (error) {
+        console.error("Error re-initializing emblas:", error);
+        retries++;
+
+        if (retries === MAX_RETRIES) {
+          console.error("Max retries reached. Could not re-initialize all emblas.");
+        } else {
+          await new Promise((resolve) => setTimeout(resolve, 1000));
+        }
+      }
+    }
+  };
+
   useEffect(() => {
     const fetchAndSetGallery = async (type: string) => {
       try {
@@ -38,15 +62,7 @@ export default function Gallery() {
     if (window.location.href.includes("/gallery")) setDocumentTitle("Gallery");
 
     Promise.all([fetchAndSetGallery("hoodies"), fetchAndSetGallery("keychains"), fetchAndSetGallery("posters")]).then(() => {
-      setTimeout(() => {
-        if (embla.hoodies) embla.hoodies.reInit(), 1000;
-      });
-      setTimeout(() => {
-        if (embla.keychains) embla.keychains.reInit(), 1000;
-      });
-      setTimeout(() => {
-        if (embla.posters) embla.posters.reInit(), 1000;
-      });
+      reInitEmblas();
     });
   }, [embla]);
 
