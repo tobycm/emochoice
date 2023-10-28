@@ -38,9 +38,15 @@ export default function Gallery() {
     if (window.location.href.includes("/gallery")) setDocumentTitle("Gallery");
 
     Promise.all([fetchAndSetGallery("hoodies"), fetchAndSetGallery("keychains"), fetchAndSetGallery("posters")]).then(() => {
-      if (embla.hoodies) embla.hoodies.reInit();
-      if (embla.keychains) embla.keychains.reInit();
-      if (embla.posters) embla.posters.reInit();
+      setTimeout(() => {
+        if (embla.hoodies) embla.hoodies.reInit(), 1000;
+      });
+      setTimeout(() => {
+        if (embla.keychains) embla.keychains.reInit(), 1000;
+      });
+      setTimeout(() => {
+        if (embla.posters) embla.posters.reInit(), 1000;
+      });
     });
   }, [embla]);
 
