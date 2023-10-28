@@ -1,12 +1,15 @@
 import { Carousel } from "@mantine/carousel";
 import { Box, Card, Container, Divider, Image, Title } from "@mantine/core";
-import { useEffect } from "react";
+import Autoplay from "embla-carousel-autoplay";
+import { useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { setDocumentTitle } from "../../lib/utils";
 import Gallery from "../Gallery";
 import classes from "./index.module.css";
 
 export default function Home() {
+  const autoplay = useRef(Autoplay({ delay: 5000 }));
+
   useEffect(() => {
     setDocumentTitle();
   }, []);
@@ -14,7 +17,16 @@ export default function Home() {
   return (
     <>
       <Box style={{ display: "flex", alignItems: "center", flexDirection: "column" }}>
-        <Carousel w={"100%"} loop withIndicators style={{ transform: "translate(0, -5vh)" }}>
+        <Carousel
+          classNames={classes}
+          w={"100%"}
+          loop
+          withIndicators
+          style={{ transform: "translate(0, -5vh)" }}
+          plugins={[autoplay.current]}
+          onMouseEnter={autoplay.current.stop}
+          onMouseLeave={autoplay.current.reset}
+        >
           <Carousel.Slide>
             <Image src={"https://emochoice.ca/wp-content/uploads/2022/02/slide-up-01-scaled.jpg"} fit="cover" />
           </Carousel.Slide>
