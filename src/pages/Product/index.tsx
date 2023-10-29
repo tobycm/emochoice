@@ -12,7 +12,6 @@ import {
   Space,
   Table,
   Text,
-  TextInput,
   Textarea,
   Title,
   Tooltip,
@@ -22,7 +21,7 @@ import { useForm } from "@mantine/form";
 import { Notifications, notifications } from "@mantine/notifications";
 import { IconEye, IconShoppingCartPlus, IconX } from "@tabler/icons-react";
 import React, { useEffect } from "react";
-import { useLoaderData } from "react-router-dom";
+import { useLoaderData, useLocation } from "react-router-dom";
 import pocketbase from "../../lib/database";
 import ProductColor, { Product } from "../../lib/database/models";
 import { Item, List, useList } from "../../lib/list";
@@ -35,6 +34,11 @@ export default function Product() {
   const [image, setImage] = React.useState<File | null>(null);
   const [modalState, setModalState] = React.useState<{ open: boolean; fileUploaded: boolean }>({ open: false, fileUploaded: false });
   const { list, updateList } = useList();
+
+  let user: { size?: string; color?: ProductColor; quantity?: number; request?: string; fileInput?: File } = {};
+  if (useLocation().state) {
+    user = useLocation().state as { size?: string; color?: ProductColor; quantity?: number; request?: string; fileInput?: File };
+  }
 
   const initialValues: Record<string, unknown> = { quantity: 1 };
 
@@ -52,6 +56,16 @@ export default function Product() {
 
   useEffect(() => {
     setDocumentTitle(product.name);
+    notifications.clean();
+
+    if (user.size) form.setFieldValue("size", user.size);
+    if (user.color) form.setFieldValue("color", user.color.hex);
+    if (user.quantity) form.setFieldValue("quantity", user.quantity);
+    if (user.request) form.setFieldValue("request", user.request);
+    if (user.fileInput) {
+      setCustomImage(user.fileInput);
+      setImage(user.fileInput);
+    }
 
     if (!modalState.open) return;
 
@@ -134,7 +148,8 @@ export default function Product() {
         </Box>
         <Box ml={30}>
           <Title mb={"xs"}>{product.name}</Title>
-          <form
+          <Box
+            component="form"
             onSubmit={form.onSubmit((values) => {
               notifications.show({
                 title: "Success",
@@ -144,7 +159,7 @@ export default function Product() {
                 autoClose: 3000,
                 withCloseButton: true,
               });
-              const { size, quantity, request, email, fileInput } = values;
+              const { size, quantity, request, fileInput } = values;
               let color: ProductColor | undefined = undefined;
               if (!!product.expand.colors) color = product.expand.colors.filter((color) => color.hex === values.color)[0];
               const item: Item = {
@@ -153,7 +168,6 @@ export default function Product() {
                 color: color as ProductColor,
                 quantity: quantity as number,
                 request: request as string,
-                email: email as string,
                 fileInput: fileInput as File,
               };
               const newList = new List(...list, item);
@@ -251,23 +265,18 @@ export default function Product() {
               <Textarea
                 autosize
                 className={classes.textarea}
-                minRows={2}
+                minRows={3}
                 maxRows={4}
                 placeholder="Feel free to ask!"
                 {...form.getInputProps("request")}
               />
-            </Box>
-            <Box className={classes.input}>
-              <Text>Phone number or Email</Text>
-              <Space w="md" />
-              <TextInput {...form.getInputProps("email")} w={215} placeholder="your@email.com" required />
             </Box>
             <Box display="flex">
               <Button variant="filled" className={classes.input} type="submit">
                 Add to List
               </Button>
             </Box>
-          </form>
+          </Box>
         </Box>
       </Container>
       <Container className={classes.information}>

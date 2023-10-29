@@ -1,15 +1,17 @@
-import { Box, Container, Loader, NumberInput, Table, Text, Title, Tooltip, UnstyledButton } from "@mantine/core";
+import { Box, Button, Card, Checkbox, Loader, NumberInput, Pill, Table, Text, Title, Tooltip, UnstyledButton } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import { IconShoppingCartSearch, IconX } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import { List as ListClass, useList } from "../../lib/list";
+import { Link, useNavigate } from "react-router-dom";
+import proceedList, { List as ListClass, useList } from "../../lib/list";
 import { setDocumentTitle } from "../../lib/utils";
+import classes from "./index.module.css";
 
 export default function List() {
   const [isDataLoaded, setIsDataLoaded] = useState(false);
   const { list, updateList } = useList();
   const [deletedList, setDeletedList] = useState<any[]>([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     setDocumentTitle("My List");
@@ -19,7 +21,7 @@ export default function List() {
   const isMobile = useMediaQuery(`(max-width: 36em)`);
 
   return (
-    <Container style={{ display: "flex", flexDirection: "column", alignItems: "center" }} mih={"50vh"}>
+    <Box className={classes.outerBox}>
       <Title order={2} mb={20}>
         My List
       </Title>
@@ -41,64 +43,117 @@ export default function List() {
       ) : null}
       {isDataLoaded ? (
         list && list.length > 0 ? (
-          <Table verticalSpacing="md" highlightOnHover>
-            <Table.Thead>
-              <Table.Tr>
-                <Table.Th w={isMobile ? "80%" : "35%"}>Name</Table.Th>
-                {isMobile ? null : (
-                  <>
-                    <Table.Th w="15%">Color</Table.Th>
-                    <Table.Th w="15%">Size</Table.Th>
-                    <Table.Th w="25%">Request</Table.Th>
-                  </>
-                )}
-                <Table.Th w={isMobile ? "20%" : "15%"}>Quantity</Table.Th>
-              </Table.Tr>
-            </Table.Thead>
-            <Table.Tbody>
-              {list.map((item, index) => (
-                <Table.Tr key={index}>
-                  <Table.Td>
-                    <Link to={`/product/${item.product.id}`} style={{ textDecoration: "none", color: "black" }}>
-                      {item.product.name}
-                    </Link>
-                  </Table.Td>
-                  {isMobile ? null : (
-                    <>
-                      <Table.Td>
-                        {item.color ? (
+          <Box w="100%">
+            <Box className={classes.listAndCard}>
+              <Box className={classes.list}>
+                <Table verticalSpacing="md" highlightOnHover>
+                  <Table.Thead>
+                    <Table.Tr>
+                      <Table.Th w="5%"></Table.Th>
+                      <Table.Th w={isMobile ? "75%" : "30%"}>Name</Table.Th>
+                      {isMobile ? null : (
+                        <>
+                          <Table.Th w="10%">Color</Table.Th>
+                          <Table.Th w="10%">Size</Table.Th>
+                          <Table.Th w="10%">Uploaded Image</Table.Th>
+                          <Table.Th w="25%">Request</Table.Th>
+                        </>
+                      )}
+                      <Table.Th w={isMobile ? "20%" : "15%"}>Quantity</Table.Th>
+                    </Table.Tr>
+                  </Table.Thead>
+                  <Table.Tbody>
+                    {list.map((item, index) => (
+                      <Table.Tr key={index}>
+                        <Table.Td>
+                          <Checkbox defaultChecked id={`checkbox${index}`} />
+                        </Table.Td>
+                        <Table.Td>
+                          <Link
+                            to={`/product/${item.product.id}`}
+                            style={{ textDecoration: "none", color: "black" }}
+                            state={{
+                              size: item.size,
+                              color: item.color,
+                              request: item.request,
+                              quantity: item.quantity,
+                              fileInput: item.fileInput,
+                            }}
+                          >
+                            {item.product.name}
+                          </Link>
+                        </Table.Td>
+                        {isMobile ? null : (
                           <>
-                            <Tooltip label={item.color.name}>
-                              <Box w={"2vh"} h={"2vh"} mr={5} style={{ backgroundColor: item.color.hex, border: "1px solid grey" }}></Box>
-                            </Tooltip>
+                            <Table.Td>
+                              {item.color ? (
+                                <>
+                                  <Tooltip label={item.color.name}>
+                                    <Box w={"2vh"} h={"2vh"} mr={5} style={{ backgroundColor: item.color.hex, border: "1px solid grey" }}></Box>
+                                  </Tooltip>
+                                </>
+                              ) : null}
+                            </Table.Td>
+                            <Table.Td>{item.size}</Table.Td>
+                            <Table.Td maw={""}>{!!item.fileInput ? <Pill>{item.fileInput.name}</Pill> : null}</Table.Td>
+                            <Table.Td maw={""} style={{ overflow: "hidden", textOverflow: "ellipsis" }}>
+                              {item.request} {/* don't delete the blank maw */}
+                            </Table.Td>
                           </>
-                        ) : null}
-                      </Table.Td>
-                      <Table.Td>{item.size}</Table.Td>
-                      <Table.Td maw={""} style={{ overflow: "hidden", textOverflow: "ellipsis" }}>
-                        {item.request} {/* don't delete the blank maw */}
-                      </Table.Td>
-                    </>
-                  )}
-                  <Table.Td>
-                    <Box display="flex" style={{ alignItems: "center" }}>
-                      <NumberInput w={"12%"} miw={70} mr={10} clampBehavior="strict" min={1} max={99} defaultValue={item.quantity} />
-                      <UnstyledButton
-                        style={{ display: "flex", alignItems: "center" }}
-                        onClick={() => {
-                          setDeletedList([...deletedList, item]);
-                          const newList = new ListClass(...list.filter((_, i) => i !== index));
-                          updateList(newList);
-                        }}
-                      >
-                        <IconX style={{ color: "red" }} stroke={1.5}></IconX>
-                      </UnstyledButton>
-                    </Box>
-                  </Table.Td>
-                </Table.Tr>
-              ))}
-            </Table.Tbody>
-          </Table>
+                        )}
+                        <Table.Td>
+                          <Box display="flex" style={{ alignItems: "center" }}>
+                            <NumberInput w={"12%"} miw={70} mr={10} clampBehavior="strict" min={1} max={99} defaultValue={item.quantity} />
+                            <UnstyledButton
+                              style={{ display: "flex", alignItems: "center" }}
+                              onClick={() => {
+                                setDeletedList([...deletedList, item]);
+                                const newList = new ListClass(...list.filter((_, i) => i !== index));
+                                updateList(newList);
+                              }}
+                            >
+                              <IconX style={{ color: "red" }} stroke={1.5}></IconX>
+                            </UnstyledButton>
+                          </Box>
+                        </Table.Td>
+                      </Table.Tr>
+                    ))}
+                  </Table.Tbody>
+                </Table>
+              </Box>
+              <Box className={classes.card}>
+                <Card shadow="sm" padding="lg" radius="md" withBorder>
+                  <Title order={3} mb={"0.5em"}>
+                    Checkout
+                  </Title>
+                  <Text size="sm" c="dimmed">
+                    Price is going to be discussed with the seller later via email/phone call.
+                  </Text>
+                  <Button
+                    variant="light"
+                    color="emochoice-blue"
+                    fullWidth
+                    mt="md"
+                    radius="md"
+                    type="submit"
+                    onClick={() => {
+                      proceedList.length = 0;
+                      list.forEach((item, index) => {
+                        const checkbox = document.getElementById(`checkbox${index}`) as HTMLInputElement;
+                        if (checkbox.checked) {
+                          proceedList.push(item);
+                        }
+                      });
+
+                      navigate("/checkout");
+                    }}
+                  >
+                    Proceed to Checkout
+                  </Button>
+                </Card>
+              </Box>
+            </Box>
+          </Box>
         ) : (
           <Box style={{ display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center" }}>
             <IconShoppingCartSearch style={{ width: "30%", height: "30%", marginBottom: "1em" }} stroke={1} />
@@ -116,6 +171,6 @@ export default function List() {
       ) : (
         <Loader size="md" mt={"md"} />
       )}
-    </Container>
+    </Box>
   );
 }

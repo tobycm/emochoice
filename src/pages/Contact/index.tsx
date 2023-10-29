@@ -40,10 +40,6 @@ export default function Contact() {
         </Box>
         <Space h="md" />
         <Box className={classes.input}>
-          <TextInput label="Pronouns" placeholder="he/him/his" id="pronouns" />
-        </Box>
-        <Space h="md" />
-        <Box className={classes.input}>
           <TextInput withAsterisk label="Email" placeholder="johnsmith@email.com" {...form.getInputProps("email")} id="email" />
         </Box>
         <Space h="md" />

@@ -47,7 +47,7 @@ export default function Home() {
           <Link to="/catalog" className={classes.card}>
             <Card shadow="sm" padding="lg" radius="md" miw={224} withBorder>
               <Card.Section m={"2%"} h={"20%"}>
-                <Title order={3} style={{ textAlign: "center" }}>
+                <Title order={3} style={{ textAlign: "center" }} c="emochoice-blue">
                   Clothing & Accessories Print
                 </Title>
               </Card.Section>
@@ -65,7 +65,7 @@ export default function Home() {
           <Link to="/catalog" className={classes.card}>
             <Card shadow="sm" padding="lg" radius="md" miw={224} withBorder>
               <Card.Section m={"2%"} h={"20%"}>
-                <Title order={3} style={{ textAlign: "center" }}>
+                <Title order={3} style={{ textAlign: "center" }} c="emochoice-blue">
                   Digital Printing
                 </Title>
               </Card.Section>
@@ -77,7 +77,7 @@ export default function Home() {
           <Link to="/catalog" className={classes.card}>
             <Card shadow="sm" padding="lg" radius="md" miw={224} withBorder>
               <Card.Section m={"2%"} h={"20%"}>
-                <Title order={3} style={{ textAlign: "center" }}>
+                <Title order={3} style={{ textAlign: "center" }} c="emochoice-blue">
                   Souvenirs & Gifts Printing
                 </Title>
               </Card.Section>

@@ -4,7 +4,6 @@ import ProductColor, { Product } from "./database/models";
 export interface Item {
   product: Product;
   quantity: number;
-  email: string;
   request: string;
   size: string;
   fileInput: File;
@@ -38,3 +37,6 @@ export const useList = () => {
   }
   return context;
 };
+
+const proceedList = new List();
+export default proceedList;

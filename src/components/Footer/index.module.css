@@ -21,7 +21,7 @@
 }
 
 .information {
-  max-width: calc(90vw / 2 - 20px);
+  max-width: calc(90vw / 4 - 30px);
 
   @media screen and (max-width: $mantine-breakpoint-xs) {
     margin-top: 1vh;

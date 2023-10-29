@@ -8,7 +8,7 @@ export default function Footer() {
     <>
       <Box className={classes.footer}>
         <Box className={classes.information}>
-          <Title order={4} mb={10}>
+          <Title order={4} mb={15}>
             About us
           </Title>
           <Box display={"flex"} style={{ alignItems: "center" }} mb={10}>
@@ -36,6 +36,44 @@ export default function Footer() {
                 sales@emochoice.ca
               </Link>
             </Text>
+          </Box>
+        </Box>
+        <Box className={classes.information}>
+          <Title order={4} mb={15}>
+            Support
+          </Title>
+          <Box display={"flex"} style={{ flexDirection: "column" }}>
+            <Link to="/" style={{ marginBottom: "10px", textDecoration: "none", color: "black" }}>
+              Shopping Guide
+            </Link>
+            <Link to="/" style={{ marginBottom: "10px", textDecoration: "none", color: "black" }}>
+              Payment Guide
+            </Link>
+            <Link to="/" style={{ marginBottom: "10px", textDecoration: "none", color: "black" }}>
+              Instructions for Delivery
+            </Link>
+            <Link to="/" style={{ marginBottom: "10px", textDecoration: "none", color: "black" }}>
+              Terms of Service
+            </Link>
+          </Box>
+        </Box>
+        <Box className={classes.information}>
+          <Title order={4} mb={15}>
+            Policy
+          </Title>
+          <Box display={"flex"} style={{ flexDirection: "column" }}>
+            <Link to="/" style={{ marginBottom: "10px", textDecoration: "none", color: "black" }}>
+              Privacy Policy
+            </Link>
+            <Link to="/" style={{ marginBottom: "10px", textDecoration: "none", color: "black" }}>
+              Shipping Policy
+            </Link>
+            <Link to="/" style={{ marginBottom: "10px", textDecoration: "none", color: "black" }}>
+              Return Policy
+            </Link>
+            <Link to="/" style={{ marginBottom: "10px", textDecoration: "none", color: "black" }}>
+              Usage Rules
+            </Link>
           </Box>
         </Box>
         <Box className={classes.information}>

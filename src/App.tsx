@@ -6,13 +6,15 @@ import { createBrowserRouter } from "react-router-dom";
 import Content from "./components/Content";
 import { getProduct } from "./lib/database";
 import { Product as DProduct } from "./lib/database/models"; // DProduct stands for Database Product
+import NotFound from "./pages/404";
 import Catalog from "./pages/Catalog";
+import Checkout from "./pages/Checkout";
 import Contact from "./pages/Contact";
 import Gallery from "./pages/Gallery";
 import Home from "./pages/Home";
 import List from "./pages/List";
 import Product from "./pages/Product";
-import NotFound from "./pages/404";
+import Success from "./pages/Success";
 
 const routes: RouteObject[] = [
   {
@@ -82,9 +84,17 @@ const routes: RouteObject[] = [
         element: <Contact />,
       },
       {
+        path: "/checkout",
+        element: <Checkout />,
+      },
+      {
+        path: "/success",
+        element: <Success />,
+      },
+      {
         path: "*",
         element: <NotFound />,
-      }
+      },
     ],
   },
 ];
@@ -103,7 +113,7 @@ export default function App() {
           "emochoice-blue": ["#0468B0", "#0468B0", "#0468B0", "#0468B0", "#0468B0", "#0468B0", "#0468B0", "#0468B0", "#0468B0", "#0468B0"],
         },
         breakpoints: {
-          mn: "402px",
+          mn: "430px",
         },
       }}
     >

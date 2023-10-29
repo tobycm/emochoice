@@ -27,10 +27,10 @@
 }
 
 .textarea {
-  width: 75%;
-  min-width: 220px;
+  width: 20vw;
+  min-width: 180px;
   @media screen and (max-width: $mantine-breakpoint-xs) {
-    width: 70vw;
+    width: 65vw;
   }
 }
 
