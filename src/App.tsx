@@ -12,6 +12,7 @@ import Gallery from "./pages/Gallery";
 import Home from "./pages/Home";
 import List from "./pages/List";
 import Product from "./pages/Product";
+import NotFound from "./pages/404";
 
 const routes: RouteObject[] = [
   {
@@ -80,6 +81,10 @@ const routes: RouteObject[] = [
         path: "/contact",
         element: <Contact />,
       },
+      {
+        path: "*",
+        element: <NotFound />,
+      }
     ],
   },
 ];
