@@ -36,17 +36,15 @@ export default function Product() {
   const [modalState, setModalState] = React.useState<{ open: boolean; fileUploaded: boolean }>({ open: false, fileUploaded: false });
   const { list, updateList } = useList();
 
-  const initialValues: Record<string, unknown> = {
-    quantity: 1,
-  };
+  const initialValues: Record<string, unknown> = { quantity: 1 };
 
   const sizes = product.sizes.split(",");
-  let boundaryPoints = new Array();
+  let boundaryPoints: [number, number] = [0, 0]; // xoffset, maxwidth
 
   if (sizes.length > 0) initialValues["size"] = sizes[0];
   if (product.colors.length > 0) initialValues["color"] = product.expand.colors![0].hex;
   if (!!product.boundary) {
-    boundaryPoints = product.boundary.split(",");
+    boundaryPoints = product.boundary.split(",").map((point) => Number(point)) as [number, number];
     initialValues["fileInput"] = null;
   }
 
@@ -55,35 +53,33 @@ export default function Product() {
   useEffect(() => {
     setDocumentTitle(product.name);
 
-    if (modalState.open) {
-      const userImage = document.createElement("img");
-      const backgroundImage = document.createElement("img");
+    if (!modalState.open) return;
 
-      if (customImage) {
-        userImage.src = URL.createObjectURL(customImage);
-        backgroundImage.src = product.images.length > 0 ? pocketbase.getFileUrl(product, product.images[0]) : "/images/no_image.png";
-        backgroundImage.onload = () => {
-          userImage.onload = () => {
-            const canvas = document.getElementById("previewCanvas") as HTMLCanvasElement;
-            if (canvas) {
-              const ctx = canvas.getContext("2d");
-              canvas.width = backgroundImage.width;
-              canvas.height = backgroundImage.height;
-              if (ctx) {
-                ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
-                ctx.drawImage(
-                  userImage,
-                  canvas.width / boundaryPoints[0],
-                  canvas.height / boundaryPoints[1],
-                  canvas.width / boundaryPoints[2],
-                  canvas.height / boundaryPoints[3],
-                );
-              }
-            }
-          };
-        };
-      }
-    }
+    const userImage = document.createElement("img");
+    const backgroundImage = document.createElement("img");
+
+    if (!customImage) return;
+
+    userImage.src = URL.createObjectURL(customImage);
+    backgroundImage.src = product.images.length > 0 ? pocketbase.getFileUrl(product, product.images[0]) : "/images/no_image.png";
+    backgroundImage.onload = () => {
+      userImage.onload = () => {
+        const canvas = document.getElementById("previewCanvas") as HTMLCanvasElement | null;
+        if (!canvas) return;
+        const ctx = canvas.getContext("2d");
+        canvas.width = backgroundImage.width;
+        canvas.height = backgroundImage.height;
+        if (!ctx) return;
+        ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
+        ctx.drawImage(
+          userImage,
+          boundaryPoints[0],
+          backgroundImage.height / 2 - ((userImage.height / userImage.width) * boundaryPoints[1]) / 2,
+          boundaryPoints[1],
+          (userImage.height / userImage.width) * boundaryPoints[1],
+        );
+      };
+    };
   }, [modalState, customImage, product.name]);
   return (
     <Box>
