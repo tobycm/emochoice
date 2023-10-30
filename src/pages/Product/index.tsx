@@ -191,6 +191,7 @@ export default function Product() {
                     key={color.hex}
                     color={color.hex}
                     size={30}
+                    mr={10}
                     style={{ cursor: "pointer" }}
                     onClick={() => {
                       form.setFieldValue("color", color.hex);
