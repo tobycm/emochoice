@@ -1,7 +1,7 @@
 import {
   Box,
   Button,
-  ColorInput,
+  ColorSwatch,
   Container,
   Divider,
   FileInput,
@@ -33,12 +33,13 @@ export default function Product() {
   const [customImage, setCustomImage] = React.useState<File | null>(null);
   const [image, setImage] = React.useState<File | null>(null);
   const [modalState, setModalState] = React.useState<{ open: boolean; fileUploaded: boolean }>({ open: false, fileUploaded: false });
+  const [productImage, setProductImage] = React.useState<string>(
+    product.images.length > 0 ? pocketbase.getFileUrl(product, product.images[0]) : "/images/no_image.png",
+  );
   const { list, updateList } = useList();
 
   let user: { size?: string; color?: ProductColor; quantity?: number; request?: string; fileInput?: File } = {};
-  if (useLocation().state) {
-    user = useLocation().state as { size?: string; color?: ProductColor; quantity?: number; request?: string; fileInput?: File };
-  }
+  if (useLocation().state) user = useLocation().state as typeof user;
 
   const initialValues: Record<string, unknown> = { quantity: 1 };
 
@@ -141,10 +142,7 @@ export default function Product() {
       </Modal>
       <Container className={classes.overview}>
         <Box className={classes.imagebox}>
-          <Image
-            className={classes.image}
-            src={product.images.length > 0 ? pocketbase.getFileUrl(product, product.images[0]) : "/images/no_image.png"}
-          />
+          <Image className={classes.image} src={productImage} />
         </Box>
         <Box ml={30}>
           <Title mb={"xs"}>{product.name}</Title>
@@ -188,18 +186,19 @@ export default function Product() {
               <Box className={classes.input}>
                 <Text>Color</Text>
                 <Space w="md" />
-                <ColorInput
-                  required
-                  disallowInput
-                  withPicker={false}
-                  withEyeDropper={false}
-                  placeholder="Choose a color"
-                  swatches={product.expand.colors!.map((color) => color.hex)}
-                  {...form.getInputProps("color")}
-                  onChange={(hex) => {
-                    form.setFieldValue("color", hex);
-                  }}
-                />
+                {product.expand.colors!.map((color) => (
+                  <ColorSwatch
+                    key={color.hex}
+                    color={color.hex}
+                    size={30}
+                    style={{ cursor: "pointer" }}
+                    onClick={() => {
+                      form.setFieldValue("color", color.hex);
+                      const imageFile = product.images.find((image) => image.startsWith(`${form.values.size}_${color.name}`.toLowerCase()));
+                      if (imageFile) setProductImage(pocketbase.getFileUrl(product, imageFile));
+                    }}
+                  />
+                ))}
               </Box>
             ) : null}
             <Box className={classes.input}>
