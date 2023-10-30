@@ -53,9 +53,9 @@ export default function Home() {
               </Card.Section>
               <Card.Section h={"80%"}>
                 <Image
-                  src="https://pocketbase.emochoice.ca/api/files/kt5o377go6qzzct/4qqc2kmr6jysur6/toby_hoodie_black_50ONeWz66p.png"
+                  src="https://pocketbase.emochoice.ca/api/files/kt5o377go6qzzct/4qqc2kmr6jysur6/xs_black_RQVawPUdZC.png"
                   height={160}
-                  alt="Norway"
+                  alt="Clothing & Accessories Print"
                   maw={"100%"}
                   h={"100%"}
                 />
@@ -70,7 +70,7 @@ export default function Home() {
                 </Title>
               </Card.Section>
               <Card.Section h={"80%"}>
-                <Image src="https://m.media-amazon.com/images/I/71oJ2WNty9L.jpg" height={160} alt="Norway" maw={"100%"} h={"100%"} />
+                <Image src="https://m.media-amazon.com/images/I/71oJ2WNty9L.jpg" height={160} alt="Digital Printing" maw={"100%"} h={"100%"} />
               </Card.Section>
             </Card>
           </Link>
@@ -85,7 +85,7 @@ export default function Home() {
                 <Image
                   src="https://ae01.alicdn.com/kf/Sb073bc137af6492295be9497fcacfc9dG/Hololive-Vtuber-Anime-Figures-Cosplay-Acrylic-Keychain-La-Darknesss-Hoshimachi-Suisei-Gawr-Gura-Nanashi-Mumei-Keyring.jpg"
                   height={160}
-                  alt="Norway"
+                  alt="Souvenirs & Gifts Printing"
                   maw={"100%"}
                   h={"100%"}
                 />

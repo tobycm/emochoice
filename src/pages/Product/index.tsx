@@ -187,20 +187,22 @@ export default function Product() {
                 <Text>Color</Text>
                 <Space w="md" />
                 {product.expand.colors!.map((color) => (
-                  <ColorSwatch
-                    key={color.hex}
-                    color={color.hex}
-                    size={30}
-                    mr={10}
-                    style={{ cursor: "pointer" }}
-                    onClick={() => {
-                      form.setFieldValue("color", color.hex);
-                      const imageFileHasColor = product.images.filter((image) => image.includes(color.name.toLowerCase()));
-                      const imageFile = imageFileHasColor.find((image) => image.includes(`${form.values.size}`.toLowerCase()));
-                      if (imageFile) setProductImage(pocketbase.getFileUrl(product, imageFile));
-                      setProductImage(imageFileHasColor[0] ? pocketbase.getFileUrl(product, imageFileHasColor[0]) : "/images/no_image.png");
-                    }}
-                  />
+                  <Tooltip label={color.name} openDelay={500}>
+                    <ColorSwatch
+                      key={color.hex}
+                      color={color.hex}
+                      size={30}
+                      mr={10}
+                      style={{ cursor: "pointer" }}
+                      onClick={() => {
+                        form.setFieldValue("color", color.hex);
+                        const imageFileHasColor = product.images.filter((image) => image.includes(color.name.toLowerCase()));
+                        const imageFile = imageFileHasColor.find((image) => image.includes(`${form.values.size}`.toLowerCase()));
+                        if (imageFile) setProductImage(pocketbase.getFileUrl(product, imageFile));
+                        setProductImage(imageFileHasColor[0] ? pocketbase.getFileUrl(product, imageFileHasColor[0]) : "/images/no_image.png");
+                      }}
+                    />
+                  </Tooltip>
                 ))}
               </Box>
             ) : null}
