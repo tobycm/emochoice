@@ -194,8 +194,10 @@ export default function Product() {
                     style={{ cursor: "pointer" }}
                     onClick={() => {
                       form.setFieldValue("color", color.hex);
-                      const imageFile = product.images.find((image) => image.startsWith(`${form.values.size}_${color.name}`.toLowerCase()));
+                      const imageFileHasColor = product.images.filter((image) => image.includes(color.name.toLowerCase()));
+                      const imageFile = imageFileHasColor.find((image) => image.includes(`${form.values.size}`.toLowerCase()));
                       if (imageFile) setProductImage(pocketbase.getFileUrl(product, imageFile));
+                      setProductImage(imageFileHasColor[0] ? pocketbase.getFileUrl(product, imageFileHasColor[0]) : "/images/no_image.png");
                     }}
                   />
                 ))}
