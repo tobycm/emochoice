@@ -107,6 +107,8 @@ export default function App() {
     <MantineProvider
       theme={{
         primaryColor: "emochoice-yellow",
+        fontFamily: "Inter, sans-serif",
+        headings: { fontFamily: "Inter, sans-serif" },
         colors: {
           "emochoice-yellow": ["#FCB918", "#FCB918", "#FCB918", "#FCB918", "#FCB918", "#FCB918", "#FCB918", "#FCB918", "#FCB918", "#FCB918"],
           "emochoice-green": ["#B1CB35", "#B1CB35", "#B1CB35", "#B1CB35", "#B1CB35", "#B1CB35", "#B1CB35", "#B1CB35", "#B1CB35", "#B1CB35"],

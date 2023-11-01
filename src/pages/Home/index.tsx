@@ -1,17 +1,59 @@
-import { Carousel } from "@mantine/carousel";
+import { Carousel, Embla } from "@mantine/carousel";
 import { Box, Card, Container, Divider, Image, Title } from "@mantine/core";
 import Autoplay from "embla-carousel-autoplay";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
+import { getGallery } from "../../lib/database";
 import { setDocumentTitle } from "../../lib/utils";
 import Gallery from "../Gallery";
 import classes from "./index.module.css";
 
 export default function Home() {
   const autoplay = useRef(Autoplay({ delay: 5000 }));
+  const [slides, setSlides] = useState<JSX.Element[]>([]);
+  const [embla, setEmbla] = useState<Embla | null>(null);
+
+  const reInitEmblas = async () => {
+    const MAX_RETRIES = 10;
+    let retries = 0;
+
+    while (retries < MAX_RETRIES) {
+      try {
+        if (embla) embla.reInit();
+
+        break;
+      } catch (error) {
+        console.error("Error re-initializing emblas:", error);
+        retries++;
+
+        if (retries === MAX_RETRIES) {
+          console.error("Max retries reached. Could not re-initialize all emblas.");
+        } else {
+          await new Promise((resolve) => setTimeout(resolve, 1000));
+        }
+      }
+    }
+  };
 
   useEffect(() => {
     setDocumentTitle();
+    const fetchAndSetGallery = async (type: string) => {
+      try {
+        const gallery = await getGallery(type);
+        const slide = gallery.map((link) => (
+          <Carousel.Slide key={link}>
+            <Image src={link} />
+          </Carousel.Slide>
+        ));
+        setSlides([...slide]);
+      } catch (error) {
+        console.error(`Error fetching ${type} gallery:`, error);
+      }
+    };
+
+    Promise.all([fetchAndSetGallery("home_carousel")]).then(() => {
+      reInitEmblas();
+    });
   }, []);
 
   return (
@@ -22,20 +64,13 @@ export default function Home() {
           w={"100%"}
           loop
           withIndicators
+          getEmblaApi={setEmbla}
           style={{ transform: "translate(0, -5vh)" }}
           plugins={[autoplay.current]}
           onMouseEnter={autoplay.current.stop}
           onMouseLeave={autoplay.current.reset}
         >
-          <Carousel.Slide>
-            <Image src={"https://emochoice.ca/wp-content/uploads/2022/02/slide-up-01-scaled.jpg"} fit="cover" />
-          </Carousel.Slide>
-          <Carousel.Slide>
-            <Image src={"https://emochoice.ca/wp-content/uploads/2021/10/Slide-Web-02-scaled.jpg"} fit="cover" />
-          </Carousel.Slide>
-          <Carousel.Slide>
-            <Image src={"https://emochoice.ca/wp-content/uploads/2021/10/Slide-Web-0011859-scaled.jpg"} fit="cover" />
-          </Carousel.Slide>
+          {slides}
         </Carousel>
       </Box>
       <Container style={{ display: "flex", alignItems: "center", flexDirection: "column" }}>

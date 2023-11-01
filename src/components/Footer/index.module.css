@@ -3,7 +3,7 @@
   background-color: light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-6));
   border-bottom: rem(1px) solid light-dark(var(--mantine-color-gray-2), transparent);
   margin-top: 5vh;
-  padding: 4vh 7vw 4vh 7vw;
+  padding: 3.5vh 7vw 3.5vh 7vw;
   border-top: rgb(230, 230, 230) 1px solid;
   display: flex;
   justify-content: space-between;
@@ -15,12 +15,12 @@
 
 .innerFooter {
   width: 100%;
-  padding: 3vh 7vw 3vh 7vw;
+  padding: 2.5vh 7vw 2.5vh 7vw;
   background-color: rgb(200, 200, 200);
 }
 
 .information {
-  max-width: calc(90vw / 4 - 30px);
+  max-width: calc(90vw / 4);
 
   @media screen and (max-width: $mantine-breakpoint-xs) {
     margin-top: 1vh;
