@@ -46,14 +46,20 @@ export default function Product() {
   const sizes = product.sizes.split(",");
   let boundaryPoints: [number, number] = [0, 0]; // xoffset, maxwidth
 
-  if (sizes.length > 0) initialValues["size"] = sizes[0];
-  if (product.colors.length > 0) initialValues["color"] = product.expand.colors![0].hex;
+  if (sizes.length > 0) initialValues.size = sizes[0];
+  if (product.colors.length > 0) initialValues.color = product.expand.colors![0].hex;
   if (!!product.boundary) {
     boundaryPoints = product.boundary.split(",").map((point) => Number(point)) as [number, number];
-    initialValues["fileInput"] = null;
+    initialValues.fileInput = null;
   }
 
-  const form = useForm({ initialValues });
+  const form = useForm<{
+    size?: string;
+    color?: string;
+    quantity?: number;
+    request?: string;
+    fileInput?: File | null;
+  }>({ initialValues });
 
   useEffect(() => {
     setDocumentTitle(product.name);
