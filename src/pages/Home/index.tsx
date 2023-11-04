@@ -14,23 +14,13 @@ export default function Home() {
   const [embla, setEmbla] = useState<Embla | null>(null);
 
   const reInitEmblas = async () => {
-    const MAX_RETRIES = 10;
-    let retries = 0;
-
-    while (retries < MAX_RETRIES) {
+    while (true) {
       try {
         if (embla) embla.reInit();
-
         break;
       } catch (error) {
         console.error("Error re-initializing emblas:", error);
-        retries++;
-
-        if (retries === MAX_RETRIES) {
-          console.error("Max retries reached. Could not re-initialize all emblas.");
-        } else {
-          await new Promise((resolve) => setTimeout(resolve, 1000));
-        }
+        await new Promise((resolve) => setTimeout(resolve, 1000));
       }
     }
   };

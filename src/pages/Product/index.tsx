@@ -44,12 +44,12 @@ export default function Product() {
   const initialValues: Record<string, unknown> = { quantity: 1 };
 
   const sizes = product.sizes.split(",");
-  let boundaryPoints: [number, number] = [0, 0]; // xoffset, maxwidth
+  let boundaryPoints: [number, number, number, number] = [0, 0, 0, 0]; // xoffset, maxwidth, (maxheight, yOffset) <- just in case
 
   if (sizes.length > 0) initialValues.size = sizes[0];
   if (product.colors.length > 0) initialValues.color = product.expand.colors![0].hex;
   if (!!product.boundary) {
-    boundaryPoints = product.boundary.split(",").map((point) => Number(point)) as [number, number];
+    boundaryPoints = product.boundary.split(",").map((point) => Number(point)) as [number, number, number, number];
     initialValues.fileInput = null;
   }
 
@@ -95,9 +95,11 @@ export default function Product() {
         ctx.drawImage(
           userImage,
           boundaryPoints[0],
-          backgroundImage.height / 2 - ((userImage.height / userImage.width) * boundaryPoints[1]) / 2,
+          userImage.height <= boundaryPoints[2]
+            ? backgroundImage.height / 2 - ((userImage.height / userImage.width) * boundaryPoints[1]) / 2
+            : boundaryPoints[3],
           boundaryPoints[1],
-          (userImage.height / userImage.width) * boundaryPoints[1],
+          userImage.height <= boundaryPoints[2] ? (userImage.height / userImage.width) * boundaryPoints[1] : boundaryPoints[2],
         );
       };
     };
@@ -120,29 +122,37 @@ export default function Product() {
             <canvas id="previewCanvas" style={{ maxWidth: "100%" }}></canvas>
           </Box>
           {modalState.fileUploaded ? (
-            <Box display={"flex"} style={{ justifyContent: "center" }}>
-              <Button
-                variant="light"
-                onClick={() => {
-                  setModalState({ open: false, fileUploaded: modalState.fileUploaded });
-                  setCustomImage(image);
-                }}
-                style={{ margin: "10px" }}
-              >
-                Cancel
-              </Button>
-              <Button
-                variant="filled"
-                onClick={() => {
-                  setModalState({ open: false, fileUploaded: modalState.fileUploaded });
-                  setImage(customImage);
-                  form.setFieldValue("fileInput", customImage);
-                }}
-                style={{ margin: "10px" }}
-              >
-                Submit
-              </Button>
-            </Box>
+            <>
+              <Box mb={"md"}>
+                <Text>
+                  If the image is stretched excessively or does not fully occupy the available space, you may want to consider adjusting the scaling
+                  on your device.
+                </Text>
+              </Box>
+              <Box display={"flex"} style={{ justifyContent: "center" }}>
+                <Button
+                  variant="light"
+                  onClick={() => {
+                    setModalState({ open: false, fileUploaded: modalState.fileUploaded });
+                    setCustomImage(image);
+                  }}
+                  style={{ margin: "10px" }}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  variant="filled"
+                  onClick={() => {
+                    setModalState({ open: false, fileUploaded: modalState.fileUploaded });
+                    setImage(customImage);
+                    form.setFieldValue("fileInput", customImage);
+                  }}
+                  style={{ margin: "10px" }}
+                >
+                  Submit
+                </Button>
+              </Box>
+            </>
           ) : null}
         </Box>
       </Modal>
