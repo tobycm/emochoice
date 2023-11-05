@@ -25,5 +25,5 @@ const metadataIds = {
 } as const;
 
 export async function getMetadata(key: keyof typeof metadataIds): Promise<PocketBaseJSON> {
-  return (await pocketbase.collection<{ name: string, value: PocketBaseJSON }>("metadata").getOne(metadataIds[key])).value;
+  return (await pocketbase.collection("metadata").getOne<{ name: string; value: PocketBaseJSON }>(metadataIds[key])).value;
 }
