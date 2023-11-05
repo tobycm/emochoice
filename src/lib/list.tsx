@@ -1,5 +1,5 @@
 import { ReactNode, createContext, useContext, useState } from "react";
-import ProductColor, { Product } from "./database/models";
+import { Product, ProductColor } from "./database/models";
 
 export interface Item {
   product: Product;
