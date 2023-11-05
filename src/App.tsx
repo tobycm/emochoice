@@ -100,9 +100,6 @@ const routes: RouteObject[] = [
 ];
 const router = createBrowserRouter(routes);
 
-// @ts-ignore có cái error j đó cứ phá build
-const provider = RouterProvider({ router });
-
 export default function App() {
   return (
     <MantineProvider
@@ -120,7 +117,7 @@ export default function App() {
         },
       }}
     >
-      {provider}
+      <RouterProvider router={router} />
     </MantineProvider>
   );
 }
