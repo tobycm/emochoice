@@ -1,21 +1,21 @@
 import {
-  Box,
-  Button,
-  ColorSwatch,
-  Container,
-  Divider,
-  FileInput,
-  Image,
-  Modal,
-  NumberInput,
-  SegmentedControl,
-  Space,
-  Table,
-  Text,
-  Textarea,
-  Title,
-  Tooltip,
-  UnstyledButton,
+    Box,
+    Button,
+    ColorSwatch,
+    Container,
+    Divider,
+    FileInput,
+    Image,
+    Modal,
+    NumberInput,
+    SegmentedControl,
+    Space,
+    Table,
+    Text,
+    Textarea,
+    Title,
+    Tooltip,
+    UnstyledButton,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { Notifications, notifications } from "@mantine/notifications";
@@ -23,7 +23,7 @@ import { IconEye, IconShoppingCartPlus, IconX } from "@tabler/icons-react";
 import React, { useEffect } from "react";
 import { useLoaderData, useLocation } from "react-router-dom";
 import pocketbase from "../../lib/database";
-import ProductColor, { Product } from "../../lib/database/models";
+import { Product, ProductColor } from "../../lib/database/models";
 import { Item, List, useList } from "../../lib/list";
 import { setDocumentTitle, toTitleCase } from "../../lib/utils";
 import classes from "./index.module.css";
