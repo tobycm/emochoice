@@ -97,7 +97,7 @@ export default function Header() {
             <Space w="44px" visibleFrom="mn" />
           </Box>
           <Link to={"/"} style={{ display: "flex", justifyContent: "center", marginLeft: "6px" }}>
-            <Image src={"/images/full_logo.svg"} mih={50} mah={70} h="7vh" w={"auto"} style={{ pointerEvents: "none" }} />
+            <Image src={"/images/full_logo.svg"} mih={60} mah={70} h="7vh" w={"auto"} style={{ pointerEvents: "none" }} />
           </Link>
           <Box display={"flex"} style={{ justifyContent: "flex-end", maxWidth: isMobile ? "78px" : "min-content" }}>
             <TextInput radius="xl" w={220} mr={10} placeholder="What are you looking for?" id={"searchbarWide"} visibleFrom={"xs"} />

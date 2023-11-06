@@ -138,7 +138,7 @@ export default function App() {
           "emochoice-blue": ["#0468B0", "#0468B0", "#0468B0", "#0468B0", "#0468B0", "#0468B0", "#0468B0", "#0468B0", "#0468B0", "#0468B0"],
         },
         breakpoints: {
-          mn: "430px",
+          mn: "435px",
         },
       }}
     >
