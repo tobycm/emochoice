@@ -9,7 +9,7 @@ export default function Footer() {
       <Box className={classes.footer}>
         <Box className={classes.information}>
           <Title order={4} mb={15}>
-            About us
+            Contact us
           </Title>
           <Box display={"flex"} style={{ alignItems: "center" }} mb={10}>
             <IconMapPin className={classes.icon} />
@@ -43,16 +43,10 @@ export default function Footer() {
             Support
           </Title>
           <Box display={"flex"} style={{ flexDirection: "column" }}>
-            <Link to="/" style={{ marginBottom: "10px", textDecoration: "none", color: "black" }}>
+            <Link to="/shopping-guide" style={{ marginBottom: "10px", textDecoration: "none", color: "black" }}>
               Shopping Guide
             </Link>
-            <Link to="/" style={{ marginBottom: "10px", textDecoration: "none", color: "black" }}>
-              Payment Guide
-            </Link>
-            <Link to="/" style={{ marginBottom: "10px", textDecoration: "none", color: "black" }}>
-              Instructions for Delivery
-            </Link>
-            <Link to="/" style={{ marginBottom: "10px", textDecoration: "none", color: "black" }}>
+            <Link to="/terms-of-service" style={{ marginBottom: "10px", textDecoration: "none", color: "black" }}>
               Terms of Service
             </Link>
           </Box>
@@ -62,17 +56,17 @@ export default function Footer() {
             Policy
           </Title>
           <Box display={"flex"} style={{ flexDirection: "column" }}>
-            <Link to="/" style={{ marginBottom: "10px", textDecoration: "none", color: "black" }}>
+            <Link to="/privacy-policy" style={{ marginBottom: "10px", textDecoration: "none", color: "black" }}>
               Privacy Policy
             </Link>
-            <Link to="/" style={{ marginBottom: "10px", textDecoration: "none", color: "black" }}>
+            <Link to="/payment-policy" style={{ marginBottom: "10px", textDecoration: "none", color: "black" }}>
+              Payment Policy
+            </Link>
+            <Link to="/shipping-policy" style={{ marginBottom: "10px", textDecoration: "none", color: "black" }}>
               Shipping Policy
             </Link>
-            <Link to="/" style={{ marginBottom: "10px", textDecoration: "none", color: "black" }}>
+            <Link to="/return-policy" style={{ marginBottom: "10px", textDecoration: "none", color: "black" }}>
               Return Policy
-            </Link>
-            <Link to="/" style={{ marginBottom: "10px", textDecoration: "none", color: "black" }}>
-              Usage Rules
             </Link>
           </Box>
         </Box>

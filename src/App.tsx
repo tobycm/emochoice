@@ -10,6 +10,7 @@ import NotFound from "./pages/404";
 import Catalog from "./pages/Catalog";
 import Checkout from "./pages/Checkout";
 import Contact from "./pages/Contact";
+import Document from "./pages/Document";
 import Gallery from "./pages/Gallery";
 import Home from "./pages/Home";
 import List from "./pages/List";
@@ -90,6 +91,30 @@ const routes: RouteObject[] = [
       {
         path: "/success",
         element: <Success />,
+      },
+      {
+        path: "/terms-of-service",
+        element: <Document id="wlcw2rf3wmllk38" />,
+      },
+      {
+        path: "/payment-policy",
+        element: <Document id="nzmhp5c2oh3l2nw" />,
+      },
+      {
+        path: "/privacy-policy",
+        element: <Document id="iyk0smsk7insnej" />,
+      },
+      {
+        path: "/shipping-policy",
+        element: <Document id="1wjibyy6pz48a5j" />,
+      },
+      {
+        path: "/return-policy",
+        element: <Document id="4wu5rjh81kiad7c" />,
+      },
+      {
+        path: "/shopping-guide",
+        element: <Document id="xq6msqjc7tqk62s" />,
       },
       {
         path: "*",

@@ -177,11 +177,15 @@ export default function Checkout() {
               </Box>
               <Text size="sm" c="dimmed">
                 By clicking "Place Order" you agree to our{" "}
-                <Link to="/terms" style={{ textDecoration: "none", color: "#0468B0" }}>
+                <Link to="/terms-of-service" target="_blank" style={{ textDecoration: "none", color: "#0468B0" }}>
                   Terms of Service
-                </Link>{" "}
-                and{" "}
-                <Link to="/privacy" style={{ textDecoration: "none", color: "#0468B0" }}>
+                </Link>
+                ,{" "}
+                <Link to="/payment-policy" target="_blank" style={{ textDecoration: "none", color: "#0468B0" }}>
+                  Payment Policy
+                </Link>
+                , and{" "}
+                <Link to="/privacy-policy" target="_blank" style={{ textDecoration: "none", color: "#0468B0" }}>
                   Privacy Policy
                 </Link>
                 .
