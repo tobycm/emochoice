@@ -127,7 +127,6 @@ export default function Checkout() {
                           {isMobile ? null : (
                             <>
                               <Table.Th w="10%">Color</Table.Th>
-                              <Table.Th w="10%">Size</Table.Th>
                               <Table.Th w="10%">Uploaded Image</Table.Th>
                               <Table.Th w="25%">Request</Table.Th>
                             </>
@@ -150,8 +149,7 @@ export default function Checkout() {
                                     </>
                                   ) : null}
                                 </Table.Td>
-                                <Table.Td>{item.size}</Table.Td>
-                                <Table.Td maw={""}>{!!item.fileInput ? <Pill>{item.fileInput.name}</Pill> : null}</Table.Td>
+                                <Table.Td maw={""}>{item.fileInput ? <Pill>{item.fileInput.name}</Pill> : null}</Table.Td>
                                 <Table.Td maw={""} style={{ overflow: "hidden", textOverflow: "ellipsis" }}>
                                   {item.request} {/* don't delete the blank maw */}
                                 </Table.Td>
