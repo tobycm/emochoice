@@ -5,9 +5,8 @@ export interface Item {
   product: Product;
   quantity: number;
   request: string;
-  size: string;
-  fileInput: File;
-  color: ProductColor;
+  fileInput?: File | null;
+  color?: ProductColor;
 }
 
 export class List extends Array<Item> {

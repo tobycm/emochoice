@@ -1,5 +1,5 @@
 import { Box, Button, Checkbox, CheckboxGroup, InputBase, Loader, Modal, NavLink, Pill, Text, Title } from "@mantine/core";
-import { IconCategory, IconColorFilter, IconFilter, IconIcons, IconShirt } from "@tabler/icons-react";
+import { IconCategory, IconColorFilter, IconFilter, IconIcons } from "@tabler/icons-react";
 import { ListResult } from "pocketbase";
 import React, { useEffect, useState } from "react";
 import ProductCard from "../../components/Card";
@@ -8,7 +8,7 @@ import { Product } from "../../lib/database/models";
 import { setDocumentTitle } from "../../lib/utils";
 import classes from "./index.module.css";
 
-type FilterTypes = "color" | "size" | "category" | "brand";
+type FilterTypes = "color" | "category" | "brand";
 
 interface Filter {
   type: FilterTypes;
@@ -33,11 +33,14 @@ export default function Catalog() {
     for (const item of products.items)
       if (
         newFilters.every((filter) => {
-          if (filter.type === "color" && item.expand.colors) return item.expand.colors.filter((color) => color.name === filter.value).length > 0;
-          if (filter.type === "size") return item.sizes.includes(filter.value);
-          if (filter.type === "category" && item.expand.category)
-            return item.expand.category.filter((category) => category.name === filter.value).length > 0;
-          if (filter.type === "brand") return item.brand == filter.value;
+          switch (filter.type) {
+            case "color":
+              return item.expand.colors ? item.expand.colors.filter((color) => color.name === filter.value).length > 0 : false;
+            case "category":
+              return item.expand.category ? item.expand.category.filter((category) => category.name === filter.value).length > 0 : false;
+            case "brand":
+              return item.brand == filter.value;
+          }
         })
       )
         items.push(item);
@@ -46,16 +49,13 @@ export default function Catalog() {
 
     for (const filter of newFilters) {
       if (filter.type === "color") filterString += `&& colors.name ?= "${filter.value}"`;
-      if (filter.type === "size") filterString += `&& sizes ~ "${filter.value}"`;
       if (filter.type === "category") filterString += `&& category.name ?= "${filter.value}"`;
       if (filter.type === "brand") filterString += `&& brand = "${filter.value}"`;
     }
 
     if (filterString.slice(0, 3) === "&& ") filterString = filterString.slice(3);
 
-    getProducts(0, filterString).then((products) => {
-      setProducts(products);
-    });
+    getProducts(0, filterString).then(setProducts);
   };
 
   const updateFilters = (type: FilterTypes) => {
@@ -93,20 +93,7 @@ export default function Catalog() {
                   for (const category of product.expand.category) if (!categories.includes(category.name)) categories.push(category.name);
               }
 
-              return categories.map((size) => <Checkbox mb={5} mt={5} label={size} value={size} />);
-            })()}
-          </CheckboxGroup>
-        </NavLink>
-        <NavLink label="Fit" leftSection={<IconShirt size="1rem" stroke={1.5} />} childrenOffset={28} defaultOpened>
-          <CheckboxGroup value={getFilterValues("size")} onChange={updateFilters("size")}>
-            {(() => {
-              const sizes: string[] = [];
-
-              for (const product of products.items) {
-                for (const size of product.sizes.split(",")) if (!sizes.includes(size) && size.length > 0) sizes.push(size);
-              }
-
-              return sizes.map((size) => <Checkbox mb={5} mt={5} label={size} value={size} />);
+              return categories.map((category) => <Checkbox mb={5} mt={5} label={category} value={category} />);
             })()}
           </CheckboxGroup>
         </NavLink>

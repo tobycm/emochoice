@@ -1,79 +1,87 @@
 import {
-    Box,
-    Button,
-    ColorSwatch,
-    Container,
-    Divider,
-    FileInput,
-    Image,
-    Modal,
-    NumberInput,
-    SegmentedControl,
-    Space,
-    Table,
-    Text,
-    Textarea,
-    Title,
-    Tooltip,
-    UnstyledButton,
+  Box,
+  Button,
+  ColorSwatch,
+  Container,
+  Divider,
+  FileInput,
+  Image,
+  Modal,
+  NumberInput,
+  Space,
+  Table,
+  Text,
+  Textarea,
+  Title,
+  Tooltip,
+  UnstyledButton,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { Notifications, notifications } from "@mantine/notifications";
 import { IconEye, IconShoppingCartPlus, IconX } from "@tabler/icons-react";
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import { useLoaderData, useLocation } from "react-router-dom";
 import pocketbase from "../../lib/database";
-import { Product, ProductColor } from "../../lib/database/models";
+import { Color, Product, ProductColor } from "../../lib/database/models";
 import { Item, List, useList } from "../../lib/list";
-import { setDocumentTitle, toTitleCase } from "../../lib/utils";
+import { pasteImage, setDocumentTitle, toTitleCase } from "../../lib/utils";
 import classes from "./index.module.css";
+
+interface OrderData {
+  color?: Color;
+  quantity: number;
+  request: string;
+  fileInput?: File | null;
+}
+
+type BoundaryPoints = [number, number, number, number];
 
 export default function Product() {
   const { product } = useLoaderData() as { product: Product };
   const [customImage, setCustomImage] = React.useState<File | null>(null);
   const [image, setImage] = React.useState<File | null>(null);
-  const [modalState, setModalState] = React.useState<{ open: boolean; fileUploaded: boolean }>({ open: false, fileUploaded: false });
+  const [modalState, setModalState] = React.useState({ open: false, fileUploaded: false });
   const [productImage, setProductImage] = React.useState<string>(
     product.images.length > 0 ? pocketbase.getFileUrl(product, product.images[0]) : "/images/no_image.png",
   );
   const { list, updateList } = useList();
 
-  let user: { size?: string; color?: ProductColor; quantity?: number; request?: string; fileInput?: File } = {};
-  if (useLocation().state) user = useLocation().state as typeof user;
+  let user = useMemo<OrderData>(() => ({ quantity: 0, request: "" }), []);
 
-  const initialValues: Record<string, unknown> = { quantity: 1 };
+  const location = useLocation();
+  if (location.state) user = location.state as typeof user;
 
-  const sizes = product.sizes.split(",");
-  let boundaryPoints: [number, number, number, number] = [0, 0, 0, 0]; // xoffset, maxwidth, (maxheight, yOffset) <- just in case
+  const initialValues: OrderData = { quantity: 0, request: "" };
 
-  if (sizes.length > 0) initialValues.size = sizes[0];
-  if (product.colors.length > 0) initialValues.color = product.expand.colors![0].hex;
-  if (!!product.boundary) {
-    boundaryPoints = product.boundary.split(",").map((point) => Number(point)) as [number, number, number, number];
+  let boundaryPoints = useMemo<BoundaryPoints>(
+    () => (product.boundary ? (product.boundary.split(",").map((point) => Number(point)) as BoundaryPoints) : [0, 0, 0, 0]),
+    [product.boundary],
+  );
+
+  if (product.colors.length > 0) initialValues.color = product.expand.colors![0];
+  if (product.boundary) {
+    boundaryPoints = product.boundary.split(",").map((point) => Number(point)) as BoundaryPoints;
     initialValues.fileInput = null;
   }
 
-  const form = useForm<{
-    size?: string;
-    color?: string;
-    quantity?: number;
-    request?: string;
-    fileInput?: File | null;
-  }>({ initialValues });
+  const form = useForm<OrderData>({ initialValues });
+
+  useEffect(() => setDocumentTitle(product.name), [product.name]);
+
+  useEffect(() => notifications.clean());
 
   useEffect(() => {
-    setDocumentTitle(product.name);
-    notifications.clean();
-
-    if (user.size) form.setFieldValue("size", user.size);
-    if (user.color) form.setFieldValue("color", user.color.hex);
+    if (user.color) form.setFieldValue("color", user.color);
     if (user.quantity) form.setFieldValue("quantity", user.quantity);
     if (user.request) form.setFieldValue("request", user.request);
     if (user.fileInput) {
+      form.setFieldValue("fileInput", user.fileInput);
       setCustomImage(user.fileInput);
       setImage(user.fileInput);
     }
+  }, [user, form]);
 
+  useEffect(() => {
     if (!modalState.open) return;
 
     const userImage = document.createElement("img");
@@ -81,29 +89,34 @@ export default function Product() {
 
     if (!customImage) return;
 
+    function preview() {
+      const canvas = document.getElementById("previewCanvas") as HTMLCanvasElement | null;
+      if (!canvas) return;
+      canvas.width = backgroundImage.width;
+      canvas.height = backgroundImage.height;
+
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return;
+
+      ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
+
+      pasteImage(
+        canvas,
+        userImage,
+        {
+          xOffset: boundaryPoints[0],
+          maxWidth: boundaryPoints[1],
+          maxHeight: boundaryPoints[2],
+          yOffset: boundaryPoints[3],
+        },
+        backgroundImage.height,
+      );
+    }
+
     userImage.src = URL.createObjectURL(customImage);
     backgroundImage.src = product.images.length > 0 ? pocketbase.getFileUrl(product, product.images[0]) : "/images/no_image.png";
-    backgroundImage.onload = () => {
-      userImage.onload = () => {
-        const canvas = document.getElementById("previewCanvas") as HTMLCanvasElement | null;
-        if (!canvas) return;
-        const ctx = canvas.getContext("2d");
-        canvas.width = backgroundImage.width;
-        canvas.height = backgroundImage.height;
-        if (!ctx) return;
-        ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
-        ctx.drawImage(
-          userImage,
-          boundaryPoints[0],
-          userImage.height <= boundaryPoints[2]
-            ? backgroundImage.height / 2 - ((userImage.height / userImage.width) * boundaryPoints[1]) / 2
-            : boundaryPoints[3],
-          boundaryPoints[1],
-          userImage.height <= boundaryPoints[2] ? (userImage.height / userImage.width) * boundaryPoints[1] : boundaryPoints[2],
-        );
-      };
-    };
-  }, [modalState, customImage, product.name]);
+    backgroundImage.onload = () => (userImage.onload = preview);
+  }, [modalState, customImage, product, boundaryPoints]);
   return (
     <Box>
       <Notifications limit={5} />
@@ -165,6 +178,20 @@ export default function Product() {
           <Box
             component="form"
             onSubmit={form.onSubmit((values) => {
+              const { quantity, request, fileInput } = values;
+              if (!quantity) return;
+
+              const color: ProductColor | undefined = product.expand.colors?.find((color) => color.hex === values.color?.hex);
+              const item: Item = {
+                product,
+                color,
+                quantity,
+                request,
+                fileInput,
+              };
+              const newList = new List(...list, item);
+              updateList(newList);
+
               notifications.show({
                 title: "Success",
                 message: "Item added to list!",
@@ -173,31 +200,11 @@ export default function Product() {
                 autoClose: 3000,
                 withCloseButton: true,
               });
-              const { size, quantity, request, fileInput } = values;
-              let color: ProductColor | undefined = undefined;
-              if (!!product.expand.colors) color = product.expand.colors.filter((color) => color.hex === values.color)[0];
-              const item: Item = {
-                product: product as Product,
-                size: size as string,
-                color: color as ProductColor,
-                quantity: quantity as number,
-                request: request as string,
-                fileInput: fileInput as File,
-              };
-              const newList = new List(...list, item);
-              updateList(newList);
             })}
           >
             <Title mb={"xl"} c={"emochoice-blue"} order={4}>
               {product.brand}
             </Title>
-            {!!product.sizes ? (
-              <Box className={classes.input}>
-                <Text>Size</Text>
-                <Space w="md" />
-                <SegmentedControl data={sizes} {...form.getInputProps("size")} />
-              </Box>
-            ) : null}
             {product.colors.length > 0 ? (
               <Box className={classes.input}>
                 <Text>Color</Text>
@@ -211,11 +218,9 @@ export default function Product() {
                       mr={10}
                       style={{ cursor: "pointer" }}
                       onClick={() => {
-                        form.setFieldValue("color", color.hex);
-                        const imageFileHasColor = product.images.filter((image) => image.includes(color.name.toLowerCase()));
-                        const imageFile = imageFileHasColor.find((image) => image.includes(`${form.values.size}`.toLowerCase()));
-                        if (imageFile) setProductImage(pocketbase.getFileUrl(product, imageFile));
-                        setProductImage(imageFileHasColor[0] ? pocketbase.getFileUrl(product, imageFileHasColor[0]) : "/images/no_image.png");
+                        form.setFieldValue("color", color);
+                        const imageFile = product.images.find((image) => image.includes(color.name.toLowerCase()));
+                        setProductImage(imageFile ? pocketbase.getFileUrl(product, imageFile) : "/images/no_image.png");
                       }}
                     />
                   </Tooltip>

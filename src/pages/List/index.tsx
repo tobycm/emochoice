@@ -3,14 +3,14 @@ import { useMediaQuery } from "@mantine/hooks";
 import { IconShoppingCartSearch, IconX } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import proceedList, { List as ListClass, useList } from "../../lib/list";
+import proceedList, { Item, List as ListClass, useList } from "../../lib/list";
 import { setDocumentTitle } from "../../lib/utils";
 import classes from "./index.module.css";
 
 export default function List() {
   const [isDataLoaded, setIsDataLoaded] = useState(false);
   const { list, updateList } = useList();
-  const [deletedList, setDeletedList] = useState<any[]>([]);
+  const [deletedList, setDeletedList] = useState<Item[]>([]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -54,7 +54,6 @@ export default function List() {
                       {isMobile ? null : (
                         <>
                           <Table.Th w="10%">Color</Table.Th>
-                          <Table.Th w="10%">Size</Table.Th>
                           <Table.Th w="10%">Uploaded Image</Table.Th>
                           <Table.Th w="25%">Request</Table.Th>
                         </>
@@ -73,7 +72,6 @@ export default function List() {
                             to={`/product/${item.product.id}`}
                             style={{ textDecoration: "none", color: "black" }}
                             state={{
-                              size: item.size,
                               color: item.color,
                               request: item.request,
                               quantity: item.quantity,
@@ -94,8 +92,7 @@ export default function List() {
                                 </>
                               ) : null}
                             </Table.Td>
-                            <Table.Td>{item.size}</Table.Td>
-                            <Table.Td maw={""}>{!!item.fileInput ? <Pill>{item.fileInput.name}</Pill> : null}</Table.Td>
+                            <Table.Td maw={""}>{item.fileInput ? <Pill>{item.fileInput.name}</Pill> : null}</Table.Td>
                             <Table.Td maw={""} style={{ overflow: "hidden", textOverflow: "ellipsis" }}>
                               {item.request} {/* don't delete the blank maw */}
                             </Table.Td>

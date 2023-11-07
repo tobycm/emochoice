@@ -20,7 +20,6 @@ export async function getProduct(id: string) {
 }
 
 const metadataIds = {
-  availableSizes: "xhw3cfxggekhj5i",
   availableBrands: "qt8d6zsesjpw66n",
 } as const;
 

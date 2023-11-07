@@ -1,6 +1,6 @@
 import { RecordModel } from "pocketbase";
 
-export type PocketBaseJSON = unknown | null
+export type PocketBaseJSON = unknown | null;
 
 type HexColor = string;
 type Filename = string;
@@ -11,7 +11,6 @@ export interface Product extends RecordModel {
   brand: string;
   category: ID[];
   description: string;
-  sizes: string; // comma separated
   colors: ID[];
   images: Filename[];
   boundary: string;
@@ -26,7 +25,9 @@ interface ProductCategory extends RecordModel {
   name: string;
 }
 
-export interface ProductColor extends RecordModel {
+export interface Color {
   name: string;
   hex: HexColor;
 }
+
+export type ProductColor = RecordModel & Color;

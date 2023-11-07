@@ -10,17 +10,15 @@ export default function Success() {
   const navigate = useNavigate();
   const isMobile = useMediaQuery(`(max-width: 36em)`);
   let user: { order?: List; name?: string; email?: string; address?: string } = {};
-  if (useLocation().state) {
-    user = useLocation().state as { order: List; name: string; email: string; address: string };
+
+  const location = useLocation();
+  if (location.state) {
+    user = location.state as { order: List; name: string; email: string; address: string };
   }
 
   useEffect(() => {
     setDocumentTitle("Order Success");
-    console.log(user);
-    if (!user.order || !user.name || !user.email || !user.address) {
-      navigate("/", { replace: true });
-      return;
-    }
+    if (!user.address || !user.email || !user.name || !user.order) return navigate("/", { replace: true });
   });
 
   return (
@@ -61,7 +59,6 @@ export default function Success() {
                   {isMobile ? null : (
                     <>
                       <Table.Th w="10%">Color</Table.Th>
-                      <Table.Th w="10%">Size</Table.Th>
                       <Table.Th w="10%">Uploaded Image</Table.Th>
                       <Table.Th w="25%">Request</Table.Th>
                     </>
@@ -84,8 +81,7 @@ export default function Success() {
                             </>
                           ) : null}
                         </Table.Td>
-                        <Table.Td>{item.size}</Table.Td>
-                        <Table.Td maw={""}>{!!item.fileInput ? <Pill>{item.fileInput.name}</Pill> : null}</Table.Td>
+                        <Table.Td maw={""}>{item.fileInput ? <Pill>{item.fileInput.name}</Pill> : null}</Table.Td>
                         <Table.Td maw={""} style={{ overflow: "hidden", textOverflow: "ellipsis" }}>
                           {item.request} {/* don't delete the blank maw */}
                         </Table.Td>
