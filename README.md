@@ -1,6 +1,5 @@
-<img src="https://raw.githubusercontent.com/tobycm/emochoice/main/public/images/full_logo.svg"  width="300px" style="margin-bottom: 20px" />
-
-# [Emochoice](https://emochoice.ca) - Print on Demand store in Canada!
+<div style="text-align: center"><img src="https://raw.githubusercontent.com/tobycm/emochoice/main/public/images/full_logo.svg"  width="300px" style="margin-bottom: 20px"  />
+<h1><a href="https://emochoice.ca" target="_blank">Emochoice</a> - Print on Demand store in Canada!</h1></div>
 
 If it exists, there is printing of it. If not, contact us.
 
@@ -20,8 +19,32 @@ It is our pleasure to serve you. We wish everyone a lot of success and happiness
 
 Address: [Unit 101-737 Main St, Penticton, British Columbia, Canada V2A 5E1](https://maps.app.goo.gl/XMkwggAQtaGKr6Jp9)
 
-Phone number: [+1 (778) 531-6161](tel:1-778-531-6161)
+Phone number: +1 (778) 531-6161
 
 Email: sales@emochoice.ca
 
 <img src="https://pocketbase.emochoice.ca/api/files/sg2k8zp13z5s5id/fyed19zwcnk6fqw/slide_2_yvymmlPhvT.jpg" />
+
+## About this repository
+
+### Developers
+
+| <a href="https://github.com/tobycm" target="_blank"> <img src="https://avatars.githubusercontent.com/u/62174797?v=4" alt="" width="96px" height="96px"> </a> | <a href="https://github.com/pdt1806" target="_blank"> <img src="https://avatars.githubusercontent.com/u/78996937?v=4" alt="" width="96px" height="96px"> </a> |
+| :----------------------------------------------------------------------------------------------------------------------------------------------------------: | :-----------------------------------------------------------------------------------------------------------------------------------------------------------: |
+|                                                                            tobycm                                                                            |                                                                            pdt1806                                                                            |
+
+### Technologies
+
+- [React](https://reactjs.org/)
+- [Vite](https://vitejs.dev/)
+- [Mantine](https://mantine.dev/)
+- [PocketBase](https://pocketbase.io/)
+- [Cloudflare Pages](https://pages.cloudflare.com/)
+
+### License
+
+See the [LICENSE](https://github.com/tobycm/emochoice/blob/main/LICENSE) file for license rights and limitations (MIT).
+
+### Contributing
+
+We do not accept contributions at this time.
