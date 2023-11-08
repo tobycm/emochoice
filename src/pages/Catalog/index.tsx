@@ -1,12 +1,12 @@
-import { Box, Button, Checkbox, CheckboxGroup, InputBase, Loader, Modal, NavLink, Pill, Text, Title } from "@mantine/core";
-import { IconCategory, IconColorFilter, IconFilter, IconIcons } from "@tabler/icons-react";
+import { Box, Button, Checkbox, CheckboxGroup, InputBase, Modal, NavLink, Pill, Text, Title, UnstyledButton } from "@mantine/core";
+import { IconCategory, IconColorFilter, IconFilter, IconIcons, IconSearchOff } from "@tabler/icons-react";
 import { ListResult } from "pocketbase";
 import React, { useEffect, useState } from "react";
-import { useLocation } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 import ProductCard from "../../components/Card";
 import { getProducts, searchProducts } from "../../lib/database";
 import { Product } from "../../lib/database/models";
-import { setDocumentTitle } from "../../lib/utils";
+import LoaderBox, { setDocumentTitle } from "../../lib/utils";
 import classes from "./index.module.css";
 
 type FilterTypes = "color" | "category" | "brand";
@@ -17,6 +17,7 @@ interface Filter {
 }
 
 export default function Catalog() {
+  const navigate = useNavigate();
   const [products, setProducts] = useState<ListResult<Product>>({
     items: [],
     page: 0,
@@ -32,12 +33,13 @@ export default function Catalog() {
     searchQuery: string;
   } | null = null;
 
-  const location = useLocation();
-  if (location.state) user = location.state;
+  let location = useLocation();
+  if (location.state) {
+    user = location.state;
+  }
 
   if (user) {
     searchProducts(user.searchQuery.toLowerCase()).then((products) => {
-      user = null;
       setProducts(products);
       setIsLoaded(true);
     });
@@ -143,6 +145,31 @@ export default function Catalog() {
     );
   }
 
+  if (!isLoaded) return <LoaderBox />;
+
+  if (isLoaded && products.items.length === 0)
+    return (
+      <Box display="flex" style={{ justifyContent: "center", alignItems: "center", flexDirection: "column" }} w="100%" h="50vh">
+        <IconSearchOff style={{ width: "30%", height: "30%", marginBottom: "1em" }} stroke={1} />
+        <Title order={2} mb="md">
+          No Products Found
+        </Title>
+        <Text>
+          <UnstyledButton
+            onClick={() => {
+              location.state = null;
+              user = null;
+              getProducts().then(setProducts);
+            }}
+            style={{ color: "black", textDecoration: "underline" }}
+          >
+            Browse
+          </UnstyledButton>{" "}
+          and start adding items to the list!
+        </Text>
+      </Box>
+    );
+
   return (
     <Box className={classes.container}>
       <Modal
@@ -173,42 +200,36 @@ export default function Catalog() {
           Filters
         </Button>
       </Box>
-      {isLoaded ? (
-        <Box style={{ flex: "4.5" }}>
-          <Box ml="1vw" visibleFrom="xs">
-            <Text mb="1vh" c="dimmed">
-              Filters:
-            </Text>
-            <InputBase component="div" multiline>
-              <Pill.Group>
-                {filters.map((filter) => (
-                  <Pill
-                    key={filter.value}
-                    withRemoveButton
-                    onRemove={() => {
-                      const newFilters: Filter[] = [];
-                      for (const f of filters) if (f.value !== filter.value) newFilters.push(f);
-                      setFilters(newFilters);
-                      filterProducts(newFilters);
-                    }}
-                  >
-                    {filter.value}
-                  </Pill>
-                ))}
-              </Pill.Group>
-            </InputBase>
-          </Box>
-          <Box className={classes.cardsBox}>
-            {products.items.map((product) => (
-              <ProductCard product={product} />
-            ))}
-          </Box>
+      <Box style={{ flex: "4.5" }}>
+        <Box ml="1vw" visibleFrom="xs">
+          <Text mb="1vh" c="dimmed">
+            Filters:
+          </Text>
+          <InputBase component="div" multiline>
+            <Pill.Group>
+              {filters.map((filter) => (
+                <Pill
+                  key={filter.value}
+                  withRemoveButton
+                  onRemove={() => {
+                    const newFilters: Filter[] = [];
+                    for (const f of filters) if (f.value !== filter.value) newFilters.push(f);
+                    setFilters(newFilters);
+                    filterProducts(newFilters);
+                  }}
+                >
+                  {filter.value}
+                </Pill>
+              ))}
+            </Pill.Group>
+          </InputBase>
         </Box>
-      ) : (
-        <Box display="flex" style={{ justifyContent: "center", alignItems: "center" }} w="80%">
-          <Loader size="xl" />
+        <Box className={classes.cardsBox}>
+          {products.items.map((product) => (
+            <ProductCard product={product} />
+          ))}
         </Box>
-      )}
+      </Box>
     </Box>
   );
 }

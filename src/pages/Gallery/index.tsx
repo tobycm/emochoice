@@ -1,9 +1,9 @@
 import { Carousel, Embla } from "@mantine/carousel";
-import { Box, Image, Loader, Title } from "@mantine/core";
+import { Box, Image, Title } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import { useEffect, useState } from "react";
 import { getGallery } from "../../lib/database";
-import { setDocumentTitle, toTitleCase } from "../../lib/utils";
+import LoaderBox, { setDocumentTitle, toTitleCase } from "../../lib/utils";
 import classes from "./index.module.css";
 
 export default function Gallery() {
@@ -57,11 +57,7 @@ export default function Gallery() {
   }, [embla]);
 
   if (!slides.hoodies.length || !slides.keychains.length || !slides.posters.length) {
-    return (
-      <Box h="50vh" w="100%" display={"flex"} style={{ alignItems: "center", justifyContent: "center" }}>
-        <Loader size="lg" mt={"lg"} />
-      </Box>
-    );
+    return <LoaderBox />;
   }
 
   return (

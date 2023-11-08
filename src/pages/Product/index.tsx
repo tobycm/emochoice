@@ -17,7 +17,7 @@ import {
   UnstyledButton,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { Notifications, notifications } from "@mantine/notifications";
+import { notifications } from "@mantine/notifications";
 import { IconEye, IconShoppingCartPlus, IconX } from "@tabler/icons-react";
 import React, { useEffect, useMemo } from "react";
 import { useLoaderData, useLocation } from "react-router-dom";
@@ -68,7 +68,7 @@ export default function Product() {
 
   useEffect(() => setDocumentTitle(product.name), [product.name]);
 
-  useEffect(() => notifications.clean());
+  useEffect(() => notifications.clean(), []);
 
   useEffect(() => {
     if (user.color) form.setFieldValue("color", user.color);
@@ -119,7 +119,6 @@ export default function Product() {
   }, [modalState, customImage, product, boundaryPoints]);
   return (
     <Box>
-      <Notifications limit={5} />
       <Modal
         opened={modalState.open}
         onClose={() => {
@@ -207,7 +206,7 @@ export default function Product() {
                 <Text>Color</Text>
                 <Space w="md" />
                 {product.expand.colors!.map((color) => (
-                  <Tooltip label={color.name} openDelay={500}>
+                  <Tooltip label={color.name} openDelay={250}>
                     <ColorSwatch
                       key={color.hex}
                       color={color.hex}

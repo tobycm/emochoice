@@ -1,10 +1,10 @@
-import { Box, Button, Card, Checkbox, Loader, NumberInput, Pill, Table, Text, Title, Tooltip, UnstyledButton } from "@mantine/core";
+import { Box, Button, Card, Checkbox, NumberInput, Pill, Table, Text, Title, Tooltip, UnstyledButton } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import { IconShoppingCartSearch, IconX } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import proceedList, { Item, List as ListClass, useList } from "../../lib/list";
-import { setDocumentTitle } from "../../lib/utils";
+import LoaderBox, { setDocumentTitle } from "../../lib/utils";
 import classes from "./index.module.css";
 
 export default function List() {
@@ -166,7 +166,7 @@ export default function List() {
           </Box>
         )
       ) : (
-        <Loader size="md" mt={"md"} />
+        <LoaderBox />
       )}
     </Box>
   );

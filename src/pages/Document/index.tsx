@@ -1,8 +1,8 @@
-import { Box, Container, Loader, Text, Title } from "@mantine/core";
+import { Box, Container, Text, Title } from "@mantine/core";
 import { RecordModel } from "pocketbase";
 import { useEffect, useState } from "react";
 import { getDocument } from "../../lib/database";
-import { monthsKey } from "../../lib/utils";
+import LoaderBox, { monthsKey } from "../../lib/utils";
 
 interface DocumentProps {
   id: string;
@@ -18,11 +18,7 @@ const Document = (props: DocumentProps) => {
   });
 
   if (!document) {
-    return (
-      <Box h="50vh" w="100%" display={"flex"} style={{ alignItems: "center", justifyContent: "center" }}>
-        <Loader size="lg" mt={"lg"} />
-      </Box>
-    );
+    return <LoaderBox />;
   }
 
   return (

@@ -1,3 +1,5 @@
+import { Box, Loader } from "@mantine/core";
+
 export function toTitleCase(str: string) {
   return str.replace(/\w\S*/g, function (txt) {
     return txt.charAt(0).toUpperCase() + txt.substring(1).toLowerCase();
@@ -41,5 +43,13 @@ export function pasteImage(
     img.height <= coords.maxHeight ? backgroundImageHeight / 2 - ((img.height / img.width) * coords.maxWidth) / 2 : coords.yOffset,
     coords.maxWidth,
     img.height <= coords.maxHeight ? (img.height / img.width) * coords.maxWidth : coords.maxHeight,
+  );
+}
+
+export default function LoaderBox() {
+  return (
+    <Box h="50vh" w="100%" display={"flex"} style={{ alignItems: "center", justifyContent: "center" }}>
+      <Loader size="lg" />
+    </Box>
   );
 }
