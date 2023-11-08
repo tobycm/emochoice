@@ -2,7 +2,7 @@ import { Box, Button, Checkbox, CheckboxGroup, InputBase, Modal, NavLink, Pill, 
 import { IconCategory, IconColorFilter, IconFilter, IconIcons, IconSearchOff } from "@tabler/icons-react";
 import { ListResult } from "pocketbase";
 import React, { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router";
+import { useLocation } from "react-router";
 import ProductCard from "../../components/Card";
 import { getProducts, searchProducts } from "../../lib/database";
 import { Product } from "../../lib/database/models";
@@ -17,7 +17,6 @@ interface Filter {
 }
 
 export default function Catalog() {
-  const navigate = useNavigate();
   const [products, setProducts] = useState<ListResult<Product>>({
     items: [],
     page: 0,
