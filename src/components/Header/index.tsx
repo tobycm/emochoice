@@ -42,10 +42,10 @@ export default function Header() {
     setShowIndicator(list.length > 0);
     getProducts().then((res) => {
       res.items.forEach((item) => {
-        setProductsNames((prev) => [...prev, item.name]);
+        if (!productsNames.includes(item.name)) setProductsNames((prev) => [...prev, item.name]);
       });
     });
-  }, [list]);
+  }, [list, productsNames]);
 
   return (
     <Box className={classes.header}>
