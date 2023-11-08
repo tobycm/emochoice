@@ -13,18 +13,6 @@ export default function Home() {
   const [slides, setSlides] = useState<JSX.Element[]>([]);
   const [embla, setEmbla] = useState<Embla | null>(null);
 
-  const reInitEmblas = async () => {
-    while (true) {
-      try {
-        if (embla) embla.reInit();
-        break;
-      } catch (error) {
-        console.error("Error re-initializing emblas:", error);
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-      }
-    }
-  };
-
   useEffect(() => {
     setDocumentTitle();
     const fetchAndSetGallery = async (type: string) => {
@@ -41,10 +29,19 @@ export default function Home() {
       }
     };
 
-    Promise.all([fetchAndSetGallery("home_carousel")]).then(() => {
-      reInitEmblas();
+    fetchAndSetGallery("home_carousel").then(async () => {
+      // eslint-disable-next-line no-constant-condition
+      while (true) {
+        try {
+          if (embla) embla.reInit();
+          break;
+        } catch (error) {
+          console.error("Error re-initializing emblas:", error);
+          await new Promise((resolve) => setTimeout(resolve, 1000));
+        }
+      }
     });
-  }, []);
+  }, [embla]);
 
   return (
     <>

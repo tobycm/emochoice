@@ -15,6 +15,10 @@ export async function getProducts(page: number = 0, filter: string = "") {
   return await pocketbase.collection("products").getList<Product>(page, 24, { filter, expand: "category,colors" });
 }
 
+export async function searchProducts(query: string) {
+  return await pocketbase.collection("products").getList<Product>(0, 24, { filter: `name ~ "${query}"`, expand: "category,colors" });
+}
+
 export async function getProduct(id: string) {
   return await pocketbase.collection("products").getOne<Product>(id, { expand: "category,colors" });
 }

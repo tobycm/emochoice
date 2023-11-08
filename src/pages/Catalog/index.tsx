@@ -4,7 +4,7 @@ import { ListResult } from "pocketbase";
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router";
 import ProductCard from "../../components/Card";
-import { getProducts } from "../../lib/database";
+import { getProducts, searchProducts } from "../../lib/database";
 import { Product } from "../../lib/database/models";
 import { setDocumentTitle } from "../../lib/utils";
 import classes from "./index.module.css";
@@ -28,23 +28,22 @@ export default function Catalog() {
   const [filters, setFilters] = useState<Filter[]>([]);
   const [modalOpened, setModalOpened] = React.useState<boolean>(false);
 
-  let user: any = null;
+  let user: {
+    searchQuery: string;
+  } | null = null;
 
   const location = useLocation();
   if (location.state) user = location.state;
 
-  const getSearchingProducts = (search: string) => {
-    const items: Product[] = [];
-    getProducts().then((products) => {
-      for (const item of products.items) {
-        if (item.name.toLowerCase().includes(search.toLowerCase())) items.push(item);
-      }
-      setProducts({ ...products, items });
+  if (user) {
+    searchProducts(user.searchQuery.toLowerCase()).then((products) => {
+      user = null;
+      setProducts(products);
       setIsLoaded(true);
     });
-  };
+  }
 
-  const getFilteredProducts = (newFilters: Filter[]) => {
+  const filterProducts = (newFilters: Filter[]) => {
     const items = [];
     // also update products
     for (const item of products.items)
@@ -83,7 +82,7 @@ export default function Catalog() {
       for (const value of values) newFilters.push({ type, value });
 
       setFilters(newFilters);
-      getFilteredProducts(newFilters);
+      filterProducts(newFilters);
     };
   };
 
@@ -93,12 +92,8 @@ export default function Catalog() {
     setDocumentTitle("Catalog");
     getProducts().then((products) => {
       setProducts(products);
-      setIsLoaded(true);
+      if (user === null) setIsLoaded(true);
     });
-    if (!!user) {
-      getSearchingProducts(user.searchQuery);
-      user = null;
-    }
   }, []);
 
   function FilterNavBar() {
@@ -194,7 +189,7 @@ export default function Catalog() {
                       const newFilters: Filter[] = [];
                       for (const f of filters) if (f.value !== filter.value) newFilters.push(f);
                       setFilters(newFilters);
-                      getFilteredProducts(newFilters);
+                      filterProducts(newFilters);
                     }}
                   >
                     {filter.value}
