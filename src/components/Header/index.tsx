@@ -1,5 +1,6 @@
 import {
   ActionIcon,
+  Autocomplete,
   Box,
   Burger,
   Container,
@@ -13,12 +14,12 @@ import {
   Space,
   Tabs,
   Text,
-  TextInput,
 } from "@mantine/core";
 import { useDisclosure, useMediaQuery } from "@mantine/hooks";
 import { IconPhone, IconPhoto, IconSearch, IconShirt, IconShoppingCart } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { getProducts } from "../../lib/database";
 import { useList } from "../../lib/list";
 import classes from "./index.module.css";
 
@@ -26,12 +27,24 @@ export default function Header() {
   const [drawerOpened, { toggle: toggleDrawer }] = useDisclosure(false);
   const [searchbarOpened, { toggle: toggleSearchbar }] = useDisclosure(false);
   const [showIndicator, setShowIndicator] = useState(false);
+  const [productsNames, setProductsNames] = useState<string[]>([]);
   const { list } = useList();
-
+  const navigate = useNavigate();
   const isMobile = useMediaQuery("(max-width: 36em)");
+
+  function search(wide: boolean) {
+    wide
+      ? navigate("/catalog", { state: { searchQuery: document.getElementById("searchbarWide")?.getAttribute("value") } })
+      : navigate("/catalog", { state: { searchQuery: document.getElementById("searchbarMobile")?.getAttribute("value") } });
+  }
 
   useEffect(() => {
     setShowIndicator(list.length > 0);
+    getProducts().then((res) => {
+      res.items.forEach((item) => {
+        setProductsNames((prev) => [...prev, item.name]);
+      });
+    });
   }, [list]);
 
   return (
@@ -39,8 +52,29 @@ export default function Header() {
       <Container className={classes.mainSection}>
         <Modal opened={searchbarOpened} onClose={toggleSearchbar} title={"Search"} size="md">
           <Box display={"flex"} style={{ justifyContent: "space-between" }}>
-            <TextInput radius="xl" w={"80%"} mr={10} placeholder="What are you looking for?" id={"searchbarMobile"} />
-            <ActionIcon variant="filled" radius="lg" size="lg" mr={10} ml={isMobile ? "auto" : "none"} onClick={toggleSearchbar}>
+            <Autocomplete
+              radius="xl"
+              w={"80%"}
+              mr={10}
+              placeholder="What are you looking for?"
+              id={"searchbarMobile"}
+              data={productsNames}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") search(false);
+              }}
+              limit={10}
+            />
+            <ActionIcon
+              variant="filled"
+              radius="lg"
+              size="lg"
+              mr={10}
+              ml={isMobile ? "auto" : "none"}
+              onClick={() => {
+                search(false);
+                toggleSearchbar();
+              }}
+            >
               <IconSearch style={{ width: "60%", height: "60%" }} stroke={3} />
             </ActionIcon>
           </Box>
@@ -100,14 +134,26 @@ export default function Header() {
             <Image src={"/images/full_logo.svg"} mih={60} mah={70} h="7vh" w={"auto"} style={{ pointerEvents: "none" }} />
           </Link>
           <Box display={"flex"} style={{ justifyContent: "flex-end", maxWidth: isMobile ? "78px" : "min-content" }}>
-            <TextInput radius="xl" w={220} mr={10} placeholder="What are you looking for?" id={"searchbarWide"} visibleFrom={"xs"} />
+            <Autocomplete
+              radius="xl"
+              w={220}
+              mr={10}
+              placeholder="What are you looking for?"
+              id={"searchbarWide"}
+              visibleFrom={"xs"}
+              data={productsNames}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") search(true);
+              }}
+              limit={10}
+            />
             <ActionIcon
               variant="filled"
               radius="lg"
               size="lg"
               mr={10}
               ml={isMobile ? "auto" : "none"}
-              onClick={isMobile ? toggleSearchbar : () => {}}
+              onClick={isMobile ? toggleSearchbar : () => search(true)}
               visibleFrom="mn"
             >
               <IconSearch style={{ width: "60%", height: "60%" }} stroke={3} />

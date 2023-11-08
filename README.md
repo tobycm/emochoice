@@ -1,9 +1,10 @@
-<div style="text-align: center"><img src="https://raw.githubusercontent.com/tobycm/emochoice/main/public/images/full_logo.svg"  width="300px" style="margin-bottom: 20px"  />
-<h1><a href="https://emochoice.ca" target="_blank">Emochoice</a> - Print on Demand store in Canada!</h1></div>
+<p align="center">
+<img src="https://raw.githubusercontent.com/tobycm/emochoice/main/public/images/full_logo.svg"  width="300px"  /></p>
+<h1 align="center"><a href="https://emochoice.ca" target="_blank">Emochoice</a> - Print on Demand store in Canada!</h1>
 
-If it exists, there is printing of it. If not, contact us.
+<p align="center">If it exists, there is printing of it. If not, contact us.</p>
 
-Because **If you can think it, we can print it!**
+<p align="center">Because <strong>If you can think it, we can print it!</strong></p>
 
 <img src="https://pocketbase.emochoice.ca/api/files/sg2k8zp13z5s5id/fyed19zwcnk6fqw/slide_3_bNpdEjeqb2.jpg" />
 

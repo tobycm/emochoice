@@ -46,12 +46,12 @@ export default function Product() {
   );
   const { list, updateList } = useList();
 
-  let user = useMemo<OrderData>(() => ({ quantity: 0, request: "" }), []);
+  let user = useMemo<OrderData>(() => ({ quantity: 1, request: "" }), []);
 
   const location = useLocation();
   if (location.state) user = location.state as typeof user;
 
-  const initialValues: OrderData = { quantity: 0, request: "" };
+  const initialValues: OrderData = { quantity: 1, request: "" };
 
   let boundaryPoints = useMemo<BoundaryPoints>(
     () => (product.boundary ? (product.boundary.split(",").map((point) => Number(point)) as BoundaryPoints) : [0, 0, 0, 0]),
@@ -179,8 +179,6 @@ export default function Product() {
             component="form"
             onSubmit={form.onSubmit((values) => {
               const { quantity, request, fileInput } = values;
-              if (!quantity) return;
-
               const color: ProductColor | undefined = product.expand.colors?.find((color) => color.hex === values.color?.hex);
               const item: Item = {
                 product,
@@ -191,7 +189,6 @@ export default function Product() {
               };
               const newList = new List(...list, item);
               updateList(newList);
-
               notifications.show({
                 title: "Success",
                 message: "Item added to list!",

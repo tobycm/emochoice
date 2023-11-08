@@ -36,7 +36,7 @@ export default function Success() {
             </Avatar>
             <Title mb={"md"}>You've Successfully Placed Your Order!</Title>
             <Title order={4} mb={"md"}>
-              Order Number: 0123456789
+              Order Number: {Math.floor(Math.random() * 1000000)}
             </Title>
             <Text mb="xl">
               We'll be in touch with you shortly to confirm your order and to arrange payment. If you have any questions, please contact us{" "}

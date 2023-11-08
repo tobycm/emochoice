@@ -2,6 +2,7 @@ import { Box, Button, Checkbox, CheckboxGroup, InputBase, Loader, Modal, NavLink
 import { IconCategory, IconColorFilter, IconFilter, IconIcons } from "@tabler/icons-react";
 import { ListResult } from "pocketbase";
 import React, { useEffect, useState } from "react";
+import { useLocation } from "react-router";
 import ProductCard from "../../components/Card";
 import { getProducts } from "../../lib/database";
 import { Product } from "../../lib/database/models";
@@ -26,6 +27,22 @@ export default function Catalog() {
   const [isLoaded, setIsLoaded] = useState(false);
   const [filters, setFilters] = useState<Filter[]>([]);
   const [modalOpened, setModalOpened] = React.useState<boolean>(false);
+
+  let user: any = null;
+
+  const location = useLocation();
+  if (location.state) user = location.state;
+
+  const getSearchingProducts = (search: string) => {
+    const items: Product[] = [];
+    getProducts().then((products) => {
+      for (const item of products.items) {
+        if (item.name.toLowerCase().includes(search.toLowerCase())) items.push(item);
+      }
+      setProducts({ ...products, items });
+      setIsLoaded(true);
+    });
+  };
 
   const getFilteredProducts = (newFilters: Filter[]) => {
     const items = [];
@@ -78,6 +95,10 @@ export default function Catalog() {
       setProducts(products);
       setIsLoaded(true);
     });
+    if (!!user) {
+      getSearchingProducts(user.searchQuery);
+      user = null;
+    }
   }, []);
 
   function FilterNavBar() {
