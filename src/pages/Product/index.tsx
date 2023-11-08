@@ -6,7 +6,6 @@ import {
   Divider,
   FileInput,
   Image,
-  Modal,
   NumberInput,
   Space,
   Table,
@@ -21,13 +20,14 @@ import { notifications } from "@mantine/notifications";
 import { IconEye, IconShoppingCartPlus, IconX } from "@tabler/icons-react";
 import React, { useEffect, useMemo } from "react";
 import { useLoaderData, useLocation } from "react-router-dom";
+import CustomImageModal from "../../components/Modal/CustomImage";
 import pocketbase from "../../lib/database";
-import { Color, Product, ProductColor } from "../../lib/database/models";
+import { Color, Product } from "../../lib/database/models";
 import { Item, List, useList } from "../../lib/list";
 import { pasteImage, setDocumentTitle, toTitleCase } from "../../lib/utils";
 import classes from "./index.module.css";
 
-interface OrderData {
+export interface OrderData {
   color?: Color;
   quantity: number;
   request: string;
@@ -35,6 +35,30 @@ interface OrderData {
 }
 
 type BoundaryPoints = [number, number, number, number];
+
+function preview(backgroundImage: HTMLImageElement, userImage: HTMLImageElement, boundaryPoints: BoundaryPoints) {
+  const canvas = document.getElementById("previewCanvas") as HTMLCanvasElement | null;
+  if (!canvas) return;
+  canvas.width = backgroundImage.width;
+  canvas.height = backgroundImage.height;
+
+  const ctx = canvas.getContext("2d");
+  if (!ctx) return;
+
+  ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
+
+  pasteImage(
+    canvas,
+    userImage,
+    {
+      xOffset: boundaryPoints[0],
+      maxWidth: boundaryPoints[1],
+      maxHeight: boundaryPoints[2],
+      yOffset: boundaryPoints[3],
+    },
+    backgroundImage.height,
+  );
+}
 
 export default function Product() {
   const { product } = useLoaderData() as { product: Product };
@@ -89,85 +113,22 @@ export default function Product() {
 
     if (!customImage) return;
 
-    function preview() {
-      const canvas = document.getElementById("previewCanvas") as HTMLCanvasElement | null;
-      if (!canvas) return;
-      canvas.width = backgroundImage.width;
-      canvas.height = backgroundImage.height;
-
-      const ctx = canvas.getContext("2d");
-      if (!ctx) return;
-
-      ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
-
-      pasteImage(
-        canvas,
-        userImage,
-        {
-          xOffset: boundaryPoints[0],
-          maxWidth: boundaryPoints[1],
-          maxHeight: boundaryPoints[2],
-          yOffset: boundaryPoints[3],
-        },
-        backgroundImage.height,
-      );
-    }
-
     userImage.src = URL.createObjectURL(customImage);
     backgroundImage.src = product.images.length > 0 ? pocketbase.getFileUrl(product, product.images[0]) : "/images/no_image.png";
-    backgroundImage.onload = () => (userImage.onload = preview);
-  }, [modalState, customImage, product, boundaryPoints]);
+    backgroundImage.onload = () => (userImage.onload = () => preview(backgroundImage, userImage, boundaryPoints));
+  }, [modalState.open, customImage, product, boundaryPoints]);
+
   return (
     <Box>
-      <Modal
-        opened={modalState.open}
-        onClose={() => {
-          setModalState({ open: false, fileUploaded: modalState.fileUploaded });
-          setCustomImage(image);
-        }}
-        title={"Preview"}
-        size="lg"
-        centered
-      >
-        <Box>
-          <Box display={"flex"} style={{ justifyContent: "center" }} w="100%">
-            <canvas id="previewCanvas" style={{ maxWidth: "100%" }}></canvas>
-          </Box>
-          {modalState.fileUploaded ? (
-            <>
-              <Box mb={"md"}>
-                <Text>
-                  If the image is stretched excessively or does not fully occupy the available space, you may want to consider adjusting the scaling
-                  on your device.
-                </Text>
-              </Box>
-              <Box display={"flex"} style={{ justifyContent: "center" }}>
-                <Button
-                  variant="light"
-                  onClick={() => {
-                    setModalState({ open: false, fileUploaded: modalState.fileUploaded });
-                    setCustomImage(image);
-                  }}
-                  style={{ margin: "10px" }}
-                >
-                  Cancel
-                </Button>
-                <Button
-                  variant="filled"
-                  onClick={() => {
-                    setModalState({ open: false, fileUploaded: modalState.fileUploaded });
-                    setImage(customImage);
-                    form.setFieldValue("fileInput", customImage);
-                  }}
-                  style={{ margin: "10px" }}
-                >
-                  Submit
-                </Button>
-              </Box>
-            </>
-          ) : null}
-        </Box>
-      </Modal>
+      <CustomImageModal
+        form={form}
+        modalState={modalState}
+        setModalState={setModalState}
+        image={image}
+        setImage={setImage}
+        customImage={customImage}
+        setCustomImage={setCustomImage}
+      />
       <Container className={classes.overview}>
         <Box className={classes.imagebox}>
           <Image className={classes.image} src={productImage} />
@@ -178,7 +139,7 @@ export default function Product() {
             component="form"
             onSubmit={form.onSubmit((values) => {
               const { quantity, request, fileInput } = values;
-              const color: ProductColor | undefined = product.expand.colors?.find((color) => color.hex === values.color?.hex);
+              const color = product.expand.colors?.find((color) => color.hex === values.color?.hex);
               const item: Item = {
                 product,
                 color,
