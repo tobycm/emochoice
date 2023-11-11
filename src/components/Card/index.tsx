@@ -1,17 +1,18 @@
 import { Badge, Box, Card, Group, Image, Text, Title, Tooltip } from "@mantine/core";
+import { useMediaQuery } from "@mantine/hooks";
 import { Link } from "react-router-dom";
 import pocketbase from "../../lib/database";
 import { Product } from "../../lib/database/models";
 import { toTitleCase } from "../../lib/utils";
-import classes from "./index.module.css";
 
 export default function ProductCard(props: { product: Product }) {
   const { product } = props;
   const productUrl = `/product/${product.id}`;
+  const isMobile = useMediaQuery("(max-width: 36em)");
 
   return (
     <Link to={productUrl} style={{ textDecoration: "none" }}>
-      <Card style={{ margin: "1vw" }} w={"15vw"} h={"60vh"} miw={250} mih={500} maw={750} mah={1600} shadow="sm" padding="lg" radius="md" withBorder>
+      <Card style={{ margin: "1vw" }} w={"15vw"} h={"60vh"} miw={250} mih={550} maw={750} mah={1600} shadow="sm" padding="lg" radius="md" withBorder>
         <Card.Section h={"65%"}>
           <Image src={product.images ? pocketbase.getFileUrl(product, product.images[0]) : "/images/no_image.png"} h={"100%"} maw={"100%"} />
         </Card.Section>
@@ -21,9 +22,7 @@ export default function ProductCard(props: { product: Product }) {
               {product.brand}
             </Text>
             <Group justify="space-between">
-              <Title order={3} className={classes.title}>
-                {product.name}
-              </Title>
+              <Title order={3}>{!isMobile && product.name.length > 32 ? `${product.name.slice(0, 33)}...` : product.name}</Title>
               {product.badge ? (
                 <Badge color="pink" variant="light">
                   {product.badge}
@@ -39,7 +38,7 @@ export default function ProductCard(props: { product: Product }) {
               <Box mt={"xs"} display={"flex"}>
                 {product.expand.colors.map((color) => (
                   <Tooltip label={toTitleCase(color.name)} openDelay={250}>
-                    <Box w={"2vh"} h={"2vh"} mr={5} style={{ backgroundColor: color.hex, border: "1px solid grey" }}></Box>
+                    <Box w={"2vh"} h={"2vh"} mr={5} mih={15} miw={15} style={{ backgroundColor: color.hex, border: "1px solid grey" }}></Box>
                   </Tooltip>
                 ))}
               </Box>

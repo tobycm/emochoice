@@ -12,7 +12,7 @@ export async function getGallery(name: string) {
 }
 
 export async function getProducts(page: number = 0, filter: string = "") {
-  return await pocketbase.collection("products").getList<Product>(page, 24, { filter, expand: "category,colors" });
+  return await pocketbase.collection("products").getList<Product>(page, 24, { filter, expand: "category,colors", sort: '-created' });
 }
 
 export async function searchProducts(query: string) {
