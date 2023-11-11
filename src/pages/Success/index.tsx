@@ -4,7 +4,7 @@ import { IconCheck } from "@tabler/icons-react";
 import { useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { List } from "../../lib/list";
-import { setDocumentTitle } from "../../lib/utils";
+import { setDocumentTitle, toTitleCase } from "../../lib/utils";
 
 export default function Success() {
   const navigate = useNavigate();
@@ -75,7 +75,7 @@ export default function Success() {
                         <Table.Td>
                           {item.color ? (
                             <>
-                              <Tooltip label={item.color.name}>
+                              <Tooltip label={toTitleCase(item.color.name)}>
                                 <Box w={"2vh"} h={"2vh"} mr={5} style={{ backgroundColor: item.color.hex, border: "1px solid grey" }}></Box>
                               </Tooltip>
                             </>

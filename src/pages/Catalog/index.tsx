@@ -6,7 +6,7 @@ import { useLocation } from "react-router";
 import ProductCard from "../../components/Card";
 import { getProducts, searchProducts } from "../../lib/database";
 import { Product } from "../../lib/database/models";
-import LoaderBox, { setDocumentTitle } from "../../lib/utils";
+import LoaderBox, { setDocumentTitle, toTitleCase } from "../../lib/utils";
 import classes from "./index.module.css";
 
 type FilterTypes = "color" | "category" | "brand";
@@ -100,7 +100,7 @@ export default function Catalog() {
   function FilterNavBar() {
     return (
       <Box mih={"100%"} miw={200} style={{ flex: "0.5" }}>
-        <NavLink label="Category" leftSection={<IconCategory size="1rem" stroke={1.5} />} childrenOffset={28} defaultOpened>
+        <NavLink label="Categories" leftSection={<IconCategory size="1rem" stroke={1.5} />} childrenOffset={28} defaultOpened>
           <CheckboxGroup value={getFilterValues("category")} onChange={updateFilters("category")}>
             {(() => {
               const categories: string[] = [];
@@ -114,7 +114,7 @@ export default function Catalog() {
             })()}
           </CheckboxGroup>
         </NavLink>
-        <NavLink label="Brand" leftSection={<IconIcons size="1rem" stroke={1.5} />} childrenOffset={28} defaultOpened>
+        <NavLink label="Brands" leftSection={<IconIcons size="1rem" stroke={1.5} />} childrenOffset={28} defaultOpened>
           <CheckboxGroup value={getFilterValues("brand")} onChange={updateFilters("brand")}>
             {(() => {
               const brands: string[] = [];
@@ -127,7 +127,7 @@ export default function Catalog() {
             })()}
           </CheckboxGroup>
         </NavLink>
-        <NavLink label="Colour" leftSection={<IconColorFilter size="1rem" stroke={1.5} />} childrenOffset={28} defaultOpened>
+        <NavLink label="Colors" leftSection={<IconColorFilter size="1rem" stroke={1.5} />} childrenOffset={28} defaultOpened>
           <CheckboxGroup value={getFilterValues("color")} onChange={updateFilters("color")}>
             {(() => {
               const colors: string[] = [];
@@ -136,7 +136,7 @@ export default function Catalog() {
                 if (product.expand.colors) for (const color of product.expand.colors) if (!colors.includes(color.name)) colors.push(color.name);
               }
 
-              return colors.map((color) => <Checkbox mb={5} mt={5} label={color} value={color} />);
+              return colors.map((color) => <Checkbox mb={5} mt={5} label={toTitleCase(color)} value={color} />);
             })()}
           </CheckboxGroup>
         </NavLink>

@@ -5,7 +5,7 @@ import { IconLock } from "@tabler/icons-react";
 import { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import proceedList, { List as ListClass, useList } from "../../lib/list";
-import { setDocumentTitle } from "../../lib/utils";
+import { setDocumentTitle, toTitleCase } from "../../lib/utils";
 import classes from "./index.module.css";
 
 export default function Checkout() {
@@ -143,7 +143,7 @@ export default function Checkout() {
                                 <Table.Td>
                                   {item.color ? (
                                     <>
-                                      <Tooltip label={item.color.name}>
+                                      <Tooltip label={toTitleCase(item.color.name)}>
                                         <Box w={"2vh"} h={"2vh"} mr={5} style={{ backgroundColor: item.color.hex, border: "1px solid grey" }}></Box>
                                       </Tooltip>
                                     </>

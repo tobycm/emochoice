@@ -167,7 +167,7 @@ export default function Product() {
                 <Text>Color</Text>
                 <Space w="md" />
                 {product.expand.colors!.map((color) => (
-                  <Tooltip label={color.name} openDelay={250}>
+                  <Tooltip label={toTitleCase(color.name)} openDelay={250}>
                     <ColorSwatch
                       key={color.hex}
                       color={color.hex}
