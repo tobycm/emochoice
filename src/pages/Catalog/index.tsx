@@ -146,29 +146,6 @@ export default function Catalog() {
 
   if (!isLoaded) return <LoaderBox />;
 
-  if (isLoaded && products.items.length === 0)
-    return (
-      <Box display="flex" style={{ justifyContent: "center", alignItems: "center", flexDirection: "column" }} w="100%" h="50vh">
-        <IconSearchOff style={{ width: "30%", height: "30%", marginBottom: "1em" }} stroke={1} />
-        <Title order={2} mb="md">
-          No Products Found
-        </Title>
-        <Text>
-          <UnstyledButton
-            onClick={() => {
-              location.state = null;
-              user = null;
-              getProducts().then(setProducts);
-            }}
-            style={{ color: "black", textDecoration: "underline" }}
-          >
-            Browse
-          </UnstyledButton>{" "}
-          and start adding items to the list!
-        </Text>
-      </Box>
-    );
-
   return (
     <Box className={classes.container}>
       <Modal
@@ -223,11 +200,34 @@ export default function Catalog() {
             </Pill.Group>
           </InputBase>
         </Box>
-        <Box className={classes.cardsBox}>
-          {products.items.map((product) => (
-            <ProductCard product={product} />
-          ))}
-        </Box>
+        {products.items.length !== 0 ? (
+          <Box className={classes.cardsBox}>
+            {products.items.map((product) => (
+              <ProductCard product={product} />
+            ))}
+          </Box>
+        ) : (
+          <Box display="flex" style={{ justifyContent: "center", alignItems: "center", flexDirection: "column" }} w="100%" h="50vh">
+            <IconSearchOff style={{ width: "30%", height: "30%", marginBottom: "1em" }} stroke={1} />
+            <Title order={2} mb="md">
+              No Products Found
+            </Title>
+            <Text>
+              <UnstyledButton
+                onClick={() => {
+                  location.state = null;
+                  user = null;
+                  getProducts().then(setProducts);
+                  setFilters([]);
+                }}
+                style={{ color: "black", textDecoration: "underline" }}
+              >
+                Clear
+              </UnstyledButton>{" "}
+              filters/queries and try again.
+            </Text>
+          </Box>
+        )}
       </Box>
     </Box>
   );
