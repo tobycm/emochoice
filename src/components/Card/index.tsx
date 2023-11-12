@@ -8,7 +8,7 @@ import { toTitleCase } from "../../lib/utils";
 export default function ProductCard(props: { product: Product }) {
   const { product } = props;
   const productUrl = `/product/${product.id}`;
-  const isMobile = useMediaQuery("(max-width: 36em)");
+  const isMobile = useMediaQuery("(max-width: 49em)");
 
   return (
     <Link to={productUrl} style={{ textDecoration: "none" }}>
@@ -22,7 +22,9 @@ export default function ProductCard(props: { product: Product }) {
               {product.brand}
             </Text>
             <Group justify="space-between">
-              <Title order={3}>{!isMobile && product.name.length > 32 ? `${product.name.slice(0, 33)}...` : product.name}</Title>
+              <Title order={3}>
+                {product.name.length > 32 ? `${isMobile ? product.name.slice(0, 30) : product.name.slice(0, 33)}...` : product.name}
+              </Title>
               {product.badge ? (
                 <Badge color="pink" variant="light">
                   {product.badge}

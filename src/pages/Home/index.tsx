@@ -116,11 +116,8 @@ export default function Home() {
           </Link>
         </Box>
         <Divider my="xl" size="xs" w={"100%"}></Divider>
-        <Title order={2} mb="xl">
-          Gallery
-        </Title>
       </Container>
-      <Gallery></Gallery>
+      <Gallery />
     </>
   );
 }

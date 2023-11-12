@@ -27,6 +27,7 @@ export default function Catalog() {
   const [isLoaded, setIsLoaded] = useState(false);
   const [filters, setFilters] = useState<Filter[]>([]);
   const [modalOpened, setModalOpened] = React.useState<boolean>(false);
+  const [isFiltered, setIsFiltered] = useState(true);
 
   let user: {
     searchQuery: string;
@@ -45,7 +46,6 @@ export default function Catalog() {
   }
 
   const filterProducts = (newFilters: Filter[]) => {
-    setIsLoaded(false);
     let filterString = "";
 
     for (const filter of newFilters) {
@@ -58,7 +58,7 @@ export default function Catalog() {
 
     getProducts(0, filterString).then((products) => {
       setProducts(products);
-      setIsLoaded(true);
+      setIsFiltered(true);
     });
   };
 
@@ -69,6 +69,7 @@ export default function Catalog() {
 
       for (const value of values) newFilters.push({ type, value });
 
+      setIsFiltered(false);
       setFilters(newFilters);
       filterProducts(newFilters);
     };
@@ -83,6 +84,10 @@ export default function Catalog() {
       if (user === null) setIsLoaded(true);
     });
   }, []);
+
+  useEffect(() => {
+    console.log(isFiltered);
+  }, [isFiltered]);
 
   function FilterNavBar() {
     return (
@@ -187,13 +192,9 @@ export default function Catalog() {
             </Pill.Group>
           </InputBase>
         </Box>
-        {products.items.length !== 0 ? (
-          <Box className={classes.cardsBox}>
-            {products.items.map((product) => (
-              <ProductCard product={product} />
-            ))}
-          </Box>
-        ) : (
+        {!isFiltered ? (
+          <LoaderBox />
+        ) : products.items.length === 0 ? (
           <Box display="flex" style={{ justifyContent: "center", alignItems: "center", flexDirection: "column" }} w="100%" h="50vh">
             <IconSearchOff style={{ width: "30%", height: "30%", marginBottom: "1em" }} stroke={1} />
             <Title order={2} mb="md">
@@ -213,6 +214,12 @@ export default function Catalog() {
               </UnstyledButton>{" "}
               filters/queries and try again.
             </Text>
+          </Box>
+        ) : (
+          <Box className={classes.cardsBox}>
+            {products.items.map((product) => (
+              <ProductCard product={product} />
+            ))}
           </Box>
         )}
       </Box>
