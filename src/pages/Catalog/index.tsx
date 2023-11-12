@@ -47,9 +47,15 @@ export default function Catalog() {
 
   const filterProducts = (newFilters: Filter[]) => {
     let filterString = "";
+    let colorCounter = 0;
+    let colorsList: string[] = [];
 
     for (const filter of newFilters) {
-      if (filter.type === "color") filterString += `&& colors.name ?= "${filter.value}"`;
+      if (filter.type === "color") {
+        if (colorCounter === 0) filterString += `&& colors.name ?= "${filter.value}"`;
+        colorCounter++;
+        colorsList.push(filter.value);
+      }
       if (filter.type === "category") filterString += `&& category.name ?= "${filter.value}"`;
       if (filter.type === "brand") filterString += `&& brand = "${filter.value}"`;
     }
@@ -57,7 +63,23 @@ export default function Catalog() {
     if (filterString.slice(0, 3) === "&& ") filterString = filterString.slice(3);
 
     getProducts(0, filterString).then((products) => {
-      setProducts(products);
+      let finalProducts: ListResult<Product> = {} as ListResult<Product>;
+      if (colorsList.length > 1) {
+        for (const color of colorsList) {
+          const filteredProducts = products.items.filter((product) => {
+            if (product.expand.colors) {
+              for (const productColor of product.expand.colors) {
+                if (productColor.name === color) {
+                  return true;
+                }
+              }
+            }
+            return false;
+          });
+          finalProducts.items = filteredProducts;
+        }
+      } else finalProducts = products;
+      setProducts(finalProducts);
       setIsFiltered(true);
     });
   };
@@ -84,10 +106,6 @@ export default function Catalog() {
       if (user === null) setIsLoaded(true);
     });
   }, []);
-
-  useEffect(() => {
-    console.log(isFiltered);
-  }, [isFiltered]);
 
   function FilterNavBar() {
     return (

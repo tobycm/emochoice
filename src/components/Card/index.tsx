@@ -33,7 +33,7 @@ export default function ProductCard(props: { product: Product }) {
             </Group>
             {product.expand.category ? (
               <Text mt="xs" style={{ color: "grey" }}>
-                Category: {product.expand.category.map((category) => category.name).join(", ")}
+                Categor{product.expand.category.length === 1 ? "y" : "ies"}: {product.expand.category.map((category) => category.name).join(", ")}
               </Text>
             ) : null}
             {product.expand.colors ? (
