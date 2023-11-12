@@ -32,7 +32,7 @@ export default function Catalog() {
     searchQuery: string;
   } | null = null;
 
-  let location = useLocation();
+  const location = useLocation();
   if (location.state) {
     user = location.state;
   }
@@ -45,23 +45,7 @@ export default function Catalog() {
   }
 
   const filterProducts = (newFilters: Filter[]) => {
-    const items = [];
-    // also update products
-    for (const item of products.items)
-      if (
-        newFilters.every((filter) => {
-          switch (filter.type) {
-            case "color":
-              return item.expand.colors ? item.expand.colors.filter((color) => color.name === filter.value).length > 0 : false;
-            case "category":
-              return item.expand.category ? item.expand.category.filter((category) => category.name === filter.value).length > 0 : false;
-            case "brand":
-              return item.brand == filter.value;
-          }
-        })
-      )
-        items.push(item);
-
+    setIsLoaded(false);
     let filterString = "";
 
     for (const filter of newFilters) {
@@ -72,7 +56,10 @@ export default function Catalog() {
 
     if (filterString.slice(0, 3) === "&& ") filterString = filterString.slice(3);
 
-    getProducts(0, filterString).then(setProducts);
+    getProducts(0, filterString).then((products) => {
+      setProducts(products);
+      setIsLoaded(true);
+    });
   };
 
   const updateFilters = (type: FilterTypes) => {
