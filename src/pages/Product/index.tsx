@@ -2,21 +2,22 @@ import {
   Box,
   Button,
   Container,
-  Divider,
   FileInput,
   Image,
   NumberInput,
   Space,
   Table,
+  Tabs,
   Text,
   Textarea,
   Title,
   Tooltip,
   UnstyledButton,
+  rem,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { notifications } from "@mantine/notifications";
-import { IconEye, IconShoppingCartPlus, IconX } from "@tabler/icons-react";
+import { IconEye, IconInfoCircle, IconNumber, IconShoppingCartPlus, IconX } from "@tabler/icons-react";
 import React, { useEffect, useMemo } from "react";
 import { useLoaderData, useLocation } from "react-router-dom";
 import ColorButton from "../../components/ColorButton";
@@ -70,7 +71,12 @@ export default function Product() {
   );
   const { list, updateList } = useList();
 
-  let user = useMemo<OrderData>(() => ({ quantity: 1, request: "" }), []);
+  let user: {
+    color?: Color;
+    quantity?: number;
+    request?: string;
+    fileInput?: File | null;
+  } | null = null;
 
   const location = useLocation();
   if (location.state) user = location.state as typeof user;
@@ -95,6 +101,7 @@ export default function Product() {
   useEffect(() => notifications.clean(), []);
 
   useEffect(() => {
+    if (!user) return;
     if (user.color) form.setFieldValue("color", user.color);
     if (user.quantity) form.setFieldValue("quantity", user.quantity);
     if (user.request) form.setFieldValue("request", user.request);
@@ -167,18 +174,17 @@ export default function Product() {
                 <Text>Color</Text>
                 <Space w="md" />
                 {product.expand.colors!.map((color) => (
-                  <Tooltip label={toTitleCase(color.name)} openDelay={100}>
-                    <ColorButton
-                      key={color.hex}
-                      hex={color.hex}
-                      texture={color.texture ? pocketbase.getFileUrl(color, color.texture) : ""}
-                      onClick={() => {
-                        form.setFieldValue("color", color);
-                        const imageFile = product.images.find((image) => image.includes(color.name.toLowerCase()));
-                        setProductImage(imageFile ? pocketbase.getFileUrl(product, imageFile) : "/images/no_image.png");
-                      }}
-                    />
-                  </Tooltip>
+                  <ColorButton
+                    key={color.hex}
+                    hex={color.hex}
+                    name={color.name}
+                    texture={color.texture ? pocketbase.getFileUrl(color, color.texture) : ""}
+                    onClick={() => {
+                      form.setFieldValue("color", color);
+                      const imageFile = product.images.find((image) => image.includes(color.name.toLowerCase()));
+                      setProductImage(imageFile ? pocketbase.getFileUrl(product, imageFile) : "/images/no_image.png");
+                    }}
+                  />
                 ))}
               </Box>
             ) : null}
@@ -259,54 +265,66 @@ export default function Product() {
           </Box>
         </Box>
       </Container>
-      <Container className={classes.information}>
-        <Title order={2}>Description</Title>
-        <Divider my="xs" />
-        <div dangerouslySetInnerHTML={{ __html: `${product.description}` }} />
-      </Container>
-      <Container className={classes.information}>
-        <Title order={2}>Technical Details</Title>
-        <Divider my="xs" />
-        <Table>
-          <Table.Tbody>
-            <Table.Tr>
-              <Table.Td>
-                <strong>Emochoice ID</strong>
-              </Table.Td>
-              <Table.Td>{product.id}</Table.Td>
-            </Table.Tr>
-            <Table.Tr>
-              <Table.Td>
-                <strong>Brand</strong>
-              </Table.Td>
-              <Table.Td>{product.brand}</Table.Td>
-            </Table.Tr>
-            <Table.Tr>
-              <Table.Td>
-                <strong>Name</strong>
-              </Table.Td>
-              <Table.Td>{product.name}</Table.Td>
-            </Table.Tr>
-            <Table.Tr>
-              <Table.Td>
-                <strong>Category</strong>
-              </Table.Td>
-              <Table.Td>
-                {product.category.length > 0 ? product.expand.category!.map((category) => category.name).join(", ") : "No category"}
-              </Table.Td>
-            </Table.Tr>
-            {product.custom_data
-              ? Object.entries(product.custom_data).map(([key, value]) => (
+      <Container mt="sm">
+        <Tabs defaultValue="gallery">
+          <Tabs.List>
+            <Tabs.Tab value="gallery" leftSection={<IconInfoCircle style={{ width: rem(12), height: rem(12) }} />}>
+              Description
+            </Tabs.Tab>
+            <Tabs.Tab value="messages" leftSection={<IconNumber style={{ width: rem(12), height: rem(12) }} />}>
+              Technical Details
+            </Tabs.Tab>
+          </Tabs.List>
+          <Tabs.Panel value="gallery">
+            <Container className={classes.information}>
+              <div dangerouslySetInnerHTML={{ __html: `${product.description}` }} />
+            </Container>
+          </Tabs.Panel>
+          <Tabs.Panel value="messages">
+            <Container className={classes.information}>
+              <Table>
+                <Table.Tbody>
                   <Table.Tr>
                     <Table.Td>
-                      <strong>{toTitleCase(key)}</strong>
+                      <strong>Emochoice ID</strong>
                     </Table.Td>
-                    <Table.Td>{value instanceof Array ? value.join(", ") : String(value)}</Table.Td>
+                    <Table.Td>{product.id}</Table.Td>
                   </Table.Tr>
-                ))
-              : null}
-          </Table.Tbody>
-        </Table>
+                  <Table.Tr>
+                    <Table.Td>
+                      <strong>Brand</strong>
+                    </Table.Td>
+                    <Table.Td>{product.brand}</Table.Td>
+                  </Table.Tr>
+                  <Table.Tr>
+                    <Table.Td>
+                      <strong>Name</strong>
+                    </Table.Td>
+                    <Table.Td>{product.name}</Table.Td>
+                  </Table.Tr>
+                  <Table.Tr>
+                    <Table.Td>
+                      <strong>Category</strong>
+                    </Table.Td>
+                    <Table.Td>
+                      {product.category.length > 0 ? product.expand.category!.map((category) => category.name).join(", ") : "No category"}
+                    </Table.Td>
+                  </Table.Tr>
+                  {product.custom_data
+                    ? Object.entries(product.custom_data).map(([key, value]) => (
+                        <Table.Tr>
+                          <Table.Td>
+                            <strong>{toTitleCase(key)}</strong>
+                          </Table.Td>
+                          <Table.Td>{value instanceof Array ? value.join(", ") : String(value)}</Table.Td>
+                        </Table.Tr>
+                      ))
+                    : null}
+                </Table.Tbody>
+              </Table>
+            </Container>
+          </Tabs.Panel>
+        </Tabs>
       </Container>
     </Box>
   );

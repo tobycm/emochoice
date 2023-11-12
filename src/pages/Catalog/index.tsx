@@ -120,7 +120,7 @@ export default function Catalog() {
                   for (const category of product.expand.category) if (!categories.includes(category.name)) categories.push(category.name);
               }
 
-              return categories.map((category) => <Checkbox mb={5} mt={5} label={category} value={category} />);
+              return categories.map((category) => <Checkbox mb={5} mt={5} label={category} value={category} key={category} />);
             })()}
           </CheckboxGroup>
         </NavLink>
@@ -133,7 +133,7 @@ export default function Catalog() {
                 if (!brands.includes(product.brand)) brands.push(product.brand);
               }
 
-              return brands.map((brand) => <Checkbox mb={5} mt={5} label={brand} value={brand} />);
+              return brands.map((brand) => <Checkbox mb={5} mt={5} label={brand} value={brand} key={brand} />);
             })()}
           </CheckboxGroup>
         </NavLink>
@@ -146,7 +146,7 @@ export default function Catalog() {
                 if (product.expand.colors) for (const color of product.expand.colors) if (!colors.includes(color.name)) colors.push(color.name);
               }
 
-              return colors.map((color) => <Checkbox mb={5} mt={5} label={toTitleCase(color)} value={color} />);
+              return colors.map((color) => <Checkbox mb={5} mt={5} label={toTitleCase(color)} value={color} key={color} />);
             })()}
           </CheckboxGroup>
         </NavLink>
@@ -236,7 +236,7 @@ export default function Catalog() {
         ) : (
           <Box className={classes.cardsBox}>
             {products.items.map((product) => (
-              <ProductCard product={product} />
+              <ProductCard product={product} key={product.id} />
             ))}
           </Box>
         )}

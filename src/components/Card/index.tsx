@@ -39,7 +39,7 @@ export default function ProductCard(props: { product: Product }) {
             {product.expand.colors ? (
               <Box mt={"xs"} display={"flex"}>
                 {product.expand.colors.map((color) => (
-                  <Tooltip label={toTitleCase(color.name)} openDelay={250}>
+                  <Tooltip label={toTitleCase(color.name)} openDelay={250} key={color.id}>
                     <Box w={"2vh"} h={"2vh"} mr={5} mih={15} miw={15} style={{ backgroundColor: color.hex, border: "1px solid grey" }}></Box>
                   </Tooltip>
                 ))}
