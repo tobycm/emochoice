@@ -1,7 +1,6 @@
 import {
   Box,
   Button,
-  ColorSwatch,
   Container,
   Divider,
   FileInput,
@@ -20,6 +19,7 @@ import { notifications } from "@mantine/notifications";
 import { IconEye, IconShoppingCartPlus, IconX } from "@tabler/icons-react";
 import React, { useEffect, useMemo } from "react";
 import { useLoaderData, useLocation } from "react-router-dom";
+import ColorButton from "../../components/ColorButton";
 import CustomImageModal from "../../components/Modal/CustomImage";
 import pocketbase from "../../lib/database";
 import { Color, Product } from "../../lib/database/models";
@@ -167,13 +167,11 @@ export default function Product() {
                 <Text>Color</Text>
                 <Space w="md" />
                 {product.expand.colors!.map((color) => (
-                  <Tooltip label={toTitleCase(color.name)} openDelay={250}>
-                    <ColorSwatch
+                  <Tooltip label={toTitleCase(color.name)} openDelay={100}>
+                    <ColorButton
                       key={color.hex}
-                      color={color.hex}
-                      size={30}
-                      mr={10}
-                      style={{ cursor: "pointer" }}
+                      hex={color.hex}
+                      texture={color.texture ? pocketbase.getFileUrl(color, color.texture) : ""}
                       onClick={() => {
                         form.setFieldValue("color", color);
                         const imageFile = product.images.find((image) => image.includes(color.name.toLowerCase()));

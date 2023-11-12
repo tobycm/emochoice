@@ -28,6 +28,7 @@ interface ProductCategory extends RecordModel {
 export interface Color {
   name: string;
   hex: HexColor;
+  texture: string;
 }
 
 export type ProductColor = RecordModel & Color;
