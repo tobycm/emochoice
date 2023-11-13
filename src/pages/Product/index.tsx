@@ -5,6 +5,7 @@ import {
   FileInput,
   Image,
   NumberInput,
+  ScrollArea,
   Space,
   Table,
   Tabs,
@@ -20,11 +21,12 @@ import { notifications } from "@mantine/notifications";
 import { IconEye, IconInfoCircle, IconNumber, IconShoppingCartPlus, IconX } from "@tabler/icons-react";
 import React, { useEffect, useMemo } from "react";
 import { useLoaderData, useLocation } from "react-router-dom";
+import ProductCard from "../../components/Card";
 import ColorButton from "../../components/ColorButton";
 import CustomImageModal from "../../components/Modal/CustomImage";
-import pocketbase from "../../lib/database";
+import pocketbase, { getProducts } from "../../lib/database";
 import { Color, Product } from "../../lib/database/models";
-import { Item, List, useList } from "../../lib/list";
+import { List, useList } from "../../lib/list";
 import { pasteImage, setDocumentTitle, toTitleCase } from "../../lib/utils";
 import classes from "./index.module.css";
 
@@ -69,14 +71,10 @@ export default function Product() {
   const [productImage, setProductImage] = React.useState<string>(
     product.images.length > 0 ? pocketbase.getFileUrl(product, product.images[0]) : "/images/no_image.png",
   );
+  const [randomProducts, setRandomProducts] = React.useState<Product[]>([]);
   const { list, updateList } = useList();
 
-  let user: {
-    color?: Color;
-    quantity?: number;
-    request?: string;
-    fileInput?: File | null;
-  } | null = null;
+  let user: OrderData | null = null;
 
   const location = useLocation();
   if (location.state) user = location.state as typeof user;
@@ -113,6 +111,15 @@ export default function Product() {
   }, [user, form]);
 
   useEffect(() => {
+    getProducts(0, "", 7).then((products) => {
+      const randomPage = Math.floor(Math.random() * products.totalPages);
+      getProducts(randomPage, "", 7).then((products) => {
+        setRandomProducts(products.items);
+      });
+    });
+  }, []); // lmeo
+
+  useEffect(() => {
     if (!modalState.open) return;
 
     const userImage = document.createElement("img");
@@ -147,14 +154,13 @@ export default function Product() {
             onSubmit={form.onSubmit((values) => {
               const { quantity, request, fileInput } = values;
               const color = product.expand.colors?.find((color) => color.hex === values.color?.hex);
-              const item: Item = {
+              const newList = new List(...list, {
                 product,
                 color,
                 quantity,
                 request,
                 fileInput,
-              };
-              const newList = new List(...list, item);
+              });
               updateList(newList);
               notifications.show({
                 title: "Success",
@@ -265,6 +271,19 @@ export default function Product() {
           </Box>
         </Box>
       </Container>
+      <Container mt={"sm"}>
+        <ScrollArea>
+          <Box display={"flex"}>
+            {product.images.map((image) => (
+              <Image
+                src={pocketbase.getFileUrl(product, image)}
+                onClick={() => setProductImage(pocketbase.getFileUrl(product, image))}
+                style={{ width: "100px", marginRight: "10px", cursor: "pointer" }}
+              />
+            ))}
+          </Box>
+        </ScrollArea>
+      </Container>
       <Container mt="sm">
         <Tabs defaultValue="gallery">
           <Tabs.List>
@@ -325,6 +344,12 @@ export default function Product() {
             </Container>
           </Tabs.Panel>
         </Tabs>
+      </Container>
+      <Container mt="70">
+        <Title size={25}>You might also like</Title>
+        <ScrollArea>
+          <Box display={"flex"}>{randomProducts.length > 0 ? randomProducts.map((product) => <ProductCard product={product} />) : null}</Box>
+        </ScrollArea>
       </Container>
     </Box>
   );

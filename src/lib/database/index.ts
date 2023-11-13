@@ -11,8 +11,8 @@ export async function getGallery(name: string) {
   return images;
 }
 
-export async function getProducts(page: number = 0, filter: string = "") {
-  return await pocketbase.collection("products").getList<Product>(page, 24, { filter, expand: "category,colors", sort: '-created' });
+export async function getProducts(page: number = 0, filter: string = "", perPage: number = 24) {
+  return await pocketbase.collection("products").getList<Product>(page, perPage, { filter, expand: "category,colors", sort: "-created" });
 }
 
 export async function searchProducts(query: string) {
