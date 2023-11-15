@@ -5,14 +5,26 @@ import pocketbase from "../../lib/database";
 import { Product } from "../../lib/database/models";
 import { toTitleCase } from "../../lib/utils";
 
-export default function ProductCard(props: { product: Product }) {
+export default function ProductCard(props: { product: Product; inProductPage?: boolean }) {
   const { product } = props;
   const productUrl = `/product/${product.id}`;
   const isMobile = useMediaQuery("(max-width: 49em)");
 
   return (
     <Link to={productUrl} style={{ textDecoration: "none" }}>
-      <Card style={{ margin: "1vw" }} w={"15vw"} h={"60vh"} miw={250} mih={550} maw={750} mah={1600} shadow="sm" padding="lg" radius="md" withBorder>
+      <Card
+        style={{ margin: !props.inProductPage ? "1vw" : "1vw 1vw 0 0" }}
+        w={"15vw"}
+        h={"60vh"}
+        miw={250}
+        mih={550}
+        maw={750}
+        mah={1600}
+        shadow="sm"
+        padding="lg"
+        radius="md"
+        withBorder
+      >
         <Card.Section h={"65%"}>
           <Image src={product.images ? pocketbase.getFileUrl(product, product.images[0]) : "/images/no_image.png"} h={"100%"} maw={"100%"} />
         </Card.Section>
@@ -51,3 +63,7 @@ export default function ProductCard(props: { product: Product }) {
     </Link>
   );
 }
+
+Card.defaultProps = {
+  inProductPage: false,
+};

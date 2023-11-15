@@ -96,6 +96,10 @@ export default function Product() {
 
   useEffect(() => setDocumentTitle(product.name), [product.name]);
 
+  useEffect(() => {
+    setProductImage(product.images.length > 0 ? pocketbase.getFileUrl(product, product.images[0]) : "/images/no_image.png");
+  }, [product]);
+
   useEffect(() => notifications.clean(), []);
 
   useEffect(() => {
@@ -278,7 +282,7 @@ export default function Product() {
               <Image
                 src={pocketbase.getFileUrl(product, image)}
                 onClick={() => setProductImage(pocketbase.getFileUrl(product, image))}
-                style={{ width: "100px", marginRight: "10px", cursor: "pointer" }}
+                style={{ height: "100px", marginRight: "10px", cursor: "pointer" }}
               />
             ))}
           </Box>
@@ -345,10 +349,16 @@ export default function Product() {
           </Tabs.Panel>
         </Tabs>
       </Container>
-      <Container mt="70">
-        <Title size={25}>You might also like</Title>
+      <Container mt="xl">
+        <Title order={2} mb="sm">
+          You might also like
+        </Title>
         <ScrollArea>
-          <Box display={"flex"}>{randomProducts.length > 0 ? randomProducts.map((product) => <ProductCard product={product} />) : null}</Box>
+          <Box display={"flex"}>
+            {randomProducts.length > 0
+              ? randomProducts.filter((p) => p.id != product.id).map((product) => <ProductCard inProductPage={true} product={product} />)
+              : null}
+          </Box>
         </ScrollArea>
       </Container>
     </Box>
