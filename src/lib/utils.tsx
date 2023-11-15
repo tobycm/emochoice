@@ -10,6 +10,12 @@ export function setDocumentTitle(title: string = "") {
   document.title = title !== "" ? `${title} - Emochoice` : "Emochoice";
 }
 
+export function HTMLtoText(html: string) {
+  let tmp = document.createElement("DIV");
+  tmp.innerHTML = html;
+  return tmp.textContent || tmp.innerText || "";
+}
+
 export const monthsKey = {
   "01": "January",
   "02": "February",

@@ -3,6 +3,7 @@ import { useMediaQuery } from "@mantine/hooks";
 import { IconCheck } from "@tabler/icons-react";
 import { useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import DefaultHelmet from "../../components/Helmets/DefaultHelmet";
 import { List } from "../../lib/list";
 import { setDocumentTitle, toTitleCase } from "../../lib/utils";
 
@@ -23,6 +24,7 @@ export default function Success() {
 
   return (
     <Box w="100%" mih="50vh" display="flex" style={{ flexDirection: "column", alignItems: "center" }}>
+      <DefaultHelmet />
       {user.order && user.name && user.email && user.address ? (
         <>
           <Box

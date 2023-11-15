@@ -1,7 +1,6 @@
 import { Box, Button, Space, Text, TextInput, Textarea, Title } from "@mantine/core";
 import { isEmail, isNotEmpty, useForm } from "@mantine/form";
-import { useEffect } from "react";
-import { setDocumentTitle } from "../../lib/utils";
+import SmallChangeHelmet from "../../components/Helmets/SmallChangeHelmet";
 import classes from "./index.module.css";
 
 export default function Contact() {
@@ -19,12 +18,9 @@ export default function Contact() {
     },
   });
 
-  useEffect(() => {
-    setDocumentTitle("Contact");
-  }, []);
-
   return (
     <Box className={classes.container}>
+      <SmallChangeHelmet title="Contact" description="Get in Touch with Emochoice Canada now!" location="contact" />
       <iframe
         src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2591.5775601812793!2d-119.59203682298623!3d49.49248627142508!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x54826353ea4cc04b%3A0x8f64bf2deb6375fd!2sEmochoice%20Canada!5e0!3m2!1sen!2sus!4v1697402584985!5m2!1sen!2sus"
         loading="lazy"

@@ -20,6 +20,7 @@ import { useForm } from "@mantine/form";
 import { notifications } from "@mantine/notifications";
 import { IconEye, IconInfoCircle, IconNumber, IconShoppingCartPlus, IconX } from "@tabler/icons-react";
 import React, { useEffect, useMemo } from "react";
+import { Helmet } from "react-helmet";
 import { useLoaderData, useLocation } from "react-router-dom";
 import ProductCard from "../../components/Card";
 import ColorButton from "../../components/ColorButton";
@@ -27,7 +28,7 @@ import CustomImageModal from "../../components/Modal/CustomImage";
 import pocketbase, { getProducts } from "../../lib/database";
 import { Color, Product } from "../../lib/database/models";
 import { List, useList } from "../../lib/list";
-import { pasteImage, setDocumentTitle, toTitleCase } from "../../lib/utils";
+import { HTMLtoText, pasteImage, toTitleCase } from "../../lib/utils";
 import classes from "./index.module.css";
 
 export interface OrderData {
@@ -94,8 +95,6 @@ export default function Product() {
 
   const form = useForm<OrderData>({ initialValues });
 
-  useEffect(() => setDocumentTitle(product.name), [product.name]);
-
   useEffect(() => {
     setProductImage(product.images.length > 0 ? pocketbase.getFileUrl(product, product.images[0]) : "/images/no_image.png");
   }, [product]);
@@ -121,7 +120,7 @@ export default function Product() {
         setRandomProducts(products.items);
       });
     });
-  }, []); // lmeo
+  }, []);
 
   useEffect(() => {
     if (!modalState.open) return;
@@ -138,6 +137,22 @@ export default function Product() {
 
   return (
     <Box>
+      <Helmet>
+        <title>{product.name} - Emochoice</title>
+        <meta name="description" content={HTMLtoText(product.description)} />
+        <meta name="title" content={`${product.name} - Emochoice`} />
+        <meta name="description" content={HTMLtoText(product.description)} />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content={`https://v2.emochoice.ca/product/${product.id}`} />
+        <meta property="og:title" content={`${product.name} - Emochoice`} />
+        <meta property="og:description" content={HTMLtoText(product.description)} />
+        <meta property="og:image" content={productImage} />
+        <meta property="twitter:card" content="summary_large_image" />
+        <meta property="twitter:url" content={`https://v2.emochoice.ca/product/${product.id}`} />
+        <meta property="twitter:title" content={`${product.name} - Emochoice`} />
+        <meta property="twitter:description" content={HTMLtoText(product.description)} />
+        <meta property="twitter:image" content={productImage} />
+      </Helmet>
       <CustomImageModal
         form={form}
         modalState={modalState}

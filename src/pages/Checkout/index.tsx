@@ -4,6 +4,7 @@ import { useMediaQuery } from "@mantine/hooks";
 import { IconLock } from "@tabler/icons-react";
 import { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import DefaultHelmet from "../../components/Helmets/DefaultHelmet";
 import proceedList, { List as ListClass, useList } from "../../lib/list";
 import { setDocumentTitle, toTitleCase } from "../../lib/utils";
 import classes from "./index.module.css";
@@ -42,6 +43,7 @@ export default function Checkout() {
 
   return (
     <Box className={classes.outerBox}>
+      <DefaultHelmet />
       <Title order={2} mb={20}>
         Checkout
       </Title>

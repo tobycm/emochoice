@@ -1,6 +1,6 @@
 <p align="center">
 <img src="https://raw.githubusercontent.com/tobycm/emochoice/main/public/images/full_logo.svg"  width="300px"  /></p>
-<h1 align="center"><a href="https://emochoice.ca" target="_blank">Emochoice</a> - Print on Demand store in Canada!</h1>
+<h1 align="center"><a href="https://v2.emochoice.ca" target="_blank">Emochoice</a> - Print on Demand store in Canada!</h1>
 
 <p align="center">If it exists, there is printing of it. If not, contact us.</p>
 

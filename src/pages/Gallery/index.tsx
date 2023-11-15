@@ -2,11 +2,12 @@ import { Carousel, Embla } from "@mantine/carousel";
 import { Box, Image, Title } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import { useEffect, useState } from "react";
+import SmallChangeHelmet from "../../components/Helmets/SmallChangeHelmet";
 import { getGallery } from "../../lib/database";
 import LoaderBox, { setDocumentTitle } from "../../lib/utils";
 import classes from "./index.module.css";
 
-export default function Gallery() {
+export default function Gallery(props: { home: boolean }) {
   const [embla, setEmbla] = useState<{ [key: string]: Embla | null }>({
     gallery_1: null,
     gallery_2: null,
@@ -62,6 +63,9 @@ export default function Gallery() {
 
   return (
     <Box display="flex" style={{ flexDirection: "column", alignItems: "center" }}>
+      {!props.home ? (
+        <SmallChangeHelmet title="Gallery" gallery={true} location="gallery" description="Take a look at some of our great printing products!" />
+      ) : null}
       <Title order={2} mb="xl">
         Gallery
       </Title>
@@ -84,3 +88,7 @@ export default function Gallery() {
     </Box>
   );
 }
+
+Gallery.defaultProps = {
+  home: false,
+};

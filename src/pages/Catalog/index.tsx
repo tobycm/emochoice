@@ -4,6 +4,7 @@ import { ListResult } from "pocketbase";
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router";
 import ProductCard from "../../components/Card";
+import SmallChangeHelmet from "../../components/Helmets/SmallChangeHelmet";
 import { getProducts, searchProducts } from "../../lib/database";
 import { Product } from "../../lib/database/models";
 import LoaderBox, { setDocumentTitle, toTitleCase } from "../../lib/utils";
@@ -110,6 +111,7 @@ export default function Catalog() {
   function FilterNavBar() {
     return (
       <Box mih={"100%"} miw={200} style={{ flex: "0.5" }}>
+        <SmallChangeHelmet title="Catalog" description="Browse through our wide selection of products!" location="catalog" />
         <NavLink label="Categories" leftSection={<IconCategory size="1rem" stroke={1.5} />} childrenOffset={28} defaultOpened>
           <CheckboxGroup value={getFilterValues("category")} onChange={updateFilters("category")}>
             {(() => {

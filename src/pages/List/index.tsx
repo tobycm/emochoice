@@ -3,6 +3,7 @@ import { useMediaQuery } from "@mantine/hooks";
 import { IconShoppingCartSearch, IconX } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import DefaultHelmet from "../../components/Helmets/DefaultHelmet";
 import proceedList, { Item, List as ListClass, useList } from "../../lib/list";
 import LoaderBox, { setDocumentTitle, toTitleCase } from "../../lib/utils";
 import classes from "./index.module.css";
@@ -22,6 +23,7 @@ export default function List() {
 
   return (
     <Box className={classes.outerBox}>
+      <DefaultHelmet />
       <Title order={2} mb={20}>
         My List
       </Title>

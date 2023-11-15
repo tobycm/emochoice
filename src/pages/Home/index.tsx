@@ -3,6 +3,7 @@ import { Box, Card, Container, Divider, Image, Title } from "@mantine/core";
 import Autoplay from "embla-carousel-autoplay";
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
+import DefaultHelmet from "../../components/Helmets/DefaultHelmet";
 import { getGallery } from "../../lib/database";
 import { setDocumentTitle } from "../../lib/utils";
 import Gallery from "../Gallery";
@@ -46,6 +47,7 @@ export default function Home() {
   return (
     <>
       <Box style={{ display: "flex", alignItems: "center", flexDirection: "column" }}>
+        <DefaultHelmet />
         <Carousel
           classNames={classes}
           w={"100%"}
@@ -117,7 +119,7 @@ export default function Home() {
         </Box>
         <Divider my="xl" size="xs" w={"100%"}></Divider>
       </Container>
-      <Gallery />
+      <Gallery home={true} />
     </>
   );
 }
