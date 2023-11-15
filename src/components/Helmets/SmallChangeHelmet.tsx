@@ -1,4 +1,4 @@
-import { Helmet } from "react-helmet";
+import { Helmet } from "react-helmet-async";
 
 const SmallChangeHelmet = (props: { title: string; description: string; location: string; gallery: boolean }) => {
   return (
