@@ -1,5 +1,5 @@
 import PocketBase, { RecordModel } from "pocketbase";
-import { PocketBaseJSON, Product } from "./models";
+import { Product } from "./models";
 
 const pocketbase = new PocketBase("https://pocketbase.emochoice.ca");
 
@@ -27,8 +27,8 @@ const metadataIds = {
   availableBrands: "qt8d6zsesjpw66n",
 } as const;
 
-export async function getMetadata(key: keyof typeof metadataIds): Promise<PocketBaseJSON> {
-  return (await pocketbase.collection("metadata").getOne<{ name: string; value: PocketBaseJSON }>(metadataIds[key])).value;
+export async function getMetadata(key: keyof typeof metadataIds): Promise<unknown | null> {
+  return (await pocketbase.collection("metadata").getOne<{ name: string; value: unknown | null }>(metadataIds[key])).value;
 }
 
 export async function getDocument(id: string) {
