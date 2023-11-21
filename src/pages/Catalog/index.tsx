@@ -31,7 +31,8 @@ export default function Catalog() {
   const [isFiltered, setIsFiltered] = useState(true);
 
   let user: {
-    searchQuery: string;
+    categories?: string[];
+    searchQuery?: string;
   } | null = null;
 
   const location = useLocation();
@@ -39,8 +40,32 @@ export default function Catalog() {
     user = location.state;
   }
 
-  if (user) {
+  if (user?.searchQuery) {
     searchProducts(user.searchQuery.toLowerCase()).then((products) => {
+      setProducts(products);
+      setIsLoaded(true);
+    });
+  }
+  if (user?.categories) {
+    // fetch with first category
+    getProducts(0, `category.name ?= "${user.categories[0]}"`, 100).then((products) => {
+      // filter products with other categories
+      for (const category of user!.categories!.slice(1)) {
+        products.items = products.items.filter((product) => {
+          if (!product.expand.category) return false;
+          for (const productCategory of product.expand.category) if (productCategory.name === category) return true;
+
+          return false;
+        });
+      }
+
+      setFilters(
+        user!.categories!.map((category) => ({
+          type: "category",
+          value: category,
+        })),
+      );
+
       setProducts(products);
       setIsLoaded(true);
     });
@@ -49,7 +74,7 @@ export default function Catalog() {
   const filterProducts = (newFilters: Filter[]) => {
     let filterString = "";
     let colorCounter = 0;
-    let colorsList: string[] = [];
+    const colorsList: string[] = [];
 
     for (const filter of newFilters) {
       if (filter.type === "color") {
@@ -102,11 +127,13 @@ export default function Catalog() {
 
   useEffect(() => {
     setDocumentTitle("Catalog");
-    getProducts().then((products) => {
-      setProducts(products);
-      if (user === null) setIsLoaded(true);
-    });
-  }, []);
+
+    if (!user?.categories)
+      getProducts().then((products) => {
+        setProducts(products);
+        if (user === null) setIsLoaded(true);
+      });
+  }, [user]);
 
   function FilterNavBar() {
     return (

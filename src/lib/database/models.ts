@@ -19,7 +19,7 @@ export interface Product extends RecordModel {
   };
 }
 
-interface ProductCategory extends RecordModel {
+export interface ProductCategory extends RecordModel {
   name: string;
 }
 
