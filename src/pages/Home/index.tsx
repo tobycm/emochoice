@@ -77,7 +77,7 @@ export default function Home() {
               </Card.Section>
               <Card.Section h={"80%"}>
                 <Image
-                  src="https://pocketbase.emochoice.ca/api/files/kt5o377go6qzzct/4qqc2kmr6jysur6/xs_black_RQVawPUdZC.png"
+                  src="https://pocketbase.emochoice.ca/api/files/kt5o377go6qzzct/fhpc531e0ri2m1y/white_29885_f_fl_L5ZizQ7cSc.jpg"
                   height={160}
                   alt="Clothing & Accessories Print"
                   maw={"100%"}

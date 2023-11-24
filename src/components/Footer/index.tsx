@@ -86,7 +86,7 @@ export default function Footer() {
       </Box>
       <Box className={classes.innerFooter}>
         <Text>
-          Copyright © {new Date().getFullYear()} <strong>Emochoice</strong>. All rights reserved.
+          Copyright © {new Date().getFullYear()} <strong>Emochoice Canada Inc.</strong>. All rights reserved.
         </Text>
       </Box>
     </>
