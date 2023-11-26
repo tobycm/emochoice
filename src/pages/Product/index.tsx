@@ -72,6 +72,7 @@ export default function Product() {
   const [productImage, setProductImage] = React.useState<string>(
     product.images.length > 0 ? pocketbase.getFileUrl(product, product.images[0]) : "/images/no_image.png",
   );
+  const [images, setImages] = React.useState<string[]>([]);
   const [randomProducts, setRandomProducts] = React.useState<Product[]>([]);
   const { list, updateList } = useList();
 
@@ -94,6 +95,10 @@ export default function Product() {
   }
 
   const form = useForm<OrderData>({ initialValues });
+
+  useEffect(() => {
+    setImages(product.images);
+  }, [product.images]);
 
   useEffect(() => {
     setProductImage(product.images.length > 0 ? pocketbase.getFileUrl(product, product.images[0]) : "/images/no_image.png");
@@ -206,8 +211,11 @@ export default function Product() {
                     texture={color.texture ? pocketbase.getFileUrl(color, color.texture) : ""}
                     onClick={() => {
                       form.setFieldValue("color", color);
-                      const imageFile = product.images.find((image) => image.includes(color.name.toLowerCase()));
+                      const imageWithColor = product.images.filter((image) => image.includes(color.name.toLowerCase()));
+                      if (imageWithColor.length < 0) return;
+                      const imageFile = imageWithColor[0];
                       setProductImage(imageFile ? pocketbase.getFileUrl(product, imageFile) : "/images/no_image.png");
+                      setImages(imageWithColor);
                     }}
                   />
                 ))}
@@ -290,19 +298,21 @@ export default function Product() {
           </Box>
         </Box>
       </Container>
-      <Container mt={"sm"}>
-        <ScrollArea>
-          <Box display={"flex"}>
-            {product.images.map((image) => (
-              <Image
-                src={pocketbase.getFileUrl(product, image)}
-                onClick={() => setProductImage(pocketbase.getFileUrl(product, image))}
-                style={{ height: "100px", marginRight: "10px", cursor: "pointer" }}
-              />
-            ))}
-          </Box>
-        </ScrollArea>
-      </Container>
+      {images.length > 0 ? (
+        <Container mt={"sm"}>
+          <ScrollArea>
+            <Box display={"flex"}>
+              {images.map((image) => (
+                <Image
+                  src={pocketbase.getFileUrl(product, image)}
+                  onClick={() => setProductImage(pocketbase.getFileUrl(product, image))}
+                  style={{ height: "100px", marginRight: "10px", cursor: "pointer" }}
+                />
+              ))}
+            </Box>
+          </ScrollArea>
+        </Container>
+      ) : null}
       <Container mt="sm">
         <Tabs defaultValue="gallery">
           <Tabs.List>
