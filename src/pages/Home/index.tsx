@@ -12,6 +12,7 @@ import classes from "./index.module.css";
 export default function Home() {
   const autoplay = useRef(Autoplay({ delay: 5000 }));
   const [slides, setSlides] = useState<JSX.Element[]>([]);
+  const [threeCards, setThreeCards] = useState<string[]>([]);
   const [embla, setEmbla] = useState<Embla | null>(null);
 
   useEffect(() => {
@@ -42,6 +43,13 @@ export default function Home() {
         }
       }
     });
+
+    const setHomeCards = async () => {
+      const images = await getGallery("3_cards");
+      setThreeCards(images);
+    };
+
+    setHomeCards();
   }, [embla]);
 
   return (
@@ -76,13 +84,7 @@ export default function Home() {
                 </Title>
               </Card.Section>
               <Card.Section h={"80%"}>
-                <Image
-                  src="https://pocketbase.emochoice.ca/api/files/kt5o377go6qzzct/fhpc531e0ri2m1y/white_29885_f_fl_L5ZizQ7cSc.jpg"
-                  height={160}
-                  alt="Clothing & Accessories Print"
-                  maw={"100%"}
-                  h={"100%"}
-                />
+                <Image src={threeCards[0]} height={160} alt="Clothing & Accessories Print" maw={"100%"} h={"100%"} />
               </Card.Section>
             </Card>
           </Link>
@@ -94,7 +96,7 @@ export default function Home() {
                 </Title>
               </Card.Section>
               <Card.Section h={"80%"}>
-                <Image src="https://m.media-amazon.com/images/I/71oJ2WNty9L.jpg" height={160} alt="Digital Printing" maw={"100%"} h={"100%"} />
+                <Image src={threeCards[1]} height={160} alt="Digital Printing" maw={"100%"} h={"100%"} />
               </Card.Section>
             </Card>
           </Link>
@@ -106,13 +108,7 @@ export default function Home() {
                 </Title>
               </Card.Section>
               <Card.Section h={"80%"}>
-                <Image
-                  src="https://ae01.alicdn.com/kf/Sb073bc137af6492295be9497fcacfc9dG/Hololive-Vtuber-Anime-Figures-Cosplay-Acrylic-Keychain-La-Darknesss-Hoshimachi-Suisei-Gawr-Gura-Nanashi-Mumei-Keyring.jpg"
-                  height={160}
-                  alt="Souvenirs & Gifts Printing"
-                  maw={"100%"}
-                  h={"100%"}
-                />
+                <Image src={threeCards[2]} height={160} alt="Souvenirs & Gifts Printing" maw={"100%"} h={"100%"} />
               </Card.Section>
             </Card>
           </Link>

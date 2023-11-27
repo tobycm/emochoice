@@ -28,7 +28,7 @@ import CustomImageModal from "../../components/Modal/CustomImage";
 import pocketbase, { getProducts } from "../../lib/database";
 import { Color, Product } from "../../lib/database/models";
 import { List, useList } from "../../lib/list";
-import { HTMLtoText, pasteImage, toTitleCase } from "../../lib/utils";
+import { HTMLtoText, pasteImage, replaceAll, toTitleCase } from "../../lib/utils";
 import classes from "./index.module.css";
 
 export interface OrderData {
@@ -211,7 +211,7 @@ export default function Product() {
                     texture={color.texture ? pocketbase.getFileUrl(color, color.texture) : ""}
                     onClick={() => {
                       form.setFieldValue("color", color);
-                      const imageWithColor = product.images.filter((image) => image.includes(color.name.toLowerCase()));
+                      const imageWithColor = product.images.filter((image) => image.includes(replaceAll(color.name.toLowerCase(), " ", "_")));
                       if (imageWithColor.length < 0) return;
                       const imageFile = imageWithColor[0];
                       setProductImage(imageFile ? pocketbase.getFileUrl(product, imageFile) : "/images/no_image.png");
