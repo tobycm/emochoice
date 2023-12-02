@@ -173,6 +173,21 @@ export default function Product() {
       <Container className={classes.overview}>
         <Box className={classes.imagebox}>
           <Image className={classes.image} src={productImage} />
+          {images.length > 0 && isMobile ? (
+            <Container mt={"sm"}>
+              <ScrollArea>
+                <Box display={"flex"}>
+                  {images.map((image) => (
+                    <Image
+                      src={pocketbase.getFileUrl(product, image)}
+                      onClick={() => setProductImage(pocketbase.getFileUrl(product, image))}
+                      style={{ height: "100px", marginRight: "10px", cursor: "pointer" }}
+                    />
+                  ))}
+                </Box>
+              </ScrollArea>
+            </Container>
+          ) : null}
         </Box>
         <Box ml={30} maw={!isMobile ? "50%" : "90%"}>
           <Title mb={"xs"}>{product.name}</Title>
@@ -302,7 +317,7 @@ export default function Product() {
           </Box>
         </Box>
       </Container>
-      {images.length > 0 ? (
+      {images.length > 0 && !isMobile ? (
         <Container mt={"sm"}>
           <ScrollArea>
             <Box display={"flex"}>
