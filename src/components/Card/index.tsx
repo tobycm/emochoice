@@ -1,9 +1,8 @@
-import { Badge, Box, Card, Group, Image, Text, Title, Tooltip } from "@mantine/core";
+import { Badge, Box, Card, Group, Image, Text, Title } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import { Link } from "react-router-dom";
 import pocketbase from "../../lib/database";
 import { Product } from "../../lib/database/models";
-import { toTitleCase } from "../../lib/utils";
 
 export default function ProductCard(props: { product: Product; inProductPage?: boolean }) {
   const { product } = props;
@@ -51,15 +50,16 @@ export default function ProductCard(props: { product: Product; inProductPage?: b
             {product.expand.colors ? (
               <Box mt={"xs"} display={"flex"} style={{ alignItems: "center" }}>
                 {product.expand.colors.slice(0, 9).map((color) => (
-                  <Tooltip label={toTitleCase(color.name)} openDelay={250} key={color.id}>
-                    <Box w={"2vh"} h={"2vh"} mr={5} mih={15} miw={15} style={{ backgroundColor: color.hex, border: "1px solid grey" }}></Box>
-                  </Tooltip>
+                  <Box
+                    w={"2vh"}
+                    h={"2vh"}
+                    mr={5}
+                    mih={15}
+                    miw={15}
+                    style={{ backgroundColor: color.hex, border: "1px solid #777", borderRadius: "3px" }}
+                  ></Box>
                 ))}
-                {product.expand.colors.length > 9 ? (
-                  <Box mr={5} mih={15} miw={15}>
-                    +{product.expand.colors.length - 9}
-                  </Box>
-                ) : null}
+                {product.expand.colors.length > 9 ? <Text c="grey">+{product.expand.colors.length - 9}</Text> : null}
               </Box>
             ) : null}
           </Box>

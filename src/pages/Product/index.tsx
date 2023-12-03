@@ -174,7 +174,7 @@ export default function Product() {
         <Box className={classes.imagebox}>
           <Image className={classes.image} src={productImage} />
           {images.length > 0 && isMobile ? (
-            <Container mt={"sm"}>
+            <Container mt="xl" mb="xl">
               <ScrollArea>
                 <Box display={"flex"}>
                   {images.map((image) => (
@@ -318,7 +318,7 @@ export default function Product() {
         </Box>
       </Container>
       {images.length > 0 && !isMobile ? (
-        <Container mt={"sm"}>
+        <Container mt="xl" mb="xl">
           <ScrollArea>
             <Box display={"flex"}>
               {images.map((image) => (

@@ -146,7 +146,12 @@ export default function Checkout() {
                                   {item.color ? (
                                     <>
                                       <Tooltip label={toTitleCase(item.color.name)}>
-                                        <Box w={"2vh"} h={"2vh"} mr={5} style={{ backgroundColor: item.color.hex, border: "1px solid grey" }}></Box>
+                                        <Box
+                                          w={"2vh"}
+                                          h={"2vh"}
+                                          mr={5}
+                                          style={{ backgroundColor: item.color.hex, border: "1px solid #777", borderRadius: "3px" }}
+                                        ></Box>
                                       </Tooltip>
                                     </>
                                   ) : null}
