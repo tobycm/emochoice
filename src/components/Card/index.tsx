@@ -49,12 +49,17 @@ export default function ProductCard(props: { product: Product; inProductPage?: b
               </Text>
             ) : null}
             {product.expand.colors ? (
-              <Box mt={"xs"} display={"flex"}>
-                {product.expand.colors.map((color) => (
+              <Box mt={"xs"} display={"flex"} style={{ alignItems: "center" }}>
+                {product.expand.colors.slice(0, 9).map((color) => (
                   <Tooltip label={toTitleCase(color.name)} openDelay={250} key={color.id}>
                     <Box w={"2vh"} h={"2vh"} mr={5} mih={15} miw={15} style={{ backgroundColor: color.hex, border: "1px solid grey" }}></Box>
                   </Tooltip>
                 ))}
+                {product.expand.colors.length > 9 ? (
+                  <Box mr={5} mih={15} miw={15}>
+                    +{product.expand.colors.length - 9}
+                  </Box>
+                ) : null}
               </Box>
             ) : null}
           </Box>
