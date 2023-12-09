@@ -11,9 +11,9 @@ export function setDocumentTitle(title: string = "") {
 }
 
 export function HTMLtoText(html: string) {
-  let tmp = document.createElement("DIV");
-  tmp.innerHTML = html;
-  return tmp.textContent || tmp.innerText || "";
+  const element = document.createElement("DIV");
+  element.innerHTML = html;
+  return element.textContent || element.innerText || "";
 }
 
 export const monthsKey = {
@@ -60,10 +60,27 @@ export default function LoaderBox() {
   );
 }
 
-function escapeRegExp(string: string) {
-  return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); // $& means the whole matched string
+function escapeRegExp(str: string) {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); // $& means the whole matched string
 }
 
 export function replaceAll(str: string, find: string, replace: string) {
   return str.replace(new RegExp(escapeRegExp(find), "g"), replace);
+}
+
+function hexToRgb(hex: string) {
+  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(replaceAll(hex, "#", ""));
+  if (!result) return null;
+  return {
+    r: parseInt(result[1], 16) / 255,
+    g: parseInt(result[2], 16) / 255,
+    b: parseInt(result[3], 16) / 255,
+  };
+}
+
+export function brightness(hex: string): "light" | "dark" {
+  const rgb = hexToRgb(hex);
+  if (!rgb) return "dark";
+
+  return rgb.r * 0.299 + rgb.g * 0.587 + rgb.b * 0.114 > 0.5 ? "light" : "dark"; // copilot
 }

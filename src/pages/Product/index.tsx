@@ -224,12 +224,10 @@ export default function Product() {
                   {product.expand.colors!.map((color) => (
                     <ColorButton
                       key={color.hex}
-                      hex={color.hex}
-                      name={color.name}
-                      texture={color.texture ? pocketbase.getFileUrl(color, color.texture) : ""}
+                      color={color}
                       onClick={() => {
                         form.setFieldValue("color", color);
-                        const imageWithColor = product.images.filter((image) => image.includes(replaceAll(color.name.toLowerCase(), " ", "_")));
+                        const imageWithColor = product.images.filter((image) => image.startsWith(replaceAll(color.name.toLowerCase(), " ", "_")));
                         if (imageWithColor.length < 0) return;
                         const imageFile = imageWithColor[0];
                         setProductImage(imageFile ? pocketbase.getFileUrl(product, imageFile) : "/images/no_image.png");
