@@ -9,15 +9,18 @@ export default function ColorButton(props: { hex: string; texture: string; onCli
       <Box
         variant="filled"
         onClick={onClick}
-        m={2}
+        mr={6}
+        mb={6}
         mih={30}
         miw={50}
         style={{
-          border: "1px solid black",
+          cursor: "pointer",
+          border: "1px solid #777",
           backgroundColor: hex,
           backgroundImage: texture ? `url(${texture})` : undefined,
           backgroundSize: "cover",
           backgroundPosition: "center",
+          borderRadius: "5px",
         }}
       ></Box>
     </Tooltip>

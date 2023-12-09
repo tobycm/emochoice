@@ -17,6 +17,7 @@ import {
   rem,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
+import { useMediaQuery } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
 import { IconEye, IconInfoCircle, IconNumber, IconShoppingCartPlus, IconX } from "@tabler/icons-react";
 import React, { useEffect, useMemo } from "react";
@@ -96,6 +97,8 @@ export default function Product() {
 
   const form = useForm<OrderData>({ initialValues });
 
+  const isMobile = useMediaQuery(`(max-width: 36em)`);
+
   useEffect(() => {
     setImages(product.images);
   }, [product.images]);
@@ -170,8 +173,23 @@ export default function Product() {
       <Container className={classes.overview}>
         <Box className={classes.imagebox}>
           <Image className={classes.image} src={productImage} />
+          {images.length > 0 && isMobile ? (
+            <Container mt="xl" mb="xl">
+              <ScrollArea>
+                <Box display={"flex"}>
+                  {images.map((image) => (
+                    <Image
+                      src={pocketbase.getFileUrl(product, image)}
+                      onClick={() => setProductImage(pocketbase.getFileUrl(product, image))}
+                      style={{ height: "100px", marginRight: "10px", cursor: "pointer" }}
+                    />
+                  ))}
+                </Box>
+              </ScrollArea>
+            </Container>
+          ) : null}
         </Box>
-        <Box ml={30}>
+        <Box ml={30} maw={!isMobile ? "50%" : "90%"}>
           <Title mb={"xs"}>{product.name}</Title>
           <Box
             component="form"
@@ -200,25 +218,26 @@ export default function Product() {
               {product.brand}
             </Title>
             {product.colors.length > 0 ? (
-              <Box className={classes.input}>
-                <Text>Color</Text>
-                <Space w="md" />
-                {product.expand.colors!.map((color) => (
-                  <ColorButton
-                    key={color.hex}
-                    hex={color.hex}
-                    name={color.name}
-                    texture={color.texture ? pocketbase.getFileUrl(color, color.texture) : ""}
-                    onClick={() => {
-                      form.setFieldValue("color", color);
-                      const imageWithColor = product.images.filter((image) => image.includes(replaceAll(color.name.toLowerCase(), " ", "_")));
-                      if (imageWithColor.length < 0) return;
-                      const imageFile = imageWithColor[0];
-                      setProductImage(imageFile ? pocketbase.getFileUrl(product, imageFile) : "/images/no_image.png");
-                      setImages(imageWithColor);
-                    }}
-                  />
-                ))}
+              <Box className={classes.input} style={{ flexDirection: "column", alignItems: "start" }}>
+                <Text mb="md">Color</Text>
+                <Box display={"flex"} style={{ flexWrap: "wrap" }}>
+                  {product.expand.colors!.map((color) => (
+                    <ColorButton
+                      key={color.hex}
+                      hex={color.hex}
+                      name={color.name}
+                      texture={color.texture ? pocketbase.getFileUrl(color, color.texture) : ""}
+                      onClick={() => {
+                        form.setFieldValue("color", color);
+                        const imageWithColor = product.images.filter((image) => image.includes(replaceAll(color.name.toLowerCase(), " ", "_")));
+                        if (imageWithColor.length < 0) return;
+                        const imageFile = imageWithColor[0];
+                        setProductImage(imageFile ? pocketbase.getFileUrl(product, imageFile) : "/images/no_image.png");
+                        setImages(imageWithColor);
+                      }}
+                    />
+                  ))}
+                </Box>
               </Box>
             ) : null}
             <Box className={classes.input}>
@@ -298,8 +317,8 @@ export default function Product() {
           </Box>
         </Box>
       </Container>
-      {images.length > 0 ? (
-        <Container mt={"sm"}>
+      {images.length > 0 && !isMobile ? (
+        <Container mt="xl" mb="xl">
           <ScrollArea>
             <Box display={"flex"}>
               {images.map((image) => (
@@ -376,7 +395,7 @@ export default function Product() {
       </Container>
       <Container mt="xl">
         <Title order={2} mb="sm">
-          You might also like
+          You may also like
         </Title>
         <ScrollArea>
           <Box display={"flex"}>
