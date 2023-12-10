@@ -322,7 +322,16 @@ export default function Product() {
               {images.map((image) => (
                 <Image
                   src={pocketbase.getFileUrl(product, image)}
-                  onClick={() => setProductImage(pocketbase.getFileUrl(product, image))}
+                  onClick={() => {
+                    setProductImage(pocketbase.getFileUrl(product, image));
+
+                    const color = product.expand.colors?.find((color) => image.startsWith(replaceAll(color.name.toLowerCase(), " ", "_")));
+                    if (!color) return;
+
+                    form.setFieldValue("color", color);
+
+                    setImages(product.images.filter((image) => image.startsWith(replaceAll(color.name.toLowerCase(), " ", "_"))) ?? []);
+                  }}
                   style={{ height: "100px", marginRight: "10px", cursor: "pointer" }}
                 />
               ))}
