@@ -219,7 +219,7 @@ export default function Product() {
             </Title>
             {product.colors.length > 0 ? (
               <Box className={classes.input} style={{ flexDirection: "column", alignItems: "start" }}>
-                <Text mb="md">Color: {form.values.color?.name ?? ""}</Text>
+                <Text mb="md">Color: {toTitleCase(form.values.color?.name) ?? ""}</Text>
                 <Box display={"flex"} style={{ flexWrap: "wrap" }}>
                   {product.expand.colors!.map((color) => (
                     <ColorButton
