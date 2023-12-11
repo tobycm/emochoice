@@ -29,7 +29,7 @@ import CustomImageModal from "../../components/Modal/CustomImage";
 import pocketbase, { getProducts } from "../../lib/database";
 import { Color, Product } from "../../lib/database/models";
 import { List, useList } from "../../lib/list";
-import { HTMLtoText, pasteImage, replaceAll, toTitleCase } from "../../lib/utils";
+import { HTMLtoText, pasteImage, toTitleCase } from "../../lib/utils";
 import classes from "./index.module.css";
 
 export interface OrderData {
@@ -227,7 +227,7 @@ export default function Product() {
                       color={color}
                       onClick={() => {
                         form.setFieldValue("color", color);
-                        const imageWithColor = product.images.filter((image) => image.startsWith(replaceAll(color.name.toLowerCase(), " ", "_")));
+                        const imageWithColor = product.images.filter((image) => image.startsWith(color.id));
                         if (imageWithColor.length < 0) return;
                         const imageFile = imageWithColor[0];
                         setProductImage(imageFile ? pocketbase.getFileUrl(product, imageFile) : "/images/no_image.png");
@@ -325,12 +325,12 @@ export default function Product() {
                   onClick={() => {
                     setProductImage(pocketbase.getFileUrl(product, image));
 
-                    const color = product.expand.colors?.find((color) => image.startsWith(replaceAll(color.name.toLowerCase(), " ", "_")));
+                    const color = product.expand.colors?.find((color) => image.startsWith(color.id));
                     if (!color) return;
 
                     form.setFieldValue("color", color);
 
-                    setImages(product.images.filter((image) => image.startsWith(replaceAll(color.name.toLowerCase(), " ", "_"))) ?? []);
+                    setImages(product.images.filter((image) => image.startsWith(color.id)));
                   }}
                   style={{ height: "100px", marginRight: "10px", cursor: "pointer" }}
                 />
