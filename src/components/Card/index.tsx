@@ -9,6 +9,33 @@ export default function ProductCard(props: { product: Product; inProductPage?: b
   const productUrl = `/product/${product.id}`;
   const isMobile = useMediaQuery("(max-width: 49em)");
 
+  let categories = null;
+  let colors = null;
+  if (product.expand?.category) {
+    categories = (
+      <Text mt="xs" style={{ color: "grey" }}>
+        Categor{product.expand.category.length === 1 ? "y" : "ies"}: {product.expand.category.map((category) => category.name).join(", ")}
+      </Text>
+    );
+  }
+  if (product.expand?.colors) {
+    colors = (
+      <Box mt={"xs"} display={"flex"} style={{ alignItems: "center" }}>
+        {product.expand.colors.slice(0, 9).map((color) => (
+          <Box
+            w={"2vh"}
+            h={"2vh"}
+            mr={5}
+            mih={15}
+            miw={15}
+            style={{ backgroundColor: color.hex, border: "1px solid #777", borderRadius: "3px" }}
+          ></Box>
+        ))}
+        {product.expand.colors.length > 9 ? <Text c="grey">+{product.expand.colors.length - 9}</Text> : null}
+      </Box>
+    );
+  }
+
   return (
     <Link to={productUrl} style={{ textDecoration: "none" }}>
       <Card
@@ -42,26 +69,8 @@ export default function ProductCard(props: { product: Product; inProductPage?: b
                 </Badge>
               ) : null}
             </Group>
-            {product.expand.category ? (
-              <Text mt="xs" style={{ color: "grey" }}>
-                Categor{product.expand.category.length === 1 ? "y" : "ies"}: {product.expand.category.map((category) => category.name).join(", ")}
-              </Text>
-            ) : null}
-            {product.expand.colors ? (
-              <Box mt={"xs"} display={"flex"} style={{ alignItems: "center" }}>
-                {product.expand.colors.slice(0, 9).map((color) => (
-                  <Box
-                    w={"2vh"}
-                    h={"2vh"}
-                    mr={5}
-                    mih={15}
-                    miw={15}
-                    style={{ backgroundColor: color.hex, border: "1px solid #777", borderRadius: "3px" }}
-                  ></Box>
-                ))}
-                {product.expand.colors.length > 9 ? <Text c="grey">+{product.expand.colors.length - 9}</Text> : null}
-              </Box>
-            ) : null}
+            {categories}
+            {colors}
           </Box>
         </Card.Section>
       </Card>
@@ -69,6 +78,6 @@ export default function ProductCard(props: { product: Product; inProductPage?: b
   );
 }
 
-Card.defaultProps = {
+ProductCard.defaultProps = {
   inProductPage: false,
 };

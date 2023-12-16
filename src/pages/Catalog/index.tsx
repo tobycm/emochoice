@@ -52,7 +52,7 @@ export default function Catalog() {
       // filter products with other categories
       for (const category of user!.categories!.slice(1)) {
         products.items = products.items.filter((product) => {
-          if (!product.expand.category) return false;
+          if (!product.expand?.category) return false;
           for (const productCategory of product.expand.category) if (productCategory.name === category) return true;
 
           return false;
@@ -89,22 +89,11 @@ export default function Catalog() {
     if (filterString.slice(0, 3) === "&& ") filterString = filterString.slice(3);
 
     getProducts(0, filterString).then((products) => {
-      let finalProducts: ListResult<Product> = {} as ListResult<Product>;
-      if (colorsList.length > 1) {
-        for (const color of colorsList) {
-          const filteredProducts = products.items.filter((product) => {
-            if (product.expand.colors) {
-              for (const productColor of product.expand.colors) {
-                if (productColor.name === color) {
-                  return true;
-                }
-              }
-            }
-            return false;
-          });
-          finalProducts.items = filteredProducts;
-        }
-      } else finalProducts = products;
+      const finalProducts = products;
+      if (colorsList.length > 1)
+        for (const color of colorsList)
+          finalProducts.items = products.items.filter((product) => !!product.expand?.colors?.find((productColor) => productColor.name === color));
+
       setProducts(finalProducts);
       setIsFiltered(true);
     });
@@ -144,10 +133,9 @@ export default function Catalog() {
             {(() => {
               const categories: string[] = [];
 
-              for (const product of products.items) {
-                if (product.expand.category)
+              for (const product of products.items)
+                if (product.expand?.category)
                   for (const category of product.expand.category) if (!categories.includes(category.name)) categories.push(category.name);
-              }
 
               return categories.map((category) => <Checkbox mb={5} mt={5} label={category} value={category} key={category} />);
             })()}
@@ -158,9 +146,7 @@ export default function Catalog() {
             {(() => {
               const brands: string[] = [];
 
-              for (const product of products.items) {
-                if (!brands.includes(product.brand)) brands.push(product.brand);
-              }
+              for (const product of products.items) if (!brands.includes(product.brand)) brands.push(product.brand);
 
               return brands.map((brand) => <Checkbox mb={5} mt={5} label={brand} value={brand} key={brand} />);
             })()}
@@ -171,9 +157,8 @@ export default function Catalog() {
             {(() => {
               const colors: string[] = [];
 
-              for (const product of products.items) {
-                if (product.expand.colors) for (const color of product.expand.colors) if (!colors.includes(color.name)) colors.push(color.name);
-              }
+              for (const product of products.items)
+                if (product.expand?.colors) for (const color of product.expand.colors) if (!colors.includes(color.name)) colors.push(color.name);
 
               return colors.map((color) => <Checkbox mb={5} mt={5} label={toTitleCase(color)} value={color} key={color} />);
             })()}

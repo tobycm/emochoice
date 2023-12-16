@@ -89,7 +89,7 @@ export default function Product() {
     [product.boundary],
   );
 
-  if (product.colors.length > 0) initialValues.color = product.expand.colors![0];
+  if (product.colors.length > 0) initialValues.color = product.expand!.colors![0];
   if (product.boundary) {
     boundaryPoints = product.boundary.split(",").map((point) => Number(point)) as BoundaryPoints;
     initialValues.fileInput = null;
@@ -195,7 +195,7 @@ export default function Product() {
             component="form"
             onSubmit={form.onSubmit((values) => {
               const { quantity, request, fileInput } = values;
-              const color = product.expand.colors?.find((color) => color.hex === values.color?.hex);
+              const color = product.expand?.colors?.find((color) => color.hex === values.color?.hex);
               const newList = new List(...list, {
                 product,
                 color,
@@ -221,7 +221,7 @@ export default function Product() {
               <Box className={classes.input} style={{ flexDirection: "column", alignItems: "start" }}>
                 <Text mb="md">Color: {toTitleCase(form.values.color?.name) ?? ""}</Text>
                 <Box display={"flex"} style={{ flexWrap: "wrap" }}>
-                  {product.expand.colors!.map((color) => (
+                  {product.expand!.colors!.map((color) => (
                     <ColorButton
                       key={color.hex}
                       color={color}
@@ -325,7 +325,7 @@ export default function Product() {
                   onClick={() => {
                     setProductImage(pocketbase.getFileUrl(product, image));
 
-                    const color = product.expand.colors?.find((color) => image.startsWith(color.id));
+                    const color = product.expand?.colors?.find((color) => image.startsWith(color.id));
                     if (!color) return;
 
                     form.setFieldValue("color", color);
@@ -381,7 +381,7 @@ export default function Product() {
                       <strong>Category</strong>
                     </Table.Td>
                     <Table.Td>
-                      {product.category.length > 0 ? product.expand.category!.map((category) => category.name).join(", ") : "No category"}
+                      {product.category.length > 0 ? product.expand!.category!.map((category) => category.name).join(", ") : "No category"}
                     </Table.Td>
                   </Table.Tr>
                   {product.custom_data

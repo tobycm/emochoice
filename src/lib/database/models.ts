@@ -13,7 +13,7 @@ export interface Product extends RecordModel {
   images: Filename[];
   boundary: string;
   custom_data: unknown | null;
-  expand: {
+  expand?: {
     category?: ProductCategory[];
     colors?: ProductColor[];
   };
