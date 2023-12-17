@@ -1,5 +1,5 @@
 import { Notifications } from "@mantine/notifications";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { HelmetProvider } from "react-helmet-async";
 import { Outlet } from "react-router";
 import { ScrollRestoration } from "react-router-dom";
@@ -20,14 +20,17 @@ export default function Content() {
       </HelmetProvider>
     </ListProvider>,
   );
-  fetch("https://pocketbase.emochoice.ca")
-    .then((res) => {
-      if (res.status !== 200) setPage(<Maintenance />);
-    })
-    .catch((error) => {
-      console.error(error);
-      setPage(<Maintenance />);
-    });
+
+  useEffect(() => {
+    fetch("https://pocketbase.emochoice.ca")
+      .then((res) => {
+        if (res.status !== 200) setPage(<Maintenance />);
+      })
+      .catch((error) => {
+        console.error(error);
+        setPage(<Maintenance />);
+      });
+  }, []);
 
   return page;
 }
