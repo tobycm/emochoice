@@ -20,9 +20,14 @@ export default function Content() {
       </HelmetProvider>
     </ListProvider>,
   );
-  fetch("https://pocketbase.emochoice.ca").then((res) => {
-    if (res.status !== 200) setPage(<Maintenance />);
-  });
+  fetch("https://pocketbase.emochoice.ca")
+    .then((res) => {
+      if (res.status !== 200) setPage(<Maintenance />);
+    })
+    .catch((error) => {
+      console.error(error);
+      setPage(<Maintenance />);
+    });
 
   return page;
 }
