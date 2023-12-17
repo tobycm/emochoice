@@ -1,21 +1,28 @@
 import { Notifications } from "@mantine/notifications";
+import { useState } from "react";
 import { HelmetProvider } from "react-helmet-async";
-import { Outlet, ScrollRestoration } from "react-router-dom";
+import { Outlet } from "react-router";
+import { ScrollRestoration } from "react-router-dom";
 import { ListProvider } from "../../lib/list";
+import Maintenance from "../../pages/Maintenance";
 import Footer from "../Footer";
 import Header from "../Header";
 
 export default function Content() {
-  const helmetContext = {};
-  return (
+  const [page, setPage] = useState(
     <ListProvider>
-      <HelmetProvider context={helmetContext}>
+      <HelmetProvider>
         <Notifications limit={5} />
         <ScrollRestoration />
         <Header />
         <Outlet />
         <Footer />
       </HelmetProvider>
-    </ListProvider>
+    </ListProvider>,
   );
+  fetch("https://pocketbase.emochoice.ca").then((res) => {
+    if (res.status !== 200) setPage(<Maintenance />);
+  });
+
+  return page;
 }

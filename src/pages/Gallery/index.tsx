@@ -71,6 +71,9 @@ export default function Gallery(props: { home: boolean }) {
       </Title>
       {["gallery_1", "gallery_2", "gallery_3"].map((type) => (
         <Box mb={20} display={"flex"} style={{ flexDirection: "column", alignItems: "center" }} key={type} mih="50vh">
+          <Title order={3} c="emochoice-blue" mb="md">
+            {type === "gallery_1" ? "Clothing & Accessories" : type === "gallery_2" ? "Digital Printing" : "Souvenirs & Gifts"}
+          </Title>
           <Carousel
             className={classes.carousel}
             getEmblaApi={(api) => setEmbla((prevEmbla) => ({ ...prevEmbla, [type]: api }))}
