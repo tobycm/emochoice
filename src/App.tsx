@@ -66,6 +66,7 @@ const routes: RouteObject[] = [
                     },
                   ],
                 },
+                customizable: false,
               },
             };
           }

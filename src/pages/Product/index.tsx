@@ -1,25 +1,8 @@
-import {
-  Box,
-  Button,
-  Container,
-  FileInput,
-  Image,
-  NumberInput,
-  ScrollArea,
-  Space,
-  Table,
-  Tabs,
-  Text,
-  Textarea,
-  Title,
-  Tooltip,
-  UnstyledButton,
-  rem,
-} from "@mantine/core";
+import { Box, Button, FileInput, Image, NumberInput, ScrollArea, Space, Table, Tabs, Text, Textarea, Title, rem } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useMediaQuery } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
-import { IconEye, IconInfoCircle, IconNumber, IconShoppingCartPlus, IconX } from "@tabler/icons-react";
+import { IconInfoCircle, IconNumber, IconShoppingCartPlus } from "@tabler/icons-react";
 import React, { useEffect, useMemo } from "react";
 import { Helmet } from "react-helmet-async";
 import { useLoaderData, useLocation } from "react-router-dom";
@@ -97,7 +80,7 @@ export default function Product() {
 
   const form = useForm<OrderData>({ initialValues });
 
-  const isMobile = useMediaQuery(`(max-width: 36em)`);
+  const isMobile = useMediaQuery(`(max-width: 48em)`);
 
   useEffect(() => {
     setImages(product.images);
@@ -144,7 +127,7 @@ export default function Product() {
   }, [modalState.open, customImage, product, boundaryPoints]);
 
   return (
-    <Box>
+    <Box w="80%" ml="auto" mr="auto">
       <Helmet>
         <title>{product.name} - Emochoice</title>
         <meta name="description" content={HTMLtoText(product.description)} />
@@ -170,11 +153,11 @@ export default function Product() {
         customImage={customImage}
         setCustomImage={setCustomImage}
       />
-      <Container className={classes.overview}>
+      <Box className={classes.overview}>
         <Box className={classes.imagebox}>
-          <Image className={classes.image} src={productImage} />
-          {images.length > 0 && isMobile ? (
-            <Container mt="xl" mb="xl">
+          <Image src={productImage} />
+          {images.length > 0 ? (
+            <Box mt="xl" mb="xl">
               <ScrollArea>
                 <Box display={"flex"}>
                   {images.map((image) => (
@@ -186,10 +169,10 @@ export default function Product() {
                   ))}
                 </Box>
               </ScrollArea>
-            </Container>
+            </Box>
           ) : null}
         </Box>
-        <Box ml={30} maw={!isMobile ? "50%" : "90%"}>
+        <Box ml={30} maw={!isMobile ? "70%" : "90%"}>
           <Title mb={"xs"}>{product.name}</Title>
           <Box
             component="form"
@@ -250,7 +233,7 @@ export default function Product() {
                 {...form.getInputProps("quantity")}
               />
             </Box>
-            {product.boundary !== "" ? (
+            {product.customizable ? (
               <Box className={classes.input}>
                 <Text>Your image</Text>
                 <Space w="md" />
@@ -268,31 +251,6 @@ export default function Product() {
                     if (value) setModalState({ open: true, fileUploaded: true });
                   }}
                 />
-                {image ? (
-                  <Box display={"flex"}>
-                    <Tooltip label="Remove image">
-                      <UnstyledButton
-                        style={{ marginLeft: "15%", display: "flex", alignItems: "center" }}
-                        onClick={() => {
-                          setCustomImage(null);
-                          setImage(null);
-                        }}
-                      >
-                        <IconX style={{ color: "red" }} stroke={1.5}></IconX>
-                      </UnstyledButton>
-                    </Tooltip>
-                    <Tooltip label="Preview">
-                      <UnstyledButton
-                        style={{ marginLeft: "15%", display: "flex", alignItems: "center" }}
-                        onClick={() => {
-                          setModalState({ open: true, fileUploaded: false });
-                        }}
-                      >
-                        <IconEye style={{ color: "#FCB918" }} stroke={1.5}></IconEye>
-                      </UnstyledButton>
-                    </Tooltip>
-                  </Box>
-                ) : null}
               </Box>
             ) : null}
             <Box className={classes.input}>
@@ -308,38 +266,14 @@ export default function Product() {
               />
             </Box>
             <Box display="flex">
-              <Button variant="filled" className={classes.input} type="submit">
+              <Button variant="filled" className={classes.input} size="lg" radius="md" type="submit">
                 Add to List
               </Button>
             </Box>
           </Box>
         </Box>
-      </Container>
-      {images.length > 0 && !isMobile ? (
-        <Container mt="xl" mb="xl">
-          <ScrollArea>
-            <Box display={"flex"}>
-              {images.map((image) => (
-                <Image
-                  src={pocketbase.getFileUrl(product, image)}
-                  onClick={() => {
-                    setProductImage(pocketbase.getFileUrl(product, image));
-
-                    const color = product.expand?.colors?.find((color) => image.startsWith(color.id));
-                    if (!color) return;
-
-                    form.setFieldValue("color", color);
-
-                    setImages(product.images.filter((image) => image.startsWith(color.id)));
-                  }}
-                  style={{ height: "100px", marginRight: "10px", cursor: "pointer" }}
-                />
-              ))}
-            </Box>
-          </ScrollArea>
-        </Container>
-      ) : null}
-      <Container mt="sm">
+      </Box>
+      <Box mt="sm">
         <Tabs defaultValue="gallery">
           <Tabs.List>
             <Tabs.Tab value="gallery" leftSection={<IconInfoCircle style={{ width: rem(12), height: rem(12) }} />}>
@@ -350,12 +284,12 @@ export default function Product() {
             </Tabs.Tab>
           </Tabs.List>
           <Tabs.Panel value="gallery">
-            <Container className={classes.information}>
+            <Box className={classes.information}>
               <div dangerouslySetInnerHTML={{ __html: `${product.description}` }} />
-            </Container>
+            </Box>
           </Tabs.Panel>
           <Tabs.Panel value="messages">
-            <Container className={classes.information}>
+            <Box className={classes.information}>
               <Table>
                 <Table.Tbody>
                   <Table.Tr>
@@ -396,11 +330,11 @@ export default function Product() {
                     : null}
                 </Table.Tbody>
               </Table>
-            </Container>
+            </Box>
           </Tabs.Panel>
         </Tabs>
-      </Container>
-      <Container mt="xl">
+      </Box>
+      <Box mt="xl">
         <Title order={2} mb="sm">
           You may also like
         </Title>
@@ -411,7 +345,7 @@ export default function Product() {
               : null}
           </Box>
         </ScrollArea>
-      </Container>
+      </Box>
     </Box>
   );
 }
