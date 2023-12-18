@@ -138,6 +138,7 @@ export default function Product() {
           style={{
             alignItems: "center",
             justifyContent: "center",
+            cursor: "pointer",
           }}
         >
           <Image style={{ height: "100vh", width: "auto" }} src={productImage} />
@@ -176,10 +177,11 @@ export default function Product() {
             onClick={() => {
               openBigImage(!bigImage);
             }}
+            style={{ cursor: "pointer" }}
           />
           {images.length > 0 ? (
             <Box mt="xl" mb="xl">
-              <ScrollArea>
+              <ScrollArea.Autosize>
                 <Box display={"flex"}>
                   {images.map((image) => (
                     <Image
@@ -189,7 +191,7 @@ export default function Product() {
                     />
                   ))}
                 </Box>
-              </ScrollArea>
+              </ScrollArea.Autosize>
             </Box>
           ) : null}
         </Box>
