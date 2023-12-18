@@ -248,7 +248,9 @@ export default function Product() {
                   value={customImage}
                   onChange={(value) => {
                     setCustomImage(value);
-                    if (value) setModalState({ open: true, fileUploaded: true });
+                    if (value)
+                      if (product.boundary) setModalState({ open: true, fileUploaded: true });
+                      else form.setFieldValue("fileInput", customImage);
                   }}
                 />
               </Box>
