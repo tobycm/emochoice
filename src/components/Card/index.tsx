@@ -39,7 +39,7 @@ export default function ProductCard(props: { product: Product; inProductPage?: b
   return (
     <Link to={productUrl} style={{ textDecoration: "none" }}>
       <Card
-        style={{ margin: !props.inProductPage ? "1vw" : "1vw 1vw 0 0" }}
+        style={{ margin: !props.inProductPage ? "1vw" : "0.3vw 0.3vw 0 0" }}
         w={"14.98vw"}
         h={"60vh"}
         miw={280}

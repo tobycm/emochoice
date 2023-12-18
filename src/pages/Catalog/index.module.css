@@ -1,6 +1,6 @@
 .container {
-  @media screen and (min-width: $mantine-breakpoint-xl) {
-    padding: 0 10% 0 10% !important;
+  @media screen and (min-width: $mantine-breakpoint-xs) {
+    padding: 0 5.5% 0 5.5% !important;
   }
 
   padding: 0 4% 0 4%;
