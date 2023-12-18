@@ -1,4 +1,4 @@
-import { Box, Button, Checkbox, CheckboxGroup, InputBase, Modal, NavLink, Pill, Text, Title, UnstyledButton } from "@mantine/core";
+import { Box, Button, Checkbox, InputBase, Modal, NavLink, Pill, ScrollArea, Text, Title, UnstyledButton } from "@mantine/core";
 import { IconCategory, IconColorFilter, IconFilter, IconIcons, IconSearchOff } from "@tabler/icons-react";
 import { ListResult } from "pocketbase";
 import React, { useEffect, useState } from "react";
@@ -128,41 +128,47 @@ export default function Catalog() {
     return (
       <Box mih={"100%"} miw={200} style={{ flex: "0.5" }}>
         <SmallChangeHelmet title="Catalog" description="Browse through our wide selection of products!" location="catalog" />
-        <NavLink label="Categories" leftSection={<IconCategory size="1rem" stroke={1.5} />} childrenOffset={28} defaultOpened>
-          <CheckboxGroup value={getFilterValues("category")} onChange={updateFilters("category")}>
-            {(() => {
-              const categories: string[] = [];
+        <NavLink label="Categories" leftSection={<IconCategory size="1rem" stroke={1.5} />} childrenOffset={28} defaultOpened={false}>
+          <Checkbox.Group value={getFilterValues("category")} onChange={updateFilters("category")}>
+            <ScrollArea.Autosize mah={200}>
+              {(() => {
+                const categories: string[] = [];
 
-              for (const product of products.items)
-                if (product.expand?.category)
-                  for (const category of product.expand.category) if (!categories.includes(category.name)) categories.push(category.name);
+                for (const product of products.items)
+                  if (product.expand?.category)
+                    for (const category of product.expand.category) if (!categories.includes(category.name)) categories.push(category.name);
 
-              return categories.map((category) => <Checkbox mb={5} mt={5} label={category} value={category} key={category} />);
-            })()}
-          </CheckboxGroup>
+                return categories.map((category) => <Checkbox mb={5} mt={5} label={category} value={category} key={category} />);
+              })()}
+            </ScrollArea.Autosize>
+          </Checkbox.Group>
         </NavLink>
-        <NavLink label="Brands" leftSection={<IconIcons size="1rem" stroke={1.5} />} childrenOffset={28} defaultOpened>
-          <CheckboxGroup value={getFilterValues("brand")} onChange={updateFilters("brand")}>
-            {(() => {
-              const brands: string[] = [];
+        <NavLink label="Brands" leftSection={<IconIcons size="1rem" stroke={1.5} />} childrenOffset={28} defaultOpened={false}>
+          <Checkbox.Group value={getFilterValues("brand")} onChange={updateFilters("brand")}>
+            <ScrollArea.Autosize mah={200}>
+              {(() => {
+                const brands: string[] = [];
 
-              for (const product of products.items) if (!brands.includes(product.brand)) brands.push(product.brand);
+                for (const product of products.items) if (!brands.includes(product.brand)) brands.push(product.brand);
 
-              return brands.map((brand) => <Checkbox mb={5} mt={5} label={brand} value={brand} key={brand} />);
-            })()}
-          </CheckboxGroup>
+                return brands.map((brand) => <Checkbox mb={5} mt={5} label={brand} value={brand} key={brand} />);
+              })()}
+            </ScrollArea.Autosize>
+          </Checkbox.Group>
         </NavLink>
-        <NavLink label="Colors" leftSection={<IconColorFilter size="1rem" stroke={1.5} />} childrenOffset={28} defaultOpened>
-          <CheckboxGroup value={getFilterValues("color")} onChange={updateFilters("color")}>
-            {(() => {
-              const colors: string[] = [];
+        <NavLink label="Colors" leftSection={<IconColorFilter size="1rem" stroke={1.5} />} childrenOffset={28} defaultOpened={false}>
+          <Checkbox.Group value={getFilterValues("color")} onChange={updateFilters("color")}>
+            <ScrollArea.Autosize mah={200}>
+              {(() => {
+                const colors: string[] = [];
 
-              for (const product of products.items)
-                if (product.expand?.colors) for (const color of product.expand.colors) if (!colors.includes(color.name)) colors.push(color.name);
+                for (const product of products.items)
+                  if (product.expand?.colors) for (const color of product.expand.colors) if (!colors.includes(color.name)) colors.push(color.name);
 
-              return colors.map((color) => <Checkbox mb={5} mt={5} label={toTitleCase(color)} value={color} key={color} />);
-            })()}
-          </CheckboxGroup>
+                return colors.map((color) => <Checkbox mb={5} mt={5} label={toTitleCase(color)} value={color} key={color} />);
+              })()}
+            </ScrollArea.Autosize>
+          </Checkbox.Group>
         </NavLink>
       </Box>
     );
