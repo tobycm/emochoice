@@ -1,4 +1,4 @@
-import { Box, Button, FileInput, Image, NumberInput, ScrollArea, Space, Table, Tabs, Text, Textarea, Title, rem } from "@mantine/core";
+import { Box, Button, FileInput, Image, NumberInput, Overlay, ScrollArea, Space, Table, Tabs, Text, Textarea, Title, rem } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useMediaQuery } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
@@ -58,6 +58,7 @@ export default function Product() {
   );
   const [images, setImages] = React.useState<string[]>([]);
   const [randomProducts, setRandomProducts] = React.useState<Product[]>([]);
+  const [bigImage, openBigImage] = React.useState(false);
   const { list, updateList } = useList();
 
   let user: OrderData | null = null;
@@ -128,6 +129,21 @@ export default function Product() {
 
   return (
     <Box w="80%" ml="auto" mr="auto">
+      {bigImage && (
+        <Overlay
+          onClick={() => {
+            openBigImage(false);
+          }}
+          display={"flex"}
+          style={{
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Image style={{ height: "100vh", width: "auto" }} src={productImage} />
+        </Overlay>
+      )}
+
       <Helmet>
         <title>{product.name} - Emochoice</title>
         <meta name="description" content={HTMLtoText(product.description)} />
@@ -155,7 +171,12 @@ export default function Product() {
       />
       <Box className={classes.overview}>
         <Box className={classes.imagebox}>
-          <Image src={productImage} />
+          <Image
+            src={productImage}
+            onClick={() => {
+              openBigImage(!bigImage);
+            }}
+          />
           {images.length > 0 ? (
             <Box mt="xl" mb="xl">
               <ScrollArea>

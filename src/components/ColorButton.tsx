@@ -9,8 +9,8 @@ export default function ColorButton(props: { color: Color; onClick: () => void }
     <Box
       variant="filled"
       onClick={onClick}
-      mr={6}
-      mb={6}
+      mr={4}
+      mb={4}
       mih={35}
       miw={60}
       mah={35}
