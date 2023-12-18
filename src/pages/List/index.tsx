@@ -152,7 +152,7 @@ export default function List() {
                       navigate("/checkout");
                     }}
                   >
-                    Proceed to Checkout
+                    Get a Quote
                   </Button>
                 </Card>
               </Box>
