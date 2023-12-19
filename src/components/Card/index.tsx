@@ -15,6 +15,7 @@ export default function ProductCard(props: { product: Product; inProductPage?: b
     categories = (
       <Text mt="xs" style={{ color: "grey" }}>
         Categor{product.expand.category.length === 1 ? "y" : "ies"}: {product.expand.category.map((category) => category.name).join(", ")}
+        {product.expand.category.length > 2 ? ", ..." : null}
       </Text>
     );
   }

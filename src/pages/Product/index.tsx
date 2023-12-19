@@ -1,4 +1,4 @@
-import { Box, Button, FileInput, Image, NumberInput, Overlay, ScrollArea, Space, Table, Tabs, Text, Textarea, Title, rem } from "@mantine/core";
+import { Box, Button, FileInput, Image, NumberInput, ScrollArea, Space, Table, Tabs, Text, Textarea, Title, rem } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useMediaQuery } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
@@ -8,6 +8,7 @@ import { Helmet } from "react-helmet-async";
 import { useLoaderData, useLocation } from "react-router-dom";
 import ProductCard from "../../components/Card";
 import ColorButton from "../../components/ColorButton";
+import ImageZoom from "../../components/ImageZoom";
 import CustomImageModal from "../../components/Modal/CustomImage";
 import pocketbase, { getProducts } from "../../lib/database";
 import { Color, Product } from "../../lib/database/models";
@@ -129,20 +130,8 @@ export default function Product() {
 
   return (
     <Box w="80%" ml="auto" mr="auto">
-      {bigImage && (
-        <Overlay
-          onClick={() => {
-            openBigImage(false);
-          }}
-          display={"flex"}
-          style={{
-            alignItems: "center",
-            justifyContent: "center",
-            cursor: "pointer",
-          }}
-        >
-          <Image style={{ height: "100vh", width: "auto" }} src={productImage} />
-        </Overlay>
+      {bigImage && !isMobile && (
+        <ImageZoom productImage={productImage} openBigImage={openBigImage} images={images} setProductImage={setProductImage} product={product} />
       )}
 
       <Helmet>
@@ -175,24 +164,22 @@ export default function Product() {
           <Image
             src={productImage}
             onClick={() => {
-              openBigImage(!bigImage);
+              !isMobile && openBigImage(!bigImage);
             }}
             style={{ cursor: "pointer" }}
           />
-          {images.length > 0 ? (
-            <Box mt="xl" mb="xl">
-              <ScrollArea.Autosize>
-                <Box display={"flex"}>
-                  {images.map((image) => (
-                    <Image
-                      src={pocketbase.getFileUrl(product, image)}
-                      onClick={() => setProductImage(pocketbase.getFileUrl(product, image))}
-                      style={{ height: "100px", marginRight: "10px", cursor: "pointer" }}
-                    />
-                  ))}
-                </Box>
-              </ScrollArea.Autosize>
-            </Box>
+          {images.length > 1 ? (
+            <ScrollArea mt="xl" mb="sm">
+              <Box display={"flex"}>
+                {images.map((image) => (
+                  <Image
+                    src={pocketbase.getFileUrl(product, image)}
+                    onClick={() => setProductImage(pocketbase.getFileUrl(product, image))}
+                    style={{ height: "100px", width: "auto", marginRight: "10px", cursor: "pointer", border: "1px solid #cccccc" }}
+                  />
+                ))}
+              </Box>
+            </ScrollArea>
           ) : null}
         </Box>
         <Box ml={30} maw={!isMobile ? "70%" : "90%"}>
@@ -291,14 +278,14 @@ export default function Product() {
               />
             </Box>
             <Box display="flex">
-              <Button variant="filled" className={classes.input} size="lg" radius="md" type="submit">
+              <Button variant="filled" className={classes.input} size="md" radius="md" type="submit">
                 Add to List
               </Button>
             </Box>
           </Box>
         </Box>
       </Box>
-      <Box mt="sm">
+      <Box mt="xl">
         <Tabs defaultValue="gallery">
           <Tabs.List>
             <Tabs.Tab value="gallery" leftSection={<IconInfoCircle style={{ width: rem(12), height: rem(12) }} />}>
