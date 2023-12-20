@@ -1,5 +1,7 @@
 .cardsBox {
   display: flex;
+  justify-content: space-between;
+  width: 100%;
   flex-direction: row;
 
   @media screen and (max-width: $mantine-breakpoint-sm) {
@@ -11,8 +13,8 @@
 .card {
   text-decoration: none;
   display: flex;
+
   justify-content: center;
-  width: 30%;
   margin-left: 1.5%;
   margin-right: 1.5%;
   height: 50vh;

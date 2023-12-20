@@ -1,8 +1,9 @@
 import { Carousel, Embla } from "@mantine/carousel";
 import { Box, Image, Title } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import SmallChangeHelmet from "../../components/Helmets/SmallChangeHelmet";
+import ImageZoom from "../../components/ImageZoom";
 import { getGallery } from "../../lib/database";
 import LoaderBox, { setDocumentTitle } from "../../lib/utils";
 import classes from "./index.module.css";
@@ -21,8 +22,11 @@ export default function Gallery(props: { home: boolean }) {
 
   const isMobile = useMediaQuery(`(max-width: 48em)`);
 
+  const [zoomImage, setZoomImage] = React.useState<string>("");
+  const [bigImage, openBigImage] = React.useState(false);
+  const [scrollHeight, setScrollHeight] = useState(0);
+
   const reInitEmblas = async () => {
-    // eslint-disable-next-line no-constant-condition
     while (true) {
       try {
         if (embla.gallery_1) embla.gallery_1.reInit();
@@ -41,8 +45,23 @@ export default function Gallery(props: { home: boolean }) {
       try {
         const gallery = await getGallery(type);
         const slides = gallery.map((link) => (
-          <Carousel.Slide w={75} key={link}>
-            <Image w={150} style={{ aspectRatio: 1 / 1 }} src={link} />
+          <Carousel.Slide w="60%" key={link} mb="xl">
+            <Box w="100%" mr={!isMobile ? 5 : 0} ml={!isMobile ? 5 : 0}>
+              <Image
+                onClick={() => {
+                  if (!isMobile) {
+                    setZoomImage(link);
+                    openBigImage(true);
+                    console.log("clicked");
+                  }
+                }}
+                w={isMobile ? "80vw" : "250px"}
+                ml="auto"
+                mr="auto"
+                style={{ aspectRatio: 1 / 1, cursor: "pointer" }}
+                src={link}
+              />
+            </Box>
           </Carousel.Slide>
         ));
         setSlides((prevSlides) => ({ ...prevSlides, [type]: slides }));
@@ -58,10 +77,25 @@ export default function Gallery(props: { home: boolean }) {
     });
   }, [embla]);
 
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrollHeight(window.scrollY);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  });
+
   if (!slides.gallery_1.length || !slides.gallery_2.length || !slides.gallery_3.length) return <LoaderBox />;
 
   return (
     <Box display="flex" style={{ flexDirection: "column", alignItems: "center" }}>
+      {bigImage && !isMobile && (
+        <ImageZoom scrollHeight={scrollHeight} productImage={zoomImage} openBigImage={openBigImage} setProductImage={setZoomImage} />
+      )}
       {!props.home ? (
         <SmallChangeHelmet title="Gallery" gallery={true} location="gallery" description="Take a look at some of our great printing products!" />
       ) : null}
@@ -74,12 +108,12 @@ export default function Gallery(props: { home: boolean }) {
             {type === "gallery_1" ? "Clothing & Accessories" : type === "gallery_2" ? "Digital Printing" : "Souvenirs & Gifts Printing"}
           </Title>
           <Carousel
+            w="80vw"
+            loop
             className={classes.carousel}
             getEmblaApi={(api) => setEmbla((prevEmbla) => ({ ...prevEmbla, [type]: api }))}
-            loop
             draggable
-            dragFree
-            slideSize={isMobile ? "100%" : "30%"}
+            slideSize={isMobile ? "100%" : "15%"}
             mb="xs"
           >
             {slides[type]}

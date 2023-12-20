@@ -3,7 +3,7 @@ import { useForm } from "@mantine/form";
 import { useMediaQuery } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
 import { IconInfoCircle, IconNumber, IconShoppingCartPlus } from "@tabler/icons-react";
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { useLoaderData, useLocation } from "react-router-dom";
 import ProductCard from "../../components/Card";
@@ -128,10 +128,31 @@ export default function Product() {
     backgroundImage.onload = () => (userImage.onload = () => preview(backgroundImage, userImage, boundaryPoints));
   }, [modalState.open, customImage, product, boundaryPoints]);
 
+  const [scrollHeight, setScrollHeight] = useState(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrollHeight(window.scrollY);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  });
+
   return (
     <Box w="80%" ml="auto" mr="auto">
       {bigImage && !isMobile && (
-        <ImageZoom productImage={productImage} openBigImage={openBigImage} images={images} setProductImage={setProductImage} product={product} />
+        <ImageZoom
+          scrollHeight={scrollHeight}
+          productImage={productImage}
+          openBigImage={openBigImage}
+          images={images}
+          setProductImage={setProductImage}
+          product={product}
+        />
       )}
 
       <Helmet>

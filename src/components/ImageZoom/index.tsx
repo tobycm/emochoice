@@ -11,13 +11,13 @@ export default function ImageZoom(props: {
   images: string[];
   setProductImage: (image: string) => void;
   product: Product;
+  scrollHeight: number;
 }) {
   const [isFocused, setIsFocused] = useState(false);
   const [needToClose, setNeedToClose] = useState(false);
 
   useEffect(() => {
     document.body.style.overflow = "hidden";
-    window.scrollTo(0, 0);
 
     return () => {
       document.body.style.overflow = "auto";
@@ -51,6 +51,7 @@ export default function ImageZoom(props: {
       onClick={() => {
         props.openBigImage(false);
       }}
+      style={{ transform: `translateY(${props.scrollHeight}px` }}
     >
       <Box
         h="100vh"
@@ -132,3 +133,8 @@ export default function ImageZoom(props: {
     </Overlay>
   );
 }
+
+ImageZoom.defaultProps = {
+  images: [],
+  product: {},
+};

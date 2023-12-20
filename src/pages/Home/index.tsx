@@ -77,7 +77,7 @@ export default function Home() {
         </Title>
         <Box className={classes.cardsBox}>
           <Link to="/catalog" state={{ categories: ["Clothing & Accessories Print"] }} className={classes.card}>
-            <Card shadow="sm" padding="lg" radius="md" miw={224} withBorder>
+            <Card shadow="sm" padding="lg" radius="md" w={270} withBorder>
               <Card.Section m={"2%"} h={"20%"}>
                 <Title order={3} style={{ textAlign: "center" }} c="emochoice-blue">
                   Clothing & Accessories Print
@@ -89,7 +89,7 @@ export default function Home() {
             </Card>
           </Link>
           <Link to="/catalog" state={{ categories: ["Digital Printing"] }} className={classes.card}>
-            <Card shadow="sm" padding="lg" radius="md" miw={224} withBorder>
+            <Card shadow="sm" padding="lg" radius="md" w={270} withBorder>
               <Card.Section m={"2%"} h={"20%"}>
                 <Title order={3} style={{ textAlign: "center" }} c="emochoice-blue">
                   Digital Printing
@@ -101,7 +101,7 @@ export default function Home() {
             </Card>
           </Link>
           <Link to="/catalog" state={{ categories: ["Souvenirs & Gifts Printing"] }} className={classes.card}>
-            <Card shadow="sm" padding="lg" radius="md" miw={224} withBorder>
+            <Card shadow="sm" padding="lg" radius="md" w={270} withBorder>
               <Card.Section m={"2%"} h={"20%"}>
                 <Title order={3} style={{ textAlign: "center" }} c="emochoice-blue">
                   Souvenirs & Gifts Printing
