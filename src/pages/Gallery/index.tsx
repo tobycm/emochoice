@@ -22,6 +22,7 @@ export default function Gallery(props: { home: boolean }) {
   const isMobile = useMediaQuery(`(max-width: 48em)`);
 
   const reInitEmblas = async () => {
+    // eslint-disable-next-line no-constant-condition
     while (true) {
       try {
         if (embla.gallery_1) embla.gallery_1.reInit();
@@ -41,7 +42,7 @@ export default function Gallery(props: { home: boolean }) {
         const gallery = await getGallery(type);
         const slides = gallery.map((link) => (
           <Carousel.Slide key={link}>
-            <Image src={link} />
+            <Image {...(!props.home ? { mah: 100, maw: 100, style: { aspectRatio: 1 / 1 } } : {})} src={link} />
           </Carousel.Slide>
         ));
         setSlides((prevSlides) => ({ ...prevSlides, [type]: slides }));
@@ -70,7 +71,7 @@ export default function Gallery(props: { home: boolean }) {
         Gallery
       </Title>
       {["gallery_1", "gallery_2", "gallery_3"].map((type) => (
-        <Box mb={20} display={"flex"} style={{ flexDirection: "column", alignItems: "center" }} key={type} mih="50vh">
+        <Box mb={1} display={"flex"} style={{ flexDirection: "column", alignItems: "center" }} key={type} mih={100}>
           <Title order={3} c="emochoice-blue" mb="md">
             {type === "gallery_1" ? "Clothing & Accessories" : type === "gallery_2" ? "Digital Printing" : "Souvenirs & Gifts Printing"}
           </Title>
@@ -82,7 +83,7 @@ export default function Gallery(props: { home: boolean }) {
             draggable
             slideSize={isMobile ? "100%" : "30%"}
             slideGap="sm"
-            mb="xl"
+            mb="xs"
           >
             {slides[type]}
           </Carousel>
