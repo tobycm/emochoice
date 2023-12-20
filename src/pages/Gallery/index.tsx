@@ -41,8 +41,8 @@ export default function Gallery(props: { home: boolean }) {
       try {
         const gallery = await getGallery(type);
         const slides = gallery.map((link) => (
-          <Carousel.Slide key={link}>
-            <Image {...(!props.home ? { mah: 100, maw: 100, style: { aspectRatio: 1 / 1 } } : {})} src={link} />
+          <Carousel.Slide w={75} key={link}>
+            <Image w={150} style={{ aspectRatio: 1 / 1 }} src={link} />
           </Carousel.Slide>
         ));
         setSlides((prevSlides) => ({ ...prevSlides, [type]: slides }));
@@ -58,9 +58,7 @@ export default function Gallery(props: { home: boolean }) {
     });
   }, [embla]);
 
-  if (!slides.gallery_1.length || !slides.gallery_2.length || !slides.gallery_3.length) {
-    return <LoaderBox />;
-  }
+  if (!slides.gallery_1.length || !slides.gallery_2.length || !slides.gallery_3.length) return <LoaderBox />;
 
   return (
     <Box display="flex" style={{ flexDirection: "column", alignItems: "center" }}>
@@ -78,11 +76,10 @@ export default function Gallery(props: { home: boolean }) {
           <Carousel
             className={classes.carousel}
             getEmblaApi={(api) => setEmbla((prevEmbla) => ({ ...prevEmbla, [type]: api }))}
-            mx="auto"
             loop
             draggable
+            dragFree
             slideSize={isMobile ? "100%" : "30%"}
-            slideGap="sm"
             mb="xs"
           >
             {slides[type]}
