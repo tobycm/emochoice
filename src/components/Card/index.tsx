@@ -50,6 +50,8 @@ export default function ProductCard(props: { product: Product; inProductPage?: b
         shadow="sm"
         padding="lg"
         radius="md"
+        pb={props.inProductPage ? "lg" : "0"}
+        mb={props.inProductPage ? "md" : "0"}
         withBorder
       >
         <Card.Section h={"65%"}>
