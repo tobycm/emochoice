@@ -1,4 +1,6 @@
+/* eslint-disable react-refresh/only-export-components */
 import { Box, Loader } from "@mantine/core";
+import { Product } from "./database/models";
 
 export function toTitleCase(str: string = "") {
   return str.replace(/\w\S*/g, function (txt) {
@@ -83,4 +85,15 @@ export function brightness(hex: string): "light" | "dark" {
   if (!rgb) return "dark";
 
   return rgb.r * 0.299 + rgb.g * 0.587 + rgb.b * 0.114 > 0.5 ? "light" : "dark"; // copilot
+}
+
+export function filterProducts(products: Product[], categories: string[], offsetLast: number = 0): Product[] {
+  const iterations = [[...products]];
+
+  for (const category of categories) {
+    if (iterations[iterations.length - 1].length === 0) break;
+    iterations.push(iterations[iterations.length - 1].filter((product) => product.expand?.category?.some((c) => c.name === category)));
+  }
+
+  return iterations[iterations.length - 1 - offsetLast];
 }
