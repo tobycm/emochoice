@@ -1,5 +1,4 @@
 import { Badge, Box, Card, Group, Image, Text, Title } from "@mantine/core";
-import { useMediaQuery } from "@mantine/hooks";
 import { Link } from "react-router-dom";
 import pocketbase from "../../lib/database";
 import { Product } from "../../lib/database/models";
@@ -7,7 +6,6 @@ import { Product } from "../../lib/database/models";
 export default function ProductCard(props: { product: Product; inProductPage?: boolean }) {
   const { product } = props;
   const productUrl = `/product/${product.id}`;
-  const isMobile = useMediaQuery("(max-width: 49em)");
 
   let categories = null;
   let colors = null;
@@ -50,8 +48,8 @@ export default function ProductCard(props: { product: Product; inProductPage?: b
         shadow="sm"
         padding="lg"
         radius="md"
-        pb={props.inProductPage ? "lg" : "0"}
-        mb={props.inProductPage ? "md" : "0"}
+        pb="xl"
+        mb="md"
         withBorder
       >
         <Card.Section h={"65%"}>
@@ -63,9 +61,7 @@ export default function ProductCard(props: { product: Product; inProductPage?: b
               {product.brand}
             </Text>
             <Group justify="space-between">
-              <Title order={3}>
-                {product.name.length > 32 ? `${isMobile ? product.name.slice(0, 30) : product.name.slice(0, 33)}...` : product.name}
-              </Title>
+              <Title order={3}>{product.name.length > 32 ? `${product.name.slice(0, 30)}...` : product.name}</Title>
               {product.badge ? (
                 <Badge color="pink" variant="light">
                   {product.badge}
