@@ -4,7 +4,7 @@ import Autoplay from "embla-carousel-autoplay";
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import DefaultHelmet from "../../components/Helmets/DefaultHelmet";
-import { getGallery, getProducts } from "../../lib/database";
+import { getGallery } from "../../lib/database";
 import { setDocumentTitle } from "../../lib/utils";
 import Gallery from "../Gallery";
 import classes from "./index.module.css";
@@ -14,10 +14,6 @@ export default function Home() {
   const [slides, setSlides] = useState<JSX.Element[]>([]);
   const [threeCards, setThreeCards] = useState<string[]>([]);
   const [embla, setEmbla] = useState<Embla | null>(null);
-
-  useEffect(() => {
-    getProducts(); // Pre-fetch products
-  }, []);
 
   useEffect(() => {
     setDocumentTitle();

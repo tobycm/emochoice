@@ -33,14 +33,14 @@ export default function Catalog() {
     user = location.state;
   }
 
-  if (user?.searchQuery) {
-    getProducts().then((products) => {
-      setProducts(products.filter((product) => product.name.toLowerCase().includes(user!.searchQuery!.toLowerCase())));
-      setIsLoaded(true);
-    });
-  }
-
   useEffect(() => {
+    if (user?.searchQuery) {
+      console.log(user?.searchQuery);
+      getProducts().then((products) => {
+        setProducts(products.filter((product) => product.name.toLowerCase().includes(user!.searchQuery!.toLowerCase())));
+      });
+      console.log(products);
+    }
     if (user?.categories) {
       // fetch with first category
       getProducts().then((products) => {
@@ -61,9 +61,9 @@ export default function Catalog() {
         );
 
         setProducts(products);
-        setIsLoaded(true);
       });
     }
+    setIsLoaded(true);
   }, [user]);
 
   const filterProducts = (newFilters: Filter[]) => {
@@ -105,10 +105,10 @@ export default function Catalog() {
   useEffect(() => {
     setDocumentTitle("Catalog");
 
-    if (!user?.categories)
+    if (!user)
       getProducts().then((products) => {
         setProducts(products);
-        if (user === null) setIsLoaded(true);
+        setIsLoaded(true);
       });
   }, [user]);
 

@@ -371,9 +371,11 @@ export default function Product() {
           </Title>
           <ScrollArea>
             <Box display={"flex"}>
-              {relatedProducts.length > 0
-                ? relatedProducts.filter((p) => p.id != product.id).map((product) => <ProductCard inProductPage={true} product={product} />)
-                : null}
+              {relatedProducts
+                .filter((p) => p.id != product.id)
+                .map((product, index) => (
+                  <ProductCard inProductPage={true} product={product} />
+                ))}
             </Box>
           </ScrollArea>
         </Box>

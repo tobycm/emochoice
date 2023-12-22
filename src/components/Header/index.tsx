@@ -38,14 +38,27 @@ export default function Header() {
       : navigate("/catalog", { state: { searchQuery: document.getElementById("searchbarMobile")?.getAttribute("value") } });
   }
 
-  useEffect(() => {
-    setShowIndicator(list.length > 0);
+  let tempSearchList = new Array<string>();
+  function getProductsNames() {
     getProducts().then((products) => {
+      console.log(products);
       products.forEach((product) => {
-        if (!productsNames.includes(product.name)) setProductsNames((prev) => [...prev, product.name]);
+        console.log(product.name);
+        if (!tempSearchList.includes(product.name)) {
+          setProductsNames((prev) => [...prev, product.name]);
+          tempSearchList.push(product.name);
+        }
       });
     });
-  }, [list, productsNames]);
+  }
+
+  useEffect(() => {
+    getProductsNames();
+  }, []);
+
+  useEffect(() => {
+    setShowIndicator(list.length > 0);
+  }, [list]);
 
   return (
     <Box className={classes.header}>
@@ -64,6 +77,7 @@ export default function Header() {
               }}
               limit={10}
             />
+
             <ActionIcon
               variant="filled"
               radius="lg"
