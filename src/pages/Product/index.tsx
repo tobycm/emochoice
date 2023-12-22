@@ -373,7 +373,7 @@ export default function Product() {
             <Box display={"flex"}>
               {relatedProducts
                 .filter((p) => p.id != product.id)
-                .map((product, index) => (
+                .map((product) => (
                   <ProductCard inProductPage={true} product={product} />
                 ))}
             </Box>
