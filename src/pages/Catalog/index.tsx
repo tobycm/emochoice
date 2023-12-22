@@ -39,37 +39,32 @@ export default function Catalog() {
       setIsLoaded(true);
     });
   }
-  if (user?.categories) {
-    // fetch with first category
-    getProducts().then((products) => {
-      products = products.filter((product) => {
-        if (!product.expand?.category) return false;
-        for (const productCategory of product.expand.category) if (productCategory.name === user!.categories![0]) return true;
 
-        return false;
+  useEffect(() => {
+    if (user?.categories) {
+      // fetch with first category
+      getProducts().then((products) => {
+        products = products.filter((product) => !!product.expand?.category);
+
+        // filter products with other categories
+        for (const category of user!.categories!) {
+          products = products.filter((product) => {
+            for (const productCategory of product.expand!.category!) return productCategory.name === category;
+          });
+        }
+
+        setFilters(
+          user!.categories!.map((category) => ({
+            type: "category",
+            value: category,
+          })),
+        );
+
+        setProducts(products);
+        setIsLoaded(true);
       });
-
-      // filter products with other categories
-      for (const category of user!.categories!.slice(1)) {
-        products = products.filter((product) => {
-          if (!product.expand?.category) return false;
-          for (const productCategory of product.expand.category) if (productCategory.name === category) return true;
-
-          return false;
-        });
-      }
-
-      setFilters(
-        user!.categories!.map((category) => ({
-          type: "category",
-          value: category,
-        })),
-      );
-
-      setProducts(products);
-      setIsLoaded(true);
-    });
-  }
+    }
+  }, [user]);
 
   const filterProducts = (newFilters: Filter[]) => {
     getProducts().then((products) => {
