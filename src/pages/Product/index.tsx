@@ -364,18 +364,20 @@ export default function Product() {
           </Tabs.Panel>
         </Tabs>
       </Box>
-      <Box mt="xl">
-        <Title order={2} mb="sm">
-          You may also like
-        </Title>
-        <ScrollArea>
-          <Box display={"flex"}>
-            {relatedProducts.length > 0
-              ? relatedProducts.filter((p) => p.id != product.id).map((product) => <ProductCard inProductPage={true} product={product} />)
-              : null}
-          </Box>
-        </ScrollArea>
-      </Box>
+      {relatedProducts.length > 0 ? (
+        <Box mt="xl">
+          <Title order={2} mb="sm">
+            You may also like
+          </Title>
+          <ScrollArea>
+            <Box display={"flex"}>
+              {relatedProducts.length > 0
+                ? relatedProducts.filter((p) => p.id != product.id).map((product) => <ProductCard inProductPage={true} product={product} />)
+                : null}
+            </Box>
+          </ScrollArea>
+        </Box>
+      ) : null}
     </Box>
   );
 }
