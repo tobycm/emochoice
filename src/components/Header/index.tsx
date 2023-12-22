@@ -41,9 +41,7 @@ export default function Header() {
   let tempSearchList = new Array<string>();
   function getProductsNames() {
     getProducts().then((products) => {
-      console.log(products);
       products.forEach((product) => {
-        console.log(product.name);
         if (!tempSearchList.includes(product.name)) {
           setProductsNames((prev) => [...prev, product.name]);
           tempSearchList.push(product.name);

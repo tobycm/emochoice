@@ -52,7 +52,6 @@ export default function Gallery(props: { home: boolean }) {
                   if (!isMobile) {
                     setZoomImage(link);
                     openBigImage(true);
-                    console.log("clicked");
                   }
                 }}
                 w={isMobile ? "80vw" : "250px"}

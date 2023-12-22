@@ -35,11 +35,9 @@ export default function Catalog() {
 
   useEffect(() => {
     if (user?.searchQuery) {
-      console.log(user?.searchQuery);
       getProducts().then((products) => {
         setProducts(products.filter((product) => product.name.toLowerCase().includes(user!.searchQuery!.toLowerCase())));
       });
-      console.log(products);
     }
     if (user?.categories) {
       // fetch with first category
