@@ -7,16 +7,8 @@ export default function ProductCard(props: { product: Product; inProductPage?: b
   const { product } = props;
   const productUrl = `/product/${product.id}`;
 
-  let categories = null;
   let colors = null;
-  if (product.expand?.category) {
-    categories = (
-      <Text mt="xs" style={{ color: "grey" }}>
-        Categor{product.expand.category.length === 1 ? "y" : "ies"}: {product.expand.category.map((category) => category.name).join(", ")}
-        {product.expand.category.length > 2 ? ", ..." : null}
-      </Text>
-    );
-  }
+
   if (product.expand?.colors) {
     colors = (
       <Box mt={"xs"} display={"flex"} style={{ alignItems: "center" }}>
@@ -52,10 +44,10 @@ export default function ProductCard(props: { product: Product; inProductPage?: b
         mb="md"
         withBorder
       >
-        <Card.Section h={"65%"}>
+        <Card.Section h={"76%"}>
           <Image src={product.images ? pocketbase.getFileUrl(product, product.images[0]) : "/images/no_image.png"} h={"100%"} maw={"100%"} />
         </Card.Section>
-        <Card.Section h={"35%"}>
+        <Card.Section h={"24%"}>
           <Box m={"8%"}>
             <Text mt="md" mb="xs" c={"emochoice-blue"} fw={"bold"}>
               {product.brand}
@@ -68,7 +60,6 @@ export default function ProductCard(props: { product: Product; inProductPage?: b
                 </Badge>
               ) : null}
             </Group>
-            {categories}
             {colors}
           </Box>
         </Card.Section>

@@ -13,7 +13,7 @@ import CustomImageModal from "../../components/Modal/CustomImage";
 import pocketbase, { getProducts } from "../../lib/database";
 import { Color, Product } from "../../lib/database/models";
 import { List, useList } from "../../lib/list";
-import { HTMLtoText, pasteImage, toTitleCase } from "../../lib/utils";
+import { HTMLtoText, filterProducts, pasteImage, toTitleCase } from "../../lib/utils";
 import classes from "./index.module.css";
 
 export interface OrderData {
@@ -58,7 +58,7 @@ export default function Product() {
     product.images.length > 0 ? pocketbase.getFileUrl(product, product.images[0]) : "/images/no_image.png",
   );
   const [images, setImages] = React.useState<string[]>([]);
-  const [randomProducts, setRandomProducts] = React.useState<Product[]>([]);
+  const [relatedProducts, setRelatedProducts] = React.useState<Product[]>([]);
   const [bigImage, openBigImage] = React.useState(false);
   const { list, updateList } = useList();
 
@@ -107,13 +107,10 @@ export default function Product() {
   }, [user, form]);
 
   useEffect(() => {
-    getProducts(0, "", 7).then((products) => {
-      const randomPage = Math.floor(Math.random() * products.totalPages);
-      getProducts(randomPage, "", 7).then((products) => {
-        setRandomProducts(products.items);
-      });
+    getProducts().then((products) => {
+      setRelatedProducts(filterProducts(products, product.category, 1));
     });
-  }, []);
+  }, [product.category]);
 
   useEffect(() => {
     if (!modalState.open) return;
@@ -373,8 +370,8 @@ export default function Product() {
         </Title>
         <ScrollArea>
           <Box display={"flex"}>
-            {randomProducts.length > 0
-              ? randomProducts.filter((p) => p.id != product.id).map((product) => <ProductCard inProductPage={true} product={product} />)
+            {relatedProducts.length > 0
+              ? relatedProducts.filter((p) => p.id != product.id).map((product) => <ProductCard inProductPage={true} product={product} />)
               : null}
           </Box>
         </ScrollArea>

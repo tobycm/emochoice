@@ -4,7 +4,7 @@ import "@mantine/notifications/styles.css";
 import { RouteObject, RouterProvider } from "react-router";
 import { createBrowserRouter } from "react-router-dom";
 import Content from "./components/Content";
-import { getProduct } from "./lib/database";
+import { getProducts } from "./lib/database";
 import { Product as DProduct } from "./lib/database/models"; // DProduct stands for Database Product
 import NotFound from "./pages/404";
 import Catalog from "./pages/Catalog";
@@ -36,7 +36,9 @@ const routes: RouteObject[] = [
         loader: async ({ params }): Promise<{ product: DProduct }> => {
           try {
             if (!params.id) throw new Error("No product ID provided");
-            return { product: await getProduct(params.id) };
+            const product = (await getProducts()).find((product) => product.id === params.id);
+            if (!product) throw new Error("Product not found");
+            return { product };
           } catch {
             return {
               product: {

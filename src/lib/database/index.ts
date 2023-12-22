@@ -14,16 +14,27 @@ export async function searchCategory(query: string) {
   return await pocketbase.collection("categories").getFirstListItem<ProductCategory>(`name ~ "${query}"`);
 }
 
-export async function getProducts(page: number = 0, filter: string = "", perPage: number = 24) {
-  return await pocketbase.collection("products").getList<Product>(page, perPage, { filter, expand: "category,colors", sort: "-created" });
-}
+let products: Product[] | undefined;
 
-export async function searchProducts(query: string) {
-  return await pocketbase.collection("products").getList<Product>(0, 24, { filter: `name ~ "${query}"`, expand: "category,colors" });
-}
+export async function getProducts() {
+  if (!products) {
+    products = await pocketbase.collection("products").getFullList<Product>(1000, { expand: "category,colors", sort: "-created" });
+    pocketbase.collection("products").subscribe<Product>("*", (event) => {
+      switch (event.action) {
+        case "create":
+          products!.unshift(event.record);
+          break;
+        case "update":
+          products = products!.map((product) => (product.id === event.record.id ? event.record : product));
+          break;
+        case "delete":
+          products = products!.filter((product) => product.id !== event.record.id);
+          break;
+      }
+    });
+  }
 
-export async function getProduct(id: string) {
-  return await pocketbase.collection("products").getOne<Product>(id, { expand: "category,colors" });
+  return products;
 }
 
 const metadataIds = {

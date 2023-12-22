@@ -1,11 +1,10 @@
 import { Box, Button, Checkbox, InputBase, Modal, NavLink, Pill, ScrollArea, Text, Title, UnstyledButton } from "@mantine/core";
 import { IconCategory, IconColorFilter, IconFilter, IconIcons, IconSearchOff } from "@tabler/icons-react";
-import { ListResult } from "pocketbase";
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router";
 import ProductCard from "../../components/Card";
 import SmallChangeHelmet from "../../components/Helmets/SmallChangeHelmet";
-import { getProducts, searchProducts } from "../../lib/database";
+import { getProducts } from "../../lib/database";
 import { Product } from "../../lib/database/models";
 import LoaderBox, { setDocumentTitle, toTitleCase } from "../../lib/utils";
 import classes from "./index.module.css";
@@ -18,13 +17,7 @@ interface Filter {
 }
 
 export default function Catalog() {
-  const [products, setProducts] = useState<ListResult<Product>>({
-    items: [],
-    page: 0,
-    perPage: 0,
-    totalItems: 0,
-    totalPages: 0,
-  });
+  const [products, setProducts] = useState<Product[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
   const [filters, setFilters] = useState<Filter[]>([]);
   const [modalOpened, setModalOpened] = React.useState<boolean>(false);
@@ -41,17 +34,24 @@ export default function Catalog() {
   }
 
   if (user?.searchQuery) {
-    searchProducts(user.searchQuery.toLowerCase()).then((products) => {
-      setProducts(products);
+    getProducts().then((products) => {
+      setProducts(products.filter((product) => product.name.toLowerCase().includes(user!.searchQuery!.toLowerCase())));
       setIsLoaded(true);
     });
   }
   if (user?.categories) {
     // fetch with first category
-    getProducts(0, `category.name ?= "${user.categories[0]}"`, 100).then((products) => {
+    getProducts().then((products) => {
+      products = products.filter((product) => {
+        if (!product.expand?.category) return false;
+        for (const productCategory of product.expand.category) if (productCategory.name === user!.categories![0]) return true;
+
+        return false;
+      });
+
       // filter products with other categories
       for (const category of user!.categories!.slice(1)) {
-        products.items = products.items.filter((product) => {
+        products = products.filter((product) => {
           if (!product.expand?.category) return false;
           for (const productCategory of product.expand.category) if (productCategory.name === category) return true;
 
@@ -72,29 +72,22 @@ export default function Catalog() {
   }
 
   const filterProducts = (newFilters: Filter[]) => {
-    let filterString = "";
-    let colorCounter = 0;
-    const colorsList: string[] = [];
-
-    for (const filter of newFilters) {
-      if (filter.type === "color") {
-        if (colorCounter === 0) filterString += `&& colors.name ?= "${filter.value}"`;
-        colorCounter++;
-        colorsList.push(filter.value);
+    getProducts().then((products) => {
+      for (const filter of newFilters) {
+        switch (filter.type) {
+          case "color":
+            products = products.filter((product) => !!product.expand?.colors?.find((productColor) => productColor.name === filter.value));
+            break;
+          case "category":
+            products = products.filter((product) => !!product.expand?.category?.find((productCategory) => productCategory.name === filter.value));
+            break;
+          case "brand":
+            products = products.filter((product) => product.brand === filter.value);
+            break;
+        }
       }
-      if (filter.type === "category") filterString += `&& category.name ?= "${filter.value}"`;
-      if (filter.type === "brand") filterString += `&& brand = "${filter.value}"`;
-    }
 
-    if (filterString.slice(0, 3) === "&& ") filterString = filterString.slice(3);
-
-    getProducts(0, filterString).then((products) => {
-      const finalProducts = products;
-      if (colorsList.length > 1)
-        for (const color of colorsList)
-          finalProducts.items = products.items.filter((product) => !!product.expand?.colors?.find((productColor) => productColor.name === color));
-
-      setProducts(finalProducts);
+      setProducts(products);
       setIsFiltered(true);
     });
   };
@@ -134,7 +127,7 @@ export default function Catalog() {
               {(() => {
                 const categories: string[] = [];
 
-                for (const product of products.items)
+                for (const product of products)
                   if (product.expand?.category)
                     for (const category of product.expand.category) if (!categories.includes(category.name)) categories.push(category.name);
 
@@ -149,7 +142,7 @@ export default function Catalog() {
               {(() => {
                 const brands: string[] = [];
 
-                for (const product of products.items) if (!brands.includes(product.brand)) brands.push(product.brand);
+                for (const product of products) if (!brands.includes(product.brand)) brands.push(product.brand);
 
                 return brands.map((brand) => <Checkbox mb={5} mt={5} label={brand} value={brand} key={brand} />);
               })()}
@@ -162,7 +155,7 @@ export default function Catalog() {
               {(() => {
                 const colors: string[] = [];
 
-                for (const product of products.items)
+                for (const product of products)
                   if (product.expand?.colors) for (const color of product.expand.colors) if (!colors.includes(color.name)) colors.push(color.name);
 
                 return colors.map((color) => <Checkbox mb={5} mt={5} label={toTitleCase(color)} value={color} key={color} />);
@@ -232,7 +225,7 @@ export default function Catalog() {
         </Box>
         {!isFiltered ? (
           <LoaderBox />
-        ) : products.items.length === 0 ? (
+        ) : products.length === 0 ? (
           <Box display="flex" style={{ justifyContent: "center", alignItems: "center", flexDirection: "column" }} w="100%" h="50vh">
             <IconSearchOff style={{ width: "30%", height: "30%", marginBottom: "1em" }} stroke={1} />
             <Title order={2} mb="md">
@@ -255,7 +248,7 @@ export default function Catalog() {
           </Box>
         ) : (
           <Box className={classes.cardsBox}>
-            {products.items.map((product) => (
+            {products.map((product) => (
               <ProductCard product={product} key={product.id} />
             ))}
           </Box>

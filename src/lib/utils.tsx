@@ -87,13 +87,13 @@ export function brightness(hex: string): "light" | "dark" {
   return rgb.r * 0.299 + rgb.g * 0.587 + rgb.b * 0.114 > 0.5 ? "light" : "dark"; // copilot
 }
 
-export function filterProducts(products: Product[], categories: string[], offsetLast: number = 0): Product[] {
+export function filterProducts(products: Product[], categoriesId: string[], offsetLast: number = 0): Product[] {
   const iterations = [[...products]];
 
-  for (const category of categories) {
+  for (const categoryId of categoriesId) {
     if (iterations[iterations.length - 1].length === 0) break;
-    iterations.push(iterations[iterations.length - 1].filter((product) => product.expand?.category?.some((c) => c.name === category)));
+    iterations.push(iterations[iterations.length - 1].filter((product) => product.category.some((cId) => cId === categoryId)));
   }
 
-  return iterations[iterations.length - 1 - offsetLast];
+  return iterations[iterations.length - 1 - offsetLast] ?? [];
 }

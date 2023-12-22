@@ -40,9 +40,9 @@ export default function Header() {
 
   useEffect(() => {
     setShowIndicator(list.length > 0);
-    getProducts().then((res) => {
-      res.items.forEach((item) => {
-        if (!productsNames.includes(item.name)) setProductsNames((prev) => [...prev, item.name]);
+    getProducts().then((products) => {
+      products.forEach((product) => {
+        if (!productsNames.includes(product.name)) setProductsNames((prev) => [...prev, product.name]);
       });
     });
   }, [list, productsNames]);
