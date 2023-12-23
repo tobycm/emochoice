@@ -46,9 +46,7 @@ export default function Catalog() {
 
         // filter products with other categories
         for (const category of user!.categories!) {
-          products = products.filter((product) => {
-            for (const productCategory of product.expand!.category!) return productCategory.name === category;
-          });
+          products = products.filter((product) => product.expand!.category!.find((productCategory) => productCategory.name === category));
         }
 
         setFilters(
