@@ -27,6 +27,7 @@ export default function Gallery(props: { home: boolean }) {
   const [scrollHeight, setScrollHeight] = useState(0);
 
   const reInitEmblas = async () => {
+    // eslint-disable-next-line no-constant-condition
     while (true) {
       try {
         if (embla.gallery_1) embla.gallery_1.reInit();
@@ -57,7 +58,7 @@ export default function Gallery(props: { home: boolean }) {
                 w={isMobile ? "80vw" : "250px"}
                 ml="auto"
                 mr="auto"
-                style={{ aspectRatio: 1 / 1, cursor: "pointer" }}
+                style={{ aspectRatio: 1 / 1.618, cursor: "pointer" }}
                 src={link}
               />
             </Box>
@@ -98,12 +99,12 @@ export default function Gallery(props: { home: boolean }) {
       {!props.home ? (
         <SmallChangeHelmet title="Gallery" gallery={true} location="gallery" description="Take a look at some of our great printing products!" />
       ) : null}
-      <Title order={2} mb="xl">
+      <Title size={"5vh"} order={2} mb="md">
         Gallery
       </Title>
       {["gallery_1", "gallery_2", "gallery_3"].map((type) => (
         <Box mb={1} display={"flex"} style={{ flexDirection: "column", alignItems: "center" }} key={type} mih={100}>
-          <Title order={3} c="emochoice-blue" mb="md">
+          <Title size={"4vh"} order={3} c="emochoice-blue" mb="md">
             {type === "gallery_1" ? "Clothing & Accessories" : type === "gallery_2" ? "Digital Printing" : "Souvenirs & Gifts Printing"}
           </Title>
           <Carousel
