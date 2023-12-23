@@ -49,6 +49,7 @@ const routes: RouteObject[] = [
                 brand: "Eggu no Toby",
                 id: "messikimochi",
                 name: "Sui-chan wa kyou mo Kawaii~ Mug",
+                custom_id: "messikimochi",
                 category: ["upfqqdkkgeff7wj"],
                 colors: [],
                 images: [],

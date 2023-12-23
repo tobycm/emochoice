@@ -58,7 +58,7 @@ export default function Gallery(props: { home: boolean }) {
                 w={isMobile ? "80vw" : "250px"}
                 ml="auto"
                 mr="auto"
-                style={{ aspectRatio: 1 / 1.618, cursor: "pointer" }}
+                style={{ aspectRatio: 9 / 11, cursor: "pointer" }}
                 src={link}
               />
             </Box>
@@ -99,12 +99,12 @@ export default function Gallery(props: { home: boolean }) {
       {!props.home ? (
         <SmallChangeHelmet title="Gallery" gallery={true} location="gallery" description="Take a look at some of our great printing products!" />
       ) : null}
-      <Title size={"5vh"} order={2} mb="md">
+      <Title order={1} mb="md">
         Gallery
       </Title>
       {["gallery_1", "gallery_2", "gallery_3"].map((type) => (
         <Box mb={1} display={"flex"} style={{ flexDirection: "column", alignItems: "center" }} key={type} mih={100}>
-          <Title size={"4vh"} order={3} c="emochoice-blue" mb="md">
+          <Title order={2} c="emochoice-blue" mb="md">
             {type === "gallery_1" ? "Clothing & Accessories" : type === "gallery_2" ? "Digital Printing" : "Souvenirs & Gifts Printing"}
           </Title>
           <Carousel

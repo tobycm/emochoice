@@ -176,7 +176,7 @@ export default function Catalog() {
         <FilterNavBar />
       </Box>
       <Box w="80%" display={"flex"} style={{ alignItems: "center", flexDirection: "column" }} mb="5%" hiddenFrom="xs">
-        <Title order={2} mb="5%">
+        <Title order={1} mb="5%">
           Catalog
         </Title>
         <Button
@@ -219,7 +219,7 @@ export default function Catalog() {
         ) : products.length === 0 ? (
           <Box display="flex" style={{ justifyContent: "center", alignItems: "center", flexDirection: "column" }} w="100%" h="50vh">
             <IconSearchOff style={{ width: "30%", height: "30%", marginBottom: "1em" }} stroke={1} />
-            <Title order={2} mb="md">
+            <Title order={1} mb="md">
               No Products Found
             </Title>
             <Text>

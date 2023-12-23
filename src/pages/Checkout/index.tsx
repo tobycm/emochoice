@@ -44,7 +44,7 @@ export default function Checkout() {
   return (
     <Box className={classes.outerBox}>
       <DefaultHelmet />
-      <Title order={2} mb={20}>
+      <Title order={1} mb={20}>
         Checkout
       </Title>
       <Box w="100%">

@@ -1,4 +1,4 @@
-import { Badge, Box, Card, Group, Image, Text, Title } from "@mantine/core";
+import { Badge, Box, Card, Group, Image, Text } from "@mantine/core";
 import { Link } from "react-router-dom";
 import pocketbase from "../../lib/database";
 import { Product } from "../../lib/database/models";
@@ -6,23 +6,17 @@ import { Product } from "../../lib/database/models";
 export default function ProductCard(props: { product: Product; inProductPage?: boolean }) {
   const { product } = props;
   const productUrl = `/product/${product.id}`;
+  // const isMobile = useMediaQuery("(max-width: 36em)");
 
   let colors = null;
 
   if (product.expand?.colors) {
     colors = (
-      <Box mt={"xs"} display={"flex"} style={{ alignItems: "center" }}>
-        {product.expand.colors.slice(0, 9).map((color) => (
-          <Box
-            w={"2vh"}
-            h={"2vh"}
-            mr={5}
-            mih={15}
-            miw={15}
-            style={{ backgroundColor: color.hex, border: "1px solid #777", borderRadius: "3px" }}
-          ></Box>
+      <Box display={"flex"} style={{ alignItems: "center" }}>
+        {product.expand.colors.slice(0, 7).map((color) => (
+          <Box w={"1.618vh"} mr={5} style={{ backgroundColor: color.hex, border: "1px solid #777", borderRadius: "3px", aspectRatio: 1 / 1 }}></Box>
         ))}
-        {product.expand.colors.length > 9 ? <Text c="grey">+{product.expand.colors.length - 9}</Text> : null}
+        {product.expand.colors.length > 7 ? <Text c="grey">+{product.expand.colors.length - 7}</Text> : null}
       </Box>
     );
   }
@@ -30,11 +24,8 @@ export default function ProductCard(props: { product: Product; inProductPage?: b
   return (
     <Link to={productUrl} style={{ textDecoration: "none" }}>
       <Card
-        style={{ margin: !props.inProductPage ? "1vw" : "0.3vw 0.3vw 0 0" }}
-        w={"14.98vw"}
-        h={"60vh"}
-        miw={280}
-        mih={550}
+        style={{ margin: !props.inProductPage ? "1vw 0 1vw 1vw" : "0.3vw 0.3vw 0 0", aspectRatio: 1 / 1.618 }}
+        w={"43rem/3"}
         maw={750}
         mah={1600}
         shadow="sm"
@@ -44,16 +35,18 @@ export default function ProductCard(props: { product: Product; inProductPage?: b
         mb="md"
         withBorder
       >
-        <Card.Section h={"76%"}>
+        <Card.Section h={"77%"}>
           <Image src={product.images ? pocketbase.getFileUrl(product, product.images[0]) : "/images/no_image.png"} h={"100%"} maw={"100%"} />
         </Card.Section>
-        <Card.Section h={"24%"}>
-          <Box m={"8%"}>
-            <Text mt="md" mb="xs" c={"emochoice-blue"} fw={"bold"}>
+        <Card.Section h={"23%"}>
+          <Box m={"5%"}>
+            <Text c={"emochoice-blue"} style={{ fontSize: "13px" }} fw={600}>
               {product.brand}
             </Text>
             <Group justify="space-between">
-              <Title order={3}>{product.name.length > 32 ? `${product.name.slice(0, 30)}...` : product.name}</Title>
+              <Text lineClamp={2} mt={3} mb={5} fw="600" style={{ fontSize: "17px" }}>
+                {product.name}
+              </Text>
               {product.badge ? (
                 <Badge color="pink" variant="light">
                   {product.badge}

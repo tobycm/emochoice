@@ -19,19 +19,23 @@ let products: Product[] | undefined;
 export async function getProducts() {
   if (!products) {
     products = await pocketbase.collection("products").getFullList<Product>(1000, { expand: "category,colors", sort: "-created" });
-    pocketbase.collection("products").subscribe<Product>("*", (event) => {
-      switch (event.action) {
-        case "create":
-          products!.unshift(event.record);
-          break;
-        case "update":
-          products = products!.map((product) => (product.id === event.record.id ? event.record : product));
-          break;
-        case "delete":
-          products = products!.filter((product) => product.id !== event.record.id);
-          break;
-      }
-    });
+    pocketbase.collection("products").subscribe<Product>(
+      "*",
+      (event) => {
+        switch (event.action) {
+          case "create":
+            products!.unshift(event.record);
+            break;
+          case "update":
+            products = products!.map((product) => (product.id === event.record.id ? event.record : product));
+            break;
+          case "delete":
+            products = products!.filter((product) => product.id !== event.record.id);
+            break;
+        }
+      },
+      { expand: "category,colors" },
+    );
   }
 
   return products;

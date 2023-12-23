@@ -72,43 +72,43 @@ export default function Home() {
       </Box>
       <Container style={{ display: "flex", alignItems: "center", flexDirection: "column" }}>
         <Divider mb="xl" size="xs" w={"100%"}></Divider>
-        <Title order={2} mb="xl" ta="center">
+        <Title order={1} mb="xl" ta="center">
           Shop by category
         </Title>
         <Box className={classes.cardsBox}>
           <Link to="/catalog" state={{ categories: ["Clothing & Accessories Print"] }} className={classes.card}>
-            <Card shadow="sm" padding="lg" radius="md" w={270} withBorder>
-              <Card.Section m={"2%"} h={"20%"}>
+            <Card shadow="sm" radius="md" w={270} withBorder>
+              <Card.Section h={"20%"} m="3%">
                 <Title order={3} style={{ textAlign: "center" }} c="emochoice-blue">
                   Clothing & Accessories Print
                 </Title>
               </Card.Section>
-              <Card.Section h={"80%"}>
-                <Image src={threeCards[0]} height={160} alt="Clothing & Accessories Print" maw={"100%"} h={"100%"} />
+              <Card.Section h={"100%"}>
+                <Image src={threeCards[0]} alt="Clothing & Accessories Print" maw={"100%"} h={"100%"} />
               </Card.Section>
             </Card>
           </Link>
           <Link to="/catalog" state={{ categories: ["Digital Printing"] }} className={classes.card}>
-            <Card shadow="sm" padding="lg" radius="md" w={270} withBorder>
-              <Card.Section m={"2%"} h={"20%"}>
+            <Card shadow="sm" radius="md" w={270} withBorder>
+              <Card.Section h={"20%"} m="3%">
                 <Title order={3} style={{ textAlign: "center" }} c="emochoice-blue">
                   Digital Printing
                 </Title>
               </Card.Section>
-              <Card.Section h={"80%"}>
-                <Image src={threeCards[1]} height={160} alt="Digital Printing" maw={"100%"} h={"100%"} />
+              <Card.Section h={"100%"}>
+                <Image src={threeCards[1]} alt="Digital Printing" maw={"100%"} h={"100%"} />
               </Card.Section>
             </Card>
           </Link>
           <Link to="/catalog" state={{ categories: ["Souvenirs & Gifts Printing"] }} className={classes.card}>
-            <Card shadow="sm" padding="lg" radius="md" w={270} withBorder>
-              <Card.Section m={"2%"} h={"20%"}>
+            <Card shadow="sm" radius="md" w={270} withBorder>
+              <Card.Section h={"20%"} m="3%">
                 <Title order={3} style={{ textAlign: "center" }} c="emochoice-blue">
                   Souvenirs & Gifts Printing
                 </Title>
               </Card.Section>
-              <Card.Section h={"80%"}>
-                <Image src={threeCards[2]} height={160} alt="Souvenirs & Gifts Printing" maw={"100%"} h={"100%"} />
+              <Card.Section h={"100%"}>
+                <Image src={threeCards[2]} alt="Souvenirs & Gifts Printing" maw={"100%"} h={"100%"} />
               </Card.Section>
             </Card>
           </Link>

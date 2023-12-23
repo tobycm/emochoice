@@ -7,6 +7,7 @@ type ID = string;
 export interface Product extends RecordModel {
   name: string;
   brand: string;
+  custom_id: string;
   category: ID[];
   description: string;
   colors: ID[];

@@ -271,6 +271,7 @@ export default function Product() {
                   accept="image/jpeg,image/png,image/gif,image/tiff,image/bmp,image/webp,image/svg+xml,image/vnd.microsoft.icon,image/heif,image/heic"
                   variant="default"
                   c={"emochoice-yellow"}
+                  // @ts-ignore
                   placeholder="Upload"
                   {...form.getInputProps("fileInput")}
                   value={customImage}
