@@ -24,7 +24,7 @@ export default function List() {
   return (
     <Box className={classes.outerBox}>
       <DefaultHelmet />
-      <Title order={2} mb={20}>
+      <Title order={1} mb={20}>
         My List
       </Title>
       {deletedList.length > 0 ? (
@@ -81,6 +81,7 @@ export default function List() {
                             }}
                           >
                             {item.product.name}
+                            {item.product.custom_id && ` - ${item.product.custom_id}`}
                           </Link>
                         </Table.Td>
                         {isMobile ? null : (

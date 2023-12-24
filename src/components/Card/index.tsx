@@ -40,9 +40,21 @@ export default function ProductCard(props: { product: Product; inProductPage?: b
         </Card.Section>
         <Card.Section h={"23%"}>
           <Box m={"5%"}>
-            <Text c={"emochoice-blue"} style={{ fontSize: "13px" }} fw={600}>
-              {product.brand}
-            </Text>
+            <Box display="flex" style={{ justifyContent: "space-between" }}>
+              <Text c={"emochoice-blue"} style={{ fontSize: "13px" }} fw={600}>
+                {product.brand}
+              </Text>
+              <Box display="flex">
+                {/* <Badge color="red" size="sm">
+                  On Sale
+                </Badge> */}
+                {product.custom_id && (
+                  <Badge ml={5} color="emochoice-blue" size="sm">
+                    {product.custom_id}
+                  </Badge>
+                )}
+              </Box>
+            </Box>
             <Group justify="space-between">
               <Text lineClamp={2} mt={3} mb={5} fw="600" style={{ fontSize: "17px" }}>
                 {product.name}

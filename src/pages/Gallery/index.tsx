@@ -99,7 +99,7 @@ export default function Gallery(props: { home: boolean }) {
       {!props.home ? (
         <SmallChangeHelmet title="Gallery" gallery={true} location="gallery" description="Take a look at some of our great printing products!" />
       ) : null}
-      <Title order={1} mb="md">
+      <Title order={1} mb="lg">
         Gallery
       </Title>
       {["gallery_1", "gallery_2", "gallery_3"].map((type) => (
