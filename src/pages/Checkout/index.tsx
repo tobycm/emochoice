@@ -139,7 +139,10 @@ export default function Checkout() {
                       <Table.Tbody>
                         {proceedList.map((item, index) => (
                           <Table.Tr key={index}>
-                            <Table.Td>{item.product.name}</Table.Td>
+                            <Table.Td>
+                              {item.product.name}
+                              {item.product.custom_id && ` - ${item.product.custom_id}`}
+                            </Table.Td>
                             {isMobile ? null : (
                               <>
                                 <Table.Td>

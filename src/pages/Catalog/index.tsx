@@ -36,7 +36,11 @@ export default function Catalog() {
   useEffect(() => {
     if (user?.searchQuery) {
       getProducts().then((products) => {
-        setProducts(products.filter((product) => product.name.toLowerCase().includes(user!.searchQuery!.toLowerCase())));
+        setProducts(
+          products.filter((product) =>
+            `${product.name}${product.custom_id && ` - ${product.custom_id}`}`.toLowerCase().includes(user!.searchQuery!.toLowerCase()),
+          ),
+        );
       });
     }
     if (user?.categories) {

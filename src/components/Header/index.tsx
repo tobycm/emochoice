@@ -42,9 +42,9 @@ export default function Header() {
   function getProductsNames() {
     getProducts().then((products) => {
       products.forEach((product) => {
-        if (!tempSearchList.includes(product.name)) {
-          setProductsNames((prev) => [...prev, product.name]);
-          tempSearchList.push(product.name);
+        if (!tempSearchList.includes(`${product.name}${product.custom_id && ` - ${product.custom_id}`}`)) {
+          setProductsNames((prev) => [...prev, `${product.name}${product.custom_id && ` - ${product.custom_id}`}`]);
+          tempSearchList.push(`${product.name}${product.custom_id && ` - ${product.custom_id}`}`);
         }
       });
     });

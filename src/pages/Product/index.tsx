@@ -153,18 +153,21 @@ export default function Product() {
       )}
 
       <Helmet>
-        <title>{product.name} - Emochoice</title>
+        <title>
+          {product.name}
+          {product.custom_id && ` - ${product.custom_id}`} - Emochoice
+        </title>
         <meta name="description" content={HTMLtoText(product.description)} />
-        <meta name="title" content={`${product.name} - Emochoice`} />
+        <meta name="title" content={`${product.name}${product.custom_id && ` - ${product.custom_id}`} - Emochoice`} />
         <meta name="description" content={HTMLtoText(product.description)} />
         <meta property="og:type" content="website" />
         <meta property="og:url" content={`https://v2.emochoice.ca/product/${product.id}`} />
-        <meta property="og:title" content={`${product.name} - Emochoice`} />
+        <meta property="og:title" content={`${product.name}${product.custom_id && ` - ${product.custom_id}`} - Emochoice`} />
         <meta property="og:description" content={HTMLtoText(product.description)} />
         <meta property="og:image" content={productImage} />
         <meta property="twitter:card" content="summary_large_image" />
         <meta property="twitter:url" content={`https://v2.emochoice.ca/product/${product.id}`} />
-        <meta property="twitter:title" content={`${product.name} - Emochoice`} />
+        <meta property="twitter:title" content={`${product.name}${product.custom_id && ` - ${product.custom_id}`} - Emochoice`} />
         <meta property="twitter:description" content={HTMLtoText(product.description)} />
         <meta property="twitter:image" content={productImage} />
       </Helmet>
@@ -201,7 +204,10 @@ export default function Product() {
           ) : null}
         </Box>
         <Box ml={30} maw={!isMobile ? "70%" : "90%"}>
-          <Title mb={"xs"}>{product.name}</Title>
+          <Title mb={"xs"}>
+            {product.name}
+            {product.custom_id && ` - ${product.custom_id}`}
+          </Title>
           <Box
             component="form"
             onSubmit={form.onSubmit((values) => {
@@ -339,7 +345,10 @@ export default function Product() {
                     <Table.Td>
                       <strong>Name</strong>
                     </Table.Td>
-                    <Table.Td>{product.name}</Table.Td>
+                    <Table.Td>
+                      {product.name}
+                      {product.custom_id && ` - ${product.custom_id}`}
+                    </Table.Td>
                   </Table.Tr>
                   <Table.Tr>
                     <Table.Td>
