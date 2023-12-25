@@ -1,4 +1,5 @@
 import { Box, Button, Checkbox, InputBase, Modal, NavLink, Pill, ScrollArea, Text, Title, UnstyledButton } from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
 import { IconCategory, IconColorFilter, IconFilter, IconIcons, IconSearchOff } from "@tabler/icons-react";
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router";
@@ -112,11 +113,21 @@ export default function Catalog() {
       });
   }, [user]);
 
+  const [openCategoryFilter, categoryFilter] = useDisclosure(false);
+  const [openBrandFilter, brandFilter] = useDisclosure(false);
+  const [openColorFilter, colorFilter] = useDisclosure(false);
+
   function FilterNavBar() {
     return (
       <Box mih={"100%"} miw={200} style={{ flex: "0.5" }}>
         <SmallChangeHelmet title="Catalog" description="Browse through our wide selection of products!" location="catalog" />
-        <NavLink label="Categories" leftSection={<IconCategory size="1rem" stroke={1.5} />} childrenOffset={28} defaultOpened={false}>
+        <NavLink
+          label="Categories"
+          leftSection={<IconCategory size="1rem" stroke={1.5} />}
+          childrenOffset={28}
+          opened={openCategoryFilter}
+          onClick={categoryFilter.toggle}
+        >
           <Checkbox.Group value={getFilterValues("category")} onChange={updateFilters("category")}>
             <ScrollArea.Autosize mah={200}>
               {(() => {
@@ -131,7 +142,13 @@ export default function Catalog() {
             </ScrollArea.Autosize>
           </Checkbox.Group>
         </NavLink>
-        <NavLink label="Brands" leftSection={<IconIcons size="1rem" stroke={1.5} />} childrenOffset={28} defaultOpened={false}>
+        <NavLink
+          label="Brands"
+          leftSection={<IconIcons size="1rem" stroke={1.5} />}
+          childrenOffset={28}
+          opened={openBrandFilter}
+          onClick={brandFilter.toggle}
+        >
           <Checkbox.Group value={getFilterValues("brand")} onChange={updateFilters("brand")}>
             <ScrollArea.Autosize mah={200}>
               {(() => {
@@ -144,7 +161,13 @@ export default function Catalog() {
             </ScrollArea.Autosize>
           </Checkbox.Group>
         </NavLink>
-        <NavLink label="Colors" leftSection={<IconColorFilter size="1rem" stroke={1.5} />} childrenOffset={28} defaultOpened={false}>
+        <NavLink
+          label="Colors"
+          leftSection={<IconColorFilter size="1rem" stroke={1.5} />}
+          childrenOffset={28}
+          opened={openColorFilter}
+          onClick={colorFilter.toggle}
+        >
           <Checkbox.Group value={getFilterValues("color")} onChange={updateFilters("color")}>
             <ScrollArea.Autosize mah={200}>
               {(() => {
