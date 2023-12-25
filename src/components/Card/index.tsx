@@ -14,7 +14,7 @@ export default function ProductCard(props: { product: Product; inProductPage?: b
     colors = (
       <Box display={"flex"} style={{ alignItems: "center" }}>
         {product.expand.colors.slice(0, 7).map((color) => (
-          <Box w={"1.618vh"} mr={5} style={{ backgroundColor: color.hex, border: "1px solid #777", borderRadius: "3px", aspectRatio: 1 / 1 }}></Box>
+          <Box w={"14px"} mr={5} style={{ backgroundColor: color.hex, border: "1px solid #777", borderRadius: "3px", aspectRatio: 1 / 1 }}></Box>
         ))}
         {product.expand.colors.length > 7 ? <Text c="grey">+{product.expand.colors.length - 7}</Text> : null}
       </Box>
@@ -24,8 +24,9 @@ export default function ProductCard(props: { product: Product; inProductPage?: b
   return (
     <Link to={productUrl} style={{ textDecoration: "none" }}>
       <Card
-        style={{ margin: !props.inProductPage ? "1vw 0 1vw 1vw" : "0.3vw 0.3vw 0 0", aspectRatio: 1 / 1.618 }}
-        w={"43rem/3"}
+        style={{ margin: !props.inProductPage ? "1vw 0 1vw 1vw" : "0.3vw 0.3vw 0 0" }}
+        w={`43rem/3`}
+        h={`${((1 + Math.sqrt(5)) / 2) * (43 / 3)}rem`}
         maw={750}
         mah={1600}
         shadow="sm"
@@ -35,10 +36,10 @@ export default function ProductCard(props: { product: Product; inProductPage?: b
         mb="md"
         withBorder
       >
-        <Card.Section h={"77%"}>
-          <Image src={product.images ? pocketbase.getFileUrl(product, product.images[0]) : "/images/no_image.png"} h={"100%"} maw={"100%"} />
+        <Card.Section h="77%">
+          <Image src={product.images ? pocketbase.getFileUrl(product, product.images[0]) : "/images/no_image.png"} h="100%" />
         </Card.Section>
-        <Card.Section h={"23%"}>
+        <Card.Section>
           <Box m={"5%"}>
             <Box display="flex" style={{ justifyContent: "space-between" }}>
               <Text c={"emochoice-blue"} style={{ fontSize: "13px" }} fw={600}>
@@ -56,7 +57,7 @@ export default function ProductCard(props: { product: Product; inProductPage?: b
               </Box>
             </Box>
             <Group justify="space-between">
-              <Text lineClamp={2} mt={3} mb={5} fw="600" style={{ fontSize: "17px" }}>
+              <Text lineClamp={2} mt={5} mb={5} fw="600" style={{ fontSize: "17px" }}>
                 {product.name}
               </Text>
               {product.badge ? (

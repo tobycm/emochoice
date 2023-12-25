@@ -22,7 +22,7 @@ export default function Home() {
         const gallery = await getGallery(type);
         const slide = gallery.map((link) => (
           <Carousel.Slide key={link}>
-            <Image src={link} />
+            <Image src={link + "?thumb=1903x546"} />
           </Carousel.Slide>
         ));
         setSlides([...slide]);
@@ -46,7 +46,7 @@ export default function Home() {
 
     const setHomeCards = async () => {
       const images = await getGallery("3_cards");
-      setThreeCards(images);
+      setThreeCards(images.map((image) => image + "?thumb=375x477")); // check this out lol
     };
 
     setHomeCards();
@@ -77,37 +77,37 @@ export default function Home() {
         </Title>
         <Box className={classes.cardsBox}>
           <Link to="/catalog" state={{ categories: ["Clothing & Accessories Print"] }} className={classes.card}>
-            <Card shadow="sm" radius="md" w={270} withBorder>
-              <Card.Section h={"20%"} m="3%">
+            <Card shadow="sm" radius="md" w={270} h={456} withBorder>
+              <Card.Section h={"20%"} m="4%">
                 <Title order={3} style={{ textAlign: "center" }} c="emochoice-blue">
                   Clothing & Accessories Print
                 </Title>
               </Card.Section>
-              <Card.Section h={"100%"}>
+              <Card.Section>
                 <Image src={threeCards[0]} alt="Clothing & Accessories Print" maw={"100%"} h={"100%"} />
               </Card.Section>
             </Card>
           </Link>
           <Link to="/catalog" state={{ categories: ["Digital Printing"] }} className={classes.card}>
-            <Card shadow="sm" radius="md" w={270} withBorder>
-              <Card.Section h={"20%"} m="3%">
+            <Card shadow="sm" radius="md" w={270} h={456} withBorder>
+              <Card.Section h={"20%"} m="4%">
                 <Title order={3} style={{ textAlign: "center" }} c="emochoice-blue">
                   Digital Printing
                 </Title>
               </Card.Section>
-              <Card.Section h={"100%"}>
+              <Card.Section>
                 <Image src={threeCards[1]} alt="Digital Printing" maw={"100%"} h={"100%"} />
               </Card.Section>
             </Card>
           </Link>
           <Link to="/catalog" state={{ categories: ["Souvenirs & Gifts Printing"] }} className={classes.card}>
-            <Card shadow="sm" radius="md" w={270} withBorder>
-              <Card.Section h={"20%"} m="3%">
+            <Card shadow="sm" radius="md" w={270} h={456} withBorder>
+              <Card.Section h={"20%"} m="4%">
                 <Title order={3} style={{ textAlign: "center" }} c="emochoice-blue">
                   Souvenirs & Gifts Printing
                 </Title>
               </Card.Section>
-              <Card.Section h={"100%"}>
+              <Card.Section>
                 <Image src={threeCards[2]} alt="Souvenirs & Gifts Printing" maw={"100%"} h={"100%"} />
               </Card.Section>
             </Card>
