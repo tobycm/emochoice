@@ -64,17 +64,22 @@ export default function FilterNavBar(props: {
       case "color":
         return products
           .map((product) => product.expand?.colors)
-          .filter((colors) => !!colors)
           .flat(1)
-          .map((color) => color!.name);
+          .map((color, _, colors) => (colors.includes(color) ? undefined : color))
+          .filter((color) => !!color)
+          .map((color) => color!.name) as string[];
       case "category":
         return products
           .map((product) => product.expand?.category)
-          .filter((categories) => !!categories)
           .flat(1)
-          .map((category) => category!.name);
+          .map((category, _, categories) => (categories.includes(category) ? undefined : category))
+          .filter((category) => !!category)
+          .map((category) => category!.name) as string[];
       case "brand":
-        return products.map((product) => product.brand);
+        return products
+          .map((product) => product.brand)
+          .map((brand, _, brands) => (brands.includes(brand) ? undefined : brand))
+          .filter((brand) => !!brand) as string[];
     }
   }
 
