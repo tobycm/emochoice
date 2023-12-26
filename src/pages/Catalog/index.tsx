@@ -113,14 +113,13 @@ export default function Catalog() {
       });
   }, [user]);
 
-  const [openCategoryFilter, categoryFilter] = useDisclosure(false);
-  const [openBrandFilter, brandFilter] = useDisclosure(false);
-  const [openColorFilter, colorFilter] = useDisclosure(false);
+  const [openCategoryFilter, categoryFilter] = useDisclosure(true);
+  const [openBrandFilter, brandFilter] = useDisclosure(true);
+  const [openColorFilter, colorFilter] = useDisclosure(true);
 
   function FilterNavBar() {
     return (
-      <Box mih={"100%"} miw={200} style={{ flex: "0.5" }}>
-        <SmallChangeHelmet title="Catalog" description="Browse through our wide selection of products!" location="catalog" />
+      <Box mih={"100%"} w={200} style={{ flex: "0.5" }}>
         <NavLink
           label="Categories"
           leftSection={<IconCategory size="1rem" stroke={1.5} />}
@@ -189,6 +188,7 @@ export default function Catalog() {
 
   return (
     <Box className={classes.container}>
+      <SmallChangeHelmet title="Catalog" description="Browse through our wide selection of products!" location="catalog" />
       <Modal
         opened={modalOpened}
         onClose={() => {

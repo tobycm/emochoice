@@ -1,6 +1,6 @@
 .imagebox {
   min-width: 360px;
-  max-width: 30%;
+  width: 30%;
   display: block;
 
   @media screen and (max-width: $mantine-breakpoint-sm) {
