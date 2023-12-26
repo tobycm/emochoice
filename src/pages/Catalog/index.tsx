@@ -1,5 +1,5 @@
 import { Box, Button, Checkbox, InputBase, Modal, NavLink, Pill, ScrollArea, Text, Title, UnstyledButton } from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
+import { useDisclosure, useMediaQuery } from "@mantine/hooks";
 import { IconCategory, IconColorFilter, IconFilter, IconIcons, IconSearchOff } from "@tabler/icons-react";
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router";
@@ -23,6 +23,7 @@ export default function Catalog() {
   const [filters, setFilters] = useState<Filter[]>([]);
   const [modalOpened, setModalOpened] = React.useState<boolean>(false);
   const [isFiltered, setIsFiltered] = useState(true);
+  const isMobile = useMediaQuery("(max-width: 36em)");
 
   let user: {
     categories?: string[];
@@ -119,7 +120,7 @@ export default function Catalog() {
 
   function FilterNavBar() {
     return (
-      <Box mih={"100%"} w={200} style={{ flex: "0.5" }}>
+      <Box mih={"100%"} w={!isMobile ? 200 : "auto"} style={{ flex: "0.5" }}>
         <NavLink
           label="Categories"
           leftSection={<IconCategory size="1rem" stroke={1.5} />}
@@ -128,7 +129,7 @@ export default function Catalog() {
           onClick={categoryFilter.toggle}
         >
           <Checkbox.Group value={getFilterValues("category")} onChange={updateFilters("category")}>
-            <ScrollArea.Autosize mah={200}>
+            <ScrollArea.Autosize mah={!isMobile ? 250 : "auto"}>
               {(() => {
                 const categories: string[] = [];
 
@@ -149,7 +150,7 @@ export default function Catalog() {
           onClick={brandFilter.toggle}
         >
           <Checkbox.Group value={getFilterValues("brand")} onChange={updateFilters("brand")}>
-            <ScrollArea.Autosize mah={200}>
+            <ScrollArea.Autosize mah={!isMobile ? 250 : "auto"}>
               {(() => {
                 const brands: string[] = [];
 
@@ -168,7 +169,7 @@ export default function Catalog() {
           onClick={colorFilter.toggle}
         >
           <Checkbox.Group value={getFilterValues("color")} onChange={updateFilters("color")}>
-            <ScrollArea.Autosize mah={200}>
+            <ScrollArea.Autosize mah={!isMobile ? 250 : "auto"}>
               {(() => {
                 const colors: string[] = [];
 
