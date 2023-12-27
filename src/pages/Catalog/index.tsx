@@ -44,6 +44,7 @@ export default function Catalog() {
           ),
         );
       });
+      setIsLoaded(true);
     }
     if (user?.categories) {
       // fetch with first category
@@ -63,9 +64,9 @@ export default function Catalog() {
         );
 
         setProducts(products);
+        setIsLoaded(true);
       });
     }
-    setIsLoaded(true);
   }, [user]);
 
   const filterProducts = (newFilters: Filter[]) => {
