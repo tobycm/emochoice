@@ -1,13 +1,11 @@
 import { Badge, Box, Card, Group, Image, Text } from "@mantine/core";
-import { useMediaQuery } from "@mantine/hooks";
 import { Link } from "react-router-dom";
 import pocketbase from "../../lib/database";
 import { Product } from "../../lib/database/models";
 
-export default function ProductCard(props: { product: Product; inProductPage?: boolean }) {
-  const { product } = props;
+export default function ProductCard(props: { product: Product; inProductPage?: boolean; isMobile?: boolean }) {
+  const { product, isMobile } = props;
   const productUrl = `/product/${product.id}`;
-  const isMobile = useMediaQuery("(max-width: 36em)");
 
   let colors = null;
 
@@ -25,20 +23,7 @@ export default function ProductCard(props: { product: Product; inProductPage?: b
   if (isMobile && !props.inProductPage)
     return (
       <Link to={productUrl} style={{ textDecoration: "none" }}>
-        <Card
-          style={{ margin: !props.inProductPage ? "1vw 0 1vw 1vw" : "0.3vw 0.3vw 0 0" }}
-          w="85vw"
-          h="calc(4/10*85vw)"
-          maw={750}
-          mah={1600}
-          shadow="sm"
-          padding="sm"
-          radius="md"
-          pb="xl"
-          mb="md"
-          display={"flex"}
-          withBorder
-        >
+        <Card w="85vw" h="calc(4/10*85vw)" maw={750} mah={1600} shadow="sm" padding="sm" radius="md" pb="xl" mb="lg" display={"flex"} withBorder>
           <Card.Section display={"flex"}>
             <Box w="30%">
               <Image src={product.images ? pocketbase.getFileUrl(product, product.images[0]) : "/images/no_image.png"} h="calc(4/10*85vw)" />
@@ -89,8 +74,8 @@ export default function ProductCard(props: { product: Product; inProductPage?: b
         shadow="sm"
         padding="lg"
         radius="md"
+        mb={props.inProductPage ? "md" : "0"}
         pb="xl"
-        mb="md"
         mr={props.inProductPage ? "10" : "0"}
         withBorder
       >
