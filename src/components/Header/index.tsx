@@ -33,9 +33,10 @@ export default function Header() {
   const isMobile = useMediaQuery("(max-width: 36em)");
 
   function search(wide: boolean) {
-    wide
-      ? navigate("/catalog", { state: { searchQuery: document.getElementById("searchbarWide")?.getAttribute("value") } })
-      : navigate("/catalog", { state: { searchQuery: document.getElementById("searchbarMobile")?.getAttribute("value") } });
+    const searchQuery = document.getElementById(wide ? "searchbarWide" : "searchbarMobile")?.getAttribute("value");
+    if (!searchQuery) return;
+    navigate("/catalog", { state: { searchQuery: searchQuery } });
+    isMobile && toggleSearchbar();
   }
 
   let tempSearchList = new Array<string>();
@@ -84,7 +85,6 @@ export default function Header() {
               ml={isMobile ? "auto" : "none"}
               onClick={() => {
                 search(false);
-                toggleSearchbar();
               }}
             >
               <IconSearch style={{ width: "60%", height: "60%" }} stroke={3} />
