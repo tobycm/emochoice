@@ -191,7 +191,7 @@ export default function Product() {
           />
           {images.length > 1 ? (
             <ScrollArea mt="xl" mb="sm">
-              <Box display={"flex"}>
+              <Box display={"flex"} mb="md">
                 {images.map((image) => (
                   <Image
                     src={pocketbase.getFileUrl(product, image)}

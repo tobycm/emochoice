@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 
 import { Avatar, Box, Image, Overlay, ScrollArea } from "@mantine/core";
+import { IconX } from "@tabler/icons-react";
 import { useEffect } from "react";
 import pocketbase from "../../lib/database";
 import { Product } from "../../lib/database/models";
@@ -45,6 +46,20 @@ export default function ImageZoom(props: {
   };
 
   const isFirefox = navigator.userAgent.toLowerCase().indexOf("firefox") > -1;
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        props.openBigImage(false);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  });
 
   return (
     <Overlay
@@ -92,7 +107,7 @@ export default function ImageZoom(props: {
             transition: "transform 0.3s ease",
           }}
         >
-          X
+          <IconX size={30} />
         </Avatar>
         {props.images.length > 1 ? (
           <ScrollArea
