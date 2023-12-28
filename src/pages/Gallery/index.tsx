@@ -59,7 +59,7 @@ export default function Gallery(props: { home: boolean }) {
                 ml="auto"
                 mr="auto"
                 style={{ aspectRatio: 9 / 11, cursor: "pointer" }}
-                src={link + "?thumb=250x306"}
+                src={isMobile ? link : link + "?thumb=250x306"}
               />
             </Box>
           </Carousel.Slide>
