@@ -1,11 +1,10 @@
 import { Carousel, Embla } from "@mantine/carousel";
-import { Box, Card, Container, Divider, Image, Title } from "@mantine/core";
+import { Box, Container, Divider, Image, Title } from "@mantine/core";
 import Autoplay from "embla-carousel-autoplay";
 import { useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
 import DefaultHelmet from "../../components/Helmets/DefaultHelmet";
+import HomeCard from "../../components/HomeCard";
 import { getGallery } from "../../lib/database";
-import { setDocumentTitle } from "../../lib/utils";
 import Gallery from "../Gallery";
 import classes from "./index.module.css";
 
@@ -16,7 +15,6 @@ export default function Home() {
   const [embla, setEmbla] = useState<Embla | null>(null);
 
   useEffect(() => {
-    setDocumentTitle();
     const fetchAndSetGallery = async (type: string) => {
       try {
         const gallery = await getGallery(type);
@@ -76,42 +74,9 @@ export default function Home() {
           Shop by category
         </Title>
         <Box className={classes.cardsBox}>
-          <Link to="/catalog" state={{ categories: ["Clothing & Accessories Print"] }} className={classes.card}>
-            <Card shadow="sm" radius="md" w={270} h={456} withBorder>
-              <Card.Section h={"20%"} m="4%">
-                <Title order={3} style={{ textAlign: "center" }} c="emochoice-blue">
-                  Clothing & Accessories Print
-                </Title>
-              </Card.Section>
-              <Card.Section>
-                <Image src={threeCards[0]} alt="Clothing & Accessories Print" maw={"100%"} h={"100%"} />
-              </Card.Section>
-            </Card>
-          </Link>
-          <Link to="/catalog" state={{ categories: ["Digital Printing"] }} className={classes.card}>
-            <Card shadow="sm" radius="md" w={270} h={456} withBorder>
-              <Card.Section h={"20%"} m="4%">
-                <Title order={3} style={{ textAlign: "center" }} c="emochoice-blue">
-                  Digital Printing
-                </Title>
-              </Card.Section>
-              <Card.Section>
-                <Image src={threeCards[1]} alt="Digital Printing" maw={"100%"} h={"100%"} />
-              </Card.Section>
-            </Card>
-          </Link>
-          <Link to="/catalog" state={{ categories: ["Souvenirs & Gifts Printing"] }} className={classes.card}>
-            <Card shadow="sm" radius="md" w={270} h={456} withBorder>
-              <Card.Section h={"20%"} m="4%">
-                <Title order={3} style={{ textAlign: "center" }} c="emochoice-blue">
-                  Souvenirs & Gifts Printing
-                </Title>
-              </Card.Section>
-              <Card.Section>
-                <Image src={threeCards[2]} alt="Souvenirs & Gifts Printing" maw={"100%"} h={"100%"} />
-              </Card.Section>
-            </Card>
-          </Link>
+          {["Clothing & Accessories Print", "Digital Printing", "Souvenirs & Gifts Printing"].map((name, index) => (
+            <HomeCard name={name} image={threeCards[index]} key={index} />
+          ))}
         </Box>
         <Divider my="xl" size="xs" w={"100%"}></Divider>
       </Container>

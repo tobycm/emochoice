@@ -10,6 +10,7 @@
 
   @media screen and (max-width: $mantine-breakpoint-xs) {
     justify-content: center;
+    padding: 0;
   }
 }
 
