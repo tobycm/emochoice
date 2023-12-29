@@ -107,9 +107,7 @@ export function fileToBase64(file: File): Promise<string> {
       reject(new Error("Failed to read the file."));
     });
 
-    reader.addEventListener("error", (error) => {
-      reject(error);
-    });
+    reader.addEventListener("error", reject);
 
     reader.readAsDataURL(file);
   });
