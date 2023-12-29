@@ -10,22 +10,22 @@ import { setDocumentTitle, toTitleCase } from "../../lib/utils";
 export default function Success() {
   const navigate = useNavigate();
   const isMobile = useMediaQuery(`(max-width: 36em)`);
-  let user: { order?: List; name?: string; email?: string; address?: string } = {};
+  let user: { order?: List; name?: string; contact?: string; address?: string } = {};
 
   const location = useLocation();
   if (location.state) {
-    user = location.state as { order: List; name: string; email: string; address: string };
+    user = location.state as { order: List; name: string; contact: string; address: string };
   }
 
   useEffect(() => {
     setDocumentTitle("Order Success");
-    if (!user.address || !user.email || !user.name || !user.order) return navigate("/", { replace: true });
+    if (!user.address || !user.contact || !user.name || !user.order) return navigate("/", { replace: true });
   });
 
   return (
     <Box w="100%" mih="50vh" display="flex" style={{ flexDirection: "column", alignItems: "center" }}>
       <DefaultHelmet />
-      {user.order && user.name && user.email && user.address ? (
+      {user.order && user.name && user.contact && user.address ? (
         <>
           <Box
             w="90%"
@@ -116,8 +116,8 @@ export default function Success() {
                   <Table.Td>{user.name}</Table.Td>
                 </Table.Tr>
                 <Table.Tr>
-                  <Table.Td fw={"bold"}>Email</Table.Td>
-                  <Table.Td>{user.email}</Table.Td>
+                  <Table.Td fw={"bold"}>Contact</Table.Td>
+                  <Table.Td>{user.contact}</Table.Td>
                 </Table.Tr>
                 <Table.Tr>
                   <Table.Td fw={"bold"}>Address</Table.Td>
