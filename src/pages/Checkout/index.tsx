@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import DefaultHelmet from "../../components/Helmets/DefaultHelmet";
 import proceedList, { List as ListClass, useList } from "../../lib/list";
-import { setDocumentTitle, toTitleCase } from "../../lib/utils";
+import { fileToBase64, setDocumentTitle, toTitleCase } from "../../lib/utils";
 import classes from "./index.module.css";
 
 export default function Checkout() {
@@ -58,32 +58,27 @@ export default function Checkout() {
           component="form"
           className={classes.listAndCard}
           onSubmit={form.onSubmit(async () => {
-            let submitData = {
+            const submitData = {
               name: `${form.values.firstName} ${form.values.lastName}`,
               contact: `${form.values.email}${form.values.email && form.values.phone_number && ", "}${form.values.phone_number}`,
               address: `${form.values.address}, ${form.values.city}, ${form.values.state} ${form.values.postalCode}, ${form.values.country}`,
-              items: proceedList.map((item) => {
-                return {
+              items: await Promise.all(
+                proceedList.map(async (item) => ({
                   id: item.product.id,
                   quantity: item.quantity,
-                  color: item.color ? item.color.id : null,
-                  image: item.fileInput ? item.fileInput : null,
-                  request: item.request ? item.request : null,
-                };
-              }),
+                  color: item.color?.id ?? null,
+                  image: item.fileInput ? await fileToBase64(item.fileInput) : null,
+                  request: item.request ?? null,
+                })),
+              ),
             };
             try {
-              const formData = new FormData();
-              formData.append("name", submitData.name);
-              formData.append("contact", submitData.contact);
-              formData.append("address", submitData.address);
-              submitData.items.forEach((item, index) => {});
-              await fetch("https://df6t9npp-3000.usw2.devtunnels.ms/quote", {
+              console.log(submitData);
+              const res = await fetch("https://api.emochoice.ca/quote", {
                 method: "POST",
-                body: formData,
-              }).then((res) => {
-                if (res.status !== 200) throw new Error("There was an error placing your order. Please try again later.");
+                body: JSON.stringify(submitData),
               });
+              if (res.status !== 200) throw new Error("There was an error placing your order. Please try again later.");
               const newList = new ListClass(
                 ...list.filter((_, index) => {
                   return !proceedList.includes(list[index]);
@@ -102,10 +97,10 @@ export default function Checkout() {
               setTimeout(() => {
                 proceedList.length = 0;
               }, 200);
-            } catch (err: any) {
+            } catch (err) {
               notifications.show({
                 title: "Error",
-                message: err.message,
+                message: (err as Error).message,
                 color: "red",
                 icon: <IconX stroke={2} />,
                 autoClose: 10000,

@@ -37,9 +37,6 @@ export default function Success() {
               <IconCheck stroke={3} size="2rem" />
             </Avatar>
             <Title mb={"md"}>You've Successfully Placed Your Order!</Title>
-            <Title order={4} mb={"md"}>
-              Order Number: {Math.floor(Math.random() * 10e11)}
-            </Title>
             <Text mb="xl">
               We'll be in touch with you shortly to confirm your order and to arrange payment. If you have any questions, please contact us{" "}
               <Link to="/contact" style={{ textDecoration: "none" }}>

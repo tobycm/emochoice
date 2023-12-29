@@ -41,7 +41,7 @@ export default function Contact() {
               message: form.values.message,
               contact: `${form.values.email}${form.values.email && form.values.phone_number && ", "}${form.values.phone_number}`,
             };
-            await fetch("https://df6t9npp-3000.usw2.devtunnels.ms/contact", {
+            await fetch("https://api.emochoice.ca/contact", {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",

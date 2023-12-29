@@ -97,3 +97,20 @@ export function filterProducts(products: Product[], categoriesId: string[], offs
 
   return iterations[iterations.length - 1 - offsetLast] ?? [];
 }
+
+export function fileToBase64(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+
+    reader.addEventListener("load", (event) => {
+      if (event.target && event.target.result) return resolve(event.target.result.toString().split(",")[1]);
+      reject(new Error("Failed to read the file."));
+    });
+
+    reader.addEventListener("error", (error) => {
+      reject(error);
+    });
+
+    reader.readAsDataURL(file);
+  });
+}
