@@ -5,7 +5,7 @@ import { notifications } from "@mantine/notifications";
 import { IconInfoCircle, IconNumber, IconShoppingCartPlus } from "@tabler/icons-react";
 import React, { useEffect, useMemo, useState } from "react";
 import { Helmet } from "react-helmet-async";
-import { useLoaderData, useLocation } from "react-router-dom";
+import { useLoaderData, useLocation, useNavigate } from "react-router-dom";
 import ProductCard from "../../components/Card";
 import ColorButton from "../../components/ColorButton";
 import ImageZoom from "../../components/ImageZoom";
@@ -61,6 +61,7 @@ export default function Product() {
   const [relatedProducts, setRelatedProducts] = React.useState<Product[]>([]);
   const [bigImage, openBigImage] = React.useState(false);
   const { list, updateList } = useList();
+  const navigate = useNavigate();
 
   let user: OrderData | null = null;
 
@@ -92,7 +93,10 @@ export default function Product() {
     setProductImage(product.images.length > 0 ? pocketbase.getFileUrl(product, product.images[0]) : "/images/no_image.png");
   }, [product]);
 
-  useEffect(() => notifications.clean(), []);
+  useEffect(() => {
+    notifications.clean();
+    if (product.hidden) navigate("/catalog", { replace: true });
+  }, []);
 
   useEffect(() => {
     if (!user) return;
@@ -382,7 +386,7 @@ export default function Product() {
           <ScrollArea>
             <Box display={"flex"}>
               {relatedProducts
-                .filter((p) => p.id != product.id)
+                .filter((p) => p.id != product.id && !p.hidden)
                 .map((product) => (
                   <ProductCard inProductPage={true} product={product} />
                 ))}

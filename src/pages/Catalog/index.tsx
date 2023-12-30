@@ -268,9 +268,11 @@ export default function Catalog() {
           </Box>
         ) : (
           <Box className={classes.cardsBox}>
-            {products.map((product) => (
-              <ProductCard product={product} key={product.id} isMobile={isMobile} />
-            ))}
+            {products
+              .filter((p) => !p.hidden)
+              .map((product) => (
+                <ProductCard product={product} key={product.id} isMobile={isMobile} />
+              ))}
           </Box>
         )}
       </Box>
