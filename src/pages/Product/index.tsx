@@ -1,4 +1,4 @@
-import { Box, Button, FileInput, Image, NumberInput, ScrollArea, Space, Table, Tabs, Text, Textarea, Title, rem } from "@mantine/core";
+import { Badge, Box, Button, FileInput, Image, NumberInput, ScrollArea, Space, Table, Tabs, Text, Textarea, Title, rem } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useMediaQuery } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
@@ -66,7 +66,6 @@ export default function Product() {
   let user: OrderData | null = null;
 
   const location = useLocation();
-  if (location.state) user = location.state as typeof user;
 
   const initialValues: OrderData = { quantity: 1, request: "" };
 
@@ -95,6 +94,7 @@ export default function Product() {
 
   useEffect(() => {
     notifications.clean();
+    if (location.state) user = location.state as typeof user;
     if (product.hidden) navigate("/catalog", { replace: true });
   }, []);
 
@@ -212,7 +212,16 @@ export default function Product() {
             {product.name}
             {product.custom_id && ` - ${product.custom_id}`}
           </Title>
+          <Title c={"emochoice-blue"} order={4}>
+            {product.brand}
+          </Title>
+          {product.tags.includes("on_sale") && (
+            <Badge size="xl" mt="md" color="red">
+              On Sale
+            </Badge>
+          )}
           <Box
+            mt="xl"
             component="form"
             onSubmit={form.onSubmit((values) => {
               const { quantity, request, fileInput } = values;
@@ -235,9 +244,6 @@ export default function Product() {
               });
             })}
           >
-            <Title mb={"xl"} c={"emochoice-blue"} order={4}>
-              {product.brand}
-            </Title>
             {product.colors.length > 0 ? (
               <Box className={classes.input} style={{ flexDirection: "column", alignItems: "start" }}>
                 <Text mb="md">Color: {toTitleCase(form.values.color?.name) ?? ""}</Text>
@@ -306,9 +312,9 @@ export default function Product() {
                 {...form.getInputProps("request")}
               />
             </Box>
-            <Box display="flex">
-              <Button variant="filled" className={classes.input} size="md" radius="md" type="submit">
-                Add to List
+            <Box>
+              <Button variant="filled" disabled={product.tags.includes("out_of_stock")} className={classes.input} size="md" radius="md" type="submit">
+                {product.tags.includes("out_of_stock") ? "Out of Stock" : "Add to list"}
               </Button>
             </Box>
           </Box>
