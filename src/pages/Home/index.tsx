@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import DefaultHelmet from "../../components/Helmets/DefaultHelmet";
 import HomeCard from "../../components/HomeCard";
 import { getGallery } from "../../lib/database";
+import { setDocumentTitle } from "../../lib/utils";
 import Gallery from "../Gallery";
 import classes from "./index.module.css";
 
@@ -49,6 +50,10 @@ export default function Home() {
 
     setHomeCards();
   }, [embla]);
+
+  useEffect(() => {
+    setDocumentTitle();
+  }, []);
 
   return (
     <>
