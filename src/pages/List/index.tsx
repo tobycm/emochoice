@@ -1,9 +1,11 @@
 import { Box, Button, Card, Checkbox, NumberInput, Pill, Table, Text, Title, Tooltip, UnstyledButton } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
-import { IconShoppingCartSearch, IconX } from "@tabler/icons-react";
+import { notifications } from "@mantine/notifications";
+import { IconShoppingCartExclamation, IconShoppingCartSearch, IconX } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import DefaultHelmet from "../../components/Helmets/DefaultHelmet";
+import { getHiddenStatus, getTags } from "../../lib/database";
 import proceedList, { Item, List as ListClass, useList } from "../../lib/list";
 import LoaderBox, { setDocumentTitle, toTitleCase } from "../../lib/utils";
 import classes from "./index.module.css";
@@ -14,9 +16,30 @@ export default function List() {
   const [deletedList, setDeletedList] = useState<Item[]>([]);
   const navigate = useNavigate();
 
+  const changeHiddenStatus = async () => {
+    let newList = new ListClass(...list);
+    await Promise.all(
+      newList.map(async (item) => {
+        item.product.hidden = await getHiddenStatus(item.product.id);
+        item.product.tags = await getTags(item.product.id);
+      }),
+    );
+    updateList(
+      newList
+        .filter((item) => !item.product.hidden && !item.product.tags.includes("out_of_stock"))
+        .concat(newList.filter((item) => !item.product.hidden && item.product.tags.includes("out_of_stock")))
+        .concat(newList.filter((item) => item.product.hidden)) as ListClass,
+    );
+  };
+
   useEffect(() => {
-    setDocumentTitle("My List");
-    setIsDataLoaded(true);
+    const fetchData = async () => {
+      setDocumentTitle("My List");
+      await changeHiddenStatus();
+      setIsDataLoaded(true);
+    };
+
+    fetchData();
   }, []);
 
   const isMobile = useMediaQuery(`(max-width: 36em)`);
@@ -65,14 +88,21 @@ export default function List() {
                   </Table.Thead>
                   <Table.Tbody>
                     {list.map((item, index) => (
-                      <Table.Tr key={index}>
+                      <Table.Tr
+                        key={index}
+                        style={{ backgroundColor: item.product.hidden || item.product.tags.includes("out_of_stock") ? "#EBEBEB" : "" }}
+                      >
                         <Table.Td>
-                          <Checkbox defaultChecked id={`checkbox${index}`} />
+                          <Checkbox
+                            defaultChecked={!(item.product.hidden || item.product.tags.includes("out_of_stock"))}
+                            id={`checkbox${index}`}
+                            style={{ pointerEvents: item.product.hidden || item.product.tags.includes("out_of_stock") ? "none" : "auto" }}
+                          />
                         </Table.Td>
                         <Table.Td>
                           <Link
                             to={`/product/${item.product.id}`}
-                            style={{ textDecoration: "none", color: "black" }}
+                            style={{ textDecoration: "none", color: "black", pointerEvents: item.product.hidden ? "none" : "auto" }}
                             state={{
                               color: item.color,
                               request: item.request,
@@ -83,6 +113,11 @@ export default function List() {
                             {item.product.name}
                             {item.product.custom_id && ` - ${item.product.custom_id}`}
                           </Link>
+                          {item.product.hidden || item.product.tags.includes("out_of_stock") ? (
+                            <Text fw={600} style={{ fontSize: "15px" }} c="red">
+                              This product is currently {item.product.hidden ? "unavailable" : "out of stock"}.
+                            </Text>
+                          ) : null}
                         </Table.Td>
                         {isMobile ? null : (
                           <>
@@ -102,13 +137,22 @@ export default function List() {
                             </Table.Td>
                             <Table.Td maw={""}>{item.fileInput ? <Pill>{item.fileInput.name}</Pill> : null}</Table.Td>
                             <Table.Td maw={""} style={{ overflow: "hidden", textOverflow: "ellipsis" }}>
-                              {item.request} {/* don't delete the blank maw */}
+                              {item.request}
                             </Table.Td>
                           </>
                         )}
                         <Table.Td>
                           <Box display="flex" style={{ alignItems: "center" }}>
-                            <NumberInput w={"12%"} miw={70} mr={10} clampBehavior="strict" min={1} max={99} defaultValue={item.quantity} />
+                            <NumberInput
+                              w={"12%"}
+                              miw={70}
+                              mr={10}
+                              style={{ pointerEvents: item.product.hidden || item.product.tags.includes("out_of_stock") ? "none" : "auto" }}
+                              clampBehavior="strict"
+                              min={1}
+                              max={99}
+                              defaultValue={item.quantity}
+                            />
                             <UnstyledButton
                               style={{ display: "flex", alignItems: "center" }}
                               onClick={() => {
@@ -149,8 +193,16 @@ export default function List() {
                           proceedList.push(item);
                         }
                       });
-
-                      navigate("/checkout");
+                      proceedList.length > 0
+                        ? navigate("/checkout")
+                        : notifications.show({
+                            title: "No items selected",
+                            message: "Please select at least one item to proceed",
+                            color: "red",
+                            icon: <IconShoppingCartExclamation stroke={2} />,
+                            autoClose: 5000,
+                            withCloseButton: true,
+                          });
                     }}
                   >
                     Get a Quote

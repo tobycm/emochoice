@@ -41,6 +41,14 @@ export async function getProducts() {
   return products;
 }
 
+export async function getHiddenStatus(id: string) {
+  return (await pocketbase.collection("products").getOne<{ hidden: boolean }>(id)).hidden;
+}
+
+export async function getTags(id: string) {
+  return (await pocketbase.collection("products").getOne<{ tags: string[] }>(id)).tags;
+}
+
 const metadataIds = {
   availableBrands: "qt8d6zsesjpw66n",
 } as const;

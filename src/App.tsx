@@ -51,6 +51,8 @@ const routes: RouteObject[] = [
                 name: "Sui-chan wa kyou mo Kawaii~ Mug",
                 custom_id: "messikimochi",
                 category: ["upfqqdkkgeff7wj"],
+                hidden: false,
+                tags: ["out_of_stock"],
                 colors: [],
                 images: [],
                 boundary: "",

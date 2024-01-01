@@ -1,11 +1,11 @@
-import { Box, Button, FileInput, Image, NumberInput, ScrollArea, Space, Table, Tabs, Text, Textarea, Title, rem } from "@mantine/core";
+import { Badge, Box, Button, FileInput, Image, NumberInput, ScrollArea, Space, Table, Tabs, Text, Textarea, Title, rem } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useMediaQuery } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
 import { IconInfoCircle, IconNumber, IconShoppingCartPlus } from "@tabler/icons-react";
 import React, { useEffect, useMemo, useState } from "react";
 import { Helmet } from "react-helmet-async";
-import { useLoaderData, useLocation } from "react-router-dom";
+import { useLoaderData, useLocation, useNavigate } from "react-router-dom";
 import ProductCard from "../../components/Card";
 import ColorButton from "../../components/ColorButton";
 import ImageZoom from "../../components/ImageZoom";
@@ -61,11 +61,11 @@ export default function Product() {
   const [relatedProducts, setRelatedProducts] = React.useState<Product[]>([]);
   const [bigImage, openBigImage] = React.useState(false);
   const { list, updateList } = useList();
+  const navigate = useNavigate();
 
   let user: OrderData | null = null;
 
   const location = useLocation();
-  if (location.state) user = location.state as typeof user;
 
   const initialValues: OrderData = { quantity: 1, request: "" };
 
@@ -92,7 +92,11 @@ export default function Product() {
     setProductImage(product.images.length > 0 ? pocketbase.getFileUrl(product, product.images[0]) : "/images/no_image.png");
   }, [product]);
 
-  useEffect(() => notifications.clean(), []);
+  useEffect(() => {
+    notifications.clean();
+    if (location.state) user = location.state as typeof user;
+    if (product.hidden) navigate("/catalog", { replace: true });
+  }, []);
 
   useEffect(() => {
     if (!user) return;
@@ -208,7 +212,16 @@ export default function Product() {
             {product.name}
             {product.custom_id && ` - ${product.custom_id}`}
           </Title>
+          <Title c={"emochoice-blue"} order={4}>
+            {product.brand}
+          </Title>
+          {product.tags.includes("on_sale") && (
+            <Badge size="xl" mt="md" color="red">
+              On Sale
+            </Badge>
+          )}
           <Box
+            mt="xl"
             component="form"
             onSubmit={form.onSubmit((values) => {
               const { quantity, request, fileInput } = values;
@@ -231,9 +244,6 @@ export default function Product() {
               });
             })}
           >
-            <Title mb={"xl"} c={"emochoice-blue"} order={4}>
-              {product.brand}
-            </Title>
             {product.colors.length > 0 ? (
               <Box className={classes.input} style={{ flexDirection: "column", alignItems: "start" }}>
                 <Text mb="md">Color: {toTitleCase(form.values.color?.name) ?? ""}</Text>
@@ -302,9 +312,9 @@ export default function Product() {
                 {...form.getInputProps("request")}
               />
             </Box>
-            <Box display="flex">
-              <Button variant="filled" className={classes.input} size="md" radius="md" type="submit">
-                Add to List
+            <Box>
+              <Button variant="filled" disabled={product.tags.includes("out_of_stock")} className={classes.input} size="md" radius="md" type="submit">
+                {product.tags.includes("out_of_stock") ? "Out of Stock" : "Add to list"}
               </Button>
             </Box>
           </Box>
@@ -382,7 +392,7 @@ export default function Product() {
           <ScrollArea>
             <Box display={"flex"}>
               {relatedProducts
-                .filter((p) => p.id != product.id)
+                .filter((p) => p.id != product.id && !p.hidden)
                 .map((product) => (
                   <ProductCard inProductPage={true} product={product} />
                 ))}

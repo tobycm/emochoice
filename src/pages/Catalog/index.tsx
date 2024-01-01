@@ -35,10 +35,14 @@ export default function Catalog() {
     user = location.state;
   }
 
+  const setSortedProducts = (products: Product[]) => {
+    setProducts(products.filter((p) => !p.tags.includes("out_of_stock")).concat(products.filter((p) => p.tags.includes("out_of_stock"))));
+  };
+
   useEffect(() => {
     if (user?.searchQuery) {
       getProducts().then((products) => {
-        setProducts(
+        setSortedProducts(
           products.filter((product) =>
             `${product.name}${product.custom_id && ` - ${product.custom_id}`}`.toLowerCase().includes(user!.searchQuery!.toLowerCase()),
           ),
@@ -63,7 +67,7 @@ export default function Catalog() {
           })),
         );
 
-        setProducts(products);
+        setSortedProducts(products);
         setIsLoaded(true);
       });
     }
@@ -85,7 +89,7 @@ export default function Catalog() {
         }
       }
 
-      setProducts(products);
+      setSortedProducts(products);
       setIsFiltered(true);
     });
   };
@@ -110,7 +114,7 @@ export default function Catalog() {
 
     if (!user)
       getProducts().then((products) => {
-        setProducts(products);
+        setSortedProducts(products);
         setIsLoaded(true);
       });
   }, [user]);
@@ -256,7 +260,7 @@ export default function Catalog() {
                 onClick={() => {
                   location.state = null;
                   user = null;
-                  getProducts().then(setProducts);
+                  getProducts().then(setSortedProducts);
                   setFilters([]);
                 }}
                 style={{ color: "black", textDecoration: "underline" }}
@@ -268,9 +272,11 @@ export default function Catalog() {
           </Box>
         ) : (
           <Box className={classes.cardsBox}>
-            {products.map((product) => (
-              <ProductCard product={product} key={product.id} isMobile={isMobile} />
-            ))}
+            {products
+              .filter((p) => !p.hidden)
+              .map((product) => (
+                <ProductCard product={product} key={product.id} isMobile={isMobile} />
+              ))}
           </Box>
         )}
       </Box>
