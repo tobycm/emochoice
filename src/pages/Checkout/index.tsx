@@ -1,36 +1,42 @@
-import { Box, Button, Card, NumberInput, Pill, Table, Text, TextInput, Title, Tooltip } from "@mantine/core";
+import { Box, Button, Card, NativeSelect, NumberInput, Pill, Table, Text, TextInput, Title, Tooltip } from "@mantine/core";
 import { isEmail, isNotEmpty, useForm } from "@mantine/form";
 import { useMediaQuery } from "@mantine/hooks";
-import { IconLock } from "@tabler/icons-react";
-import { useEffect } from "react";
+import { notifications } from "@mantine/notifications";
+import { IconLock, IconX } from "@tabler/icons-react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import DefaultHelmet from "../../components/Helmets/DefaultHelmet";
 import proceedList, { List as ListClass, useList } from "../../lib/list";
-import { setDocumentTitle, toTitleCase } from "../../lib/utils";
+import { fileToBase64, setDocumentTitle, toTitleCase } from "../../lib/utils";
 import classes from "./index.module.css";
 
 export default function Checkout() {
   const navigate = useNavigate();
   const { list, updateList } = useList();
+  const [contactMethod, setContactMethod] = useState("Email");
   const isMobile = useMediaQuery(`(max-width: 36em)`);
   const form = useForm({
     initialValues: {
       firstName: "",
       lastName: "",
       email: "",
+      phone_number: "",
       address: "",
       city: "",
       state: "",
       postalCode: "",
+      country: "Canada",
     },
     validate: {
       firstName: isNotEmpty("Enter your first name"),
       lastName: isNotEmpty("Enter your last name"),
-      email: isEmail("Invalid email"),
+      email: contactMethod.includes("Email") ? isEmail("Enter a valid email") : undefined,
+      phone_number: contactMethod.includes("Phone number") ? isNotEmpty("Enter a valid phone number") : undefined,
       address: isNotEmpty("Enter your address"),
       city: isNotEmpty("Enter your city"),
       state: isNotEmpty("Enter your state"),
       postalCode: isNotEmpty("Enter your postal code"),
+      country: isNotEmpty("Enter your country"),
     },
   });
 
@@ -51,25 +57,56 @@ export default function Checkout() {
         <Box
           component="form"
           className={classes.listAndCard}
-          onSubmit={form.onSubmit(() => {
-            const newList = new ListClass(
-              ...list.filter((_, index) => {
-                return !proceedList.includes(list[index]);
-              }),
-            );
-            updateList(newList);
-            navigate("/success", {
-              replace: true,
-              state: {
-                order: proceedList,
-                name: form.values.firstName + " " + form.values.lastName,
-                email: form.values.email,
-                address: form.values.address + ", " + form.values.city + ", " + form.values.state + " " + form.values.postalCode + ", Canada",
-              },
-            });
-            setTimeout(() => {
-              proceedList.length = 0;
-            }, 200);
+          onSubmit={form.onSubmit(async () => {
+            const submitData = {
+              name: `${form.values.firstName} ${form.values.lastName}`,
+              contact: `${form.values.email}${form.values.email && form.values.phone_number && ", "}${form.values.phone_number}`,
+              address: `${form.values.address}, ${form.values.city}, ${form.values.state} ${form.values.postalCode}, ${form.values.country}`,
+              items: await Promise.all(
+                proceedList.map(async (item) => ({
+                  id: item.product.id,
+                  quantity: item.quantity,
+                  color: item.color?.id ?? null,
+                  image: item.fileInput ? await fileToBase64(item.fileInput) : null,
+                  request: item.request ?? null,
+                })),
+              ),
+            };
+            try {
+              console.log(submitData);
+              const res = await fetch("https://api.emochoice.ca/quote", {
+                method: "POST",
+                body: JSON.stringify(submitData),
+              });
+              if (res.status !== 200) throw new Error("There was an error placing your order. Please try again later.");
+              const newList = new ListClass(
+                ...list.filter((_, index) => {
+                  return !proceedList.includes(list[index]);
+                }),
+              );
+              updateList(newList);
+              navigate("/success", {
+                replace: true,
+                state: {
+                  order: proceedList,
+                  name: submitData.name,
+                  contact: submitData.contact,
+                  address: submitData.address,
+                },
+              });
+              setTimeout(() => {
+                proceedList.length = 0;
+              }, 200);
+            } catch (err) {
+              notifications.show({
+                title: "Error",
+                message: (err as Error).message,
+                color: "red",
+                icon: <IconX stroke={2} />,
+                autoClose: 10000,
+                withCloseButton: true,
+              });
+            }
           })}
         >
           <Box className={classes.list}>
@@ -91,8 +128,42 @@ export default function Checkout() {
                         <TextInput withAsterisk label="Last name" placeholder="Smith" {...form.getInputProps("lastName")} id="lastName" />
                       </Box>
                     </Box>
-                    <TextInput mb={"md"} withAsterisk label="Email" placeholder="johnsmith@email.com" {...form.getInputProps("email")} id="email" />
-                    <TextInput mb={"md"} withAsterisk label="Country" value="Canada" disabled />
+                    <NativeSelect
+                      required
+                      withAsterisk
+                      label="Contact Method"
+                      mb="md"
+                      value={contactMethod}
+                      onChange={(event) => {
+                        setContactMethod(event.currentTarget.value);
+                        if (event.currentTarget.value === "Email") form.setFieldValue("phone_number", "");
+                        if (event.currentTarget.value === "Phone number") form.setFieldValue("email", "");
+                      }}
+                      data={["Email", "Phone number", "Email & Phone number"]}
+                    />
+                    {contactMethod.includes("Email") ? (
+                      <TextInput mb={"md"} withAsterisk label="Email" placeholder="johnsmith@email.com" {...form.getInputProps("email")} id="email" />
+                    ) : null}
+                    {contactMethod.includes("Phone number") ? (
+                      <TextInput
+                        mb={"md"}
+                        withAsterisk
+                        minLength={10}
+                        maxLength={10}
+                        label="Phone number"
+                        placeholder="1234567890"
+                        {...form.getInputProps("phone_number")}
+                        id="phone_number"
+                      />
+                    ) : null}
+                    <NativeSelect
+                      mb={"md"}
+                      {...form.getInputProps("country")}
+                      id="country"
+                      withAsterisk
+                      label="Country"
+                      data={["Canada", "United States"]}
+                    />
                     <TextInput
                       mb={"md"}
                       withAsterisk

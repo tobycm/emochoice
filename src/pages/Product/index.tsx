@@ -274,7 +274,7 @@ export default function Product() {
                 <FileInput
                   id="fileInput"
                   maw={250}
-                  accept="image/jpeg,image/png,image/gif,image/tiff,image/bmp,image/webp,image/svg+xml,image/vnd.microsoft.icon,image/heif,image/heic"
+                  accept="image/png,image/jpeg,image/gif,image/webp,image/svg+xml,image/tiff,image/bmp,image/heif,image/heic,image/avif"
                   variant="default"
                   c={"emochoice-yellow"}
                   // @ts-ignore
@@ -285,7 +285,7 @@ export default function Product() {
                     setCustomImage(value);
                     if (value)
                       if (product.boundary) setModalState({ open: true, fileUploaded: true });
-                      else form.setFieldValue("fileInput", customImage);
+                      else form.setFieldValue("fileInput", value);
                   }}
                 />
               </Box>
