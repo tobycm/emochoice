@@ -25,9 +25,7 @@ export default function Home() {
           </Carousel.Slide>
         ));
         setSlides([...slide]);
-      } catch (error) {
-        console.error(`Error fetching ${type} gallery:`, error);
-      }
+      } catch {}
     };
 
     fetchAndSetGallery("home_carousel").then(async () => {
@@ -36,8 +34,7 @@ export default function Home() {
         try {
           if (embla) embla.reInit();
           break;
-        } catch (error) {
-          console.error("Error re-initializing emblas:", error);
+        } catch {
           await new Promise((resolve) => setTimeout(resolve, 1000));
         }
       }

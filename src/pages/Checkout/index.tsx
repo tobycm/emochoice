@@ -73,7 +73,6 @@ export default function Checkout() {
               ),
             };
             try {
-              console.log(submitData);
               const res = await fetch("https://api.emochoice.ca/quote", {
                 method: "POST",
                 body: JSON.stringify(submitData),

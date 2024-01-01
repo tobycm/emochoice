@@ -34,8 +34,7 @@ export default function Gallery(props: { home: boolean }) {
         if (embla.gallery_2) embla.gallery_2.reInit();
         if (embla.gallery_3) embla.gallery_3.reInit();
         break;
-      } catch (error) {
-        console.error("Error re-initializing emblas:", error);
+      } catch {
         await new Promise((resolve) => setTimeout(resolve, 1000));
       }
     }
@@ -65,9 +64,7 @@ export default function Gallery(props: { home: boolean }) {
           </Carousel.Slide>
         ));
         setSlides((prevSlides) => ({ ...prevSlides, [type]: slides }));
-      } catch (error) {
-        console.error(`Error fetching ${type} gallery:`, error);
-      }
+      } catch {}
     };
 
     if (window.location.href.includes("/gallery")) setDocumentTitle("Gallery");

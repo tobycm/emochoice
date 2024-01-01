@@ -26,8 +26,7 @@ export default function Content() {
       .then((res) => {
         if (res.status !== 200) setPage(<Maintenance />);
       })
-      .catch((error) => {
-        console.error(error);
+      .catch(() => {
         setPage(<Maintenance />);
       });
   }, []);

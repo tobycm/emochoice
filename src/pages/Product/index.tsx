@@ -165,12 +165,12 @@ export default function Product() {
         <meta name="title" content={`${product.name}${product.custom_id && ` - ${product.custom_id}`} - Emochoice`} />
         <meta name="description" content={HTMLtoText(product.description)} />
         <meta property="og:type" content="website" />
-        <meta property="og:url" content={`https://v2.emochoice.ca/product/${product.id}`} />
+        <meta property="og:url" content={`https://emochoice.ca/product/${product.id}`} />
         <meta property="og:title" content={`${product.name}${product.custom_id && ` - ${product.custom_id}`} - Emochoice`} />
         <meta property="og:description" content={HTMLtoText(product.description)} />
         <meta property="og:image" content={productImage} />
         <meta property="twitter:card" content="summary_large_image" />
-        <meta property="twitter:url" content={`https://v2.emochoice.ca/product/${product.id}`} />
+        <meta property="twitter:url" content={`https://emochoice.ca/product/${product.id}`} />
         <meta property="twitter:title" content={`${product.name}${product.custom_id && ` - ${product.custom_id}`} - Emochoice`} />
         <meta property="twitter:description" content={HTMLtoText(product.description)} />
         <meta property="twitter:image" content={productImage} />
