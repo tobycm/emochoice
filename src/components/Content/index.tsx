@@ -22,7 +22,7 @@ export default function Content() {
   );
 
   useEffect(() => {
-    fetch("https://pocketbase.emochoice.ca")
+    fetch("https://pocketbase.emochoice.ca/api")
       .then((res) => {
         if (res.status !== 200) setPage(<Maintenance />);
       })
