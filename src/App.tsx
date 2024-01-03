@@ -139,7 +139,7 @@ export default function App() {
         headings: { fontFamily: "Inter, sans-serif" },
         colors: {
           "emochoice-yellow": ["#FCB918", "#FCB918", "#FCB918", "#FCB918", "#FCB918", "#FCB918", "#FCB918", "#FCB918", "#FCB918", "#FCB918"],
-          "emochoice-green": ["#B1CB35", "#B1CB35", "#B1CB35", "#B1CB35", "#B1CB35", "#B1CB35", "#B1CB35", "#B1CB35", "#B1CB35", "#B1CB35"],
+          "emochoice-green": ["#f8fce6", "#f0f5d5", "#e0ebaf", "#d0df84", "#c1d660", "#b8d049", "#b4cd3c", "#9db42c", "#8ba023", "#768b14"],
           "emochoice-blue": ["#0468B0", "#0468B0", "#0468B0", "#0468B0", "#0468B0", "#0468B0", "#0468B0", "#0468B0", "#0468B0", "#0468B0"],
         },
         breakpoints: {

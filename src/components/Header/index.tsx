@@ -16,7 +16,7 @@ import {
   Text,
 } from "@mantine/core";
 import { useDisclosure, useMediaQuery } from "@mantine/hooks";
-import { IconPhone, IconPhoto, IconSearch, IconShirt, IconShoppingCart } from "@tabler/icons-react";
+import { IconChevronRight, IconPhone, IconPhoto, IconSearch, IconShirt, IconShoppingCart } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { getProducts } from "../../lib/database";
@@ -206,44 +206,68 @@ export default function Header() {
                 </Link>
               </Menu.Target>
               <Menu.Dropdown>
-                <Menu.Label>Clothing & Accessories Print</Menu.Label>
-                <Menu.Item
-                  rightSection={
-                    <Text size="xs" c="dimmed">
-                      {">"}
-                    </Text>
-                  }
-                >
-                  <Menu trigger="hover" position="right-start" withArrow arrowPosition="center" offset={20} openDelay={250}>
-                    <Menu.Target>
-                      <Text size="sm">T-Shirts</Text>
-                    </Menu.Target>
-                    <Menu.Dropdown>
-                      <Menu.Item onClick={() => navigate("/catalog", { state: { categories: ["Mens & Unisex"] } })}>Mens & Unisex</Menu.Item>
-                      <Menu.Item onClick={() => navigate("/catalog", { state: { categories: ["Womens"] } })}>Womens</Menu.Item>
-                      <Menu.Item onClick={() => navigate("/catalog", { state: { categories: ["Youth"] } })}>Youth</Menu.Item>
-                      <Menu.Item onClick={() => navigate("/catalog", { state: { categories: ["Infants & Toddlers"] } })}>
-                        Infants & Toddlers
-                      </Menu.Item>
-                    </Menu.Dropdown>
-                  </Menu>
-                </Menu.Item>
-                <Menu.Item onClick={() => navigate("/catalog", { state: { categories: ["Sweatshirt", "Fleece"] } })}>Sweatshirt & Fleece</Menu.Item>
-                <Menu.Item onClick={() => navigate("/catalog", { state: { categories: ["Activewear"] } })}>Activewear</Menu.Item>
-                <Menu.Item onClick={() => navigate("/catalog", { state: { categories: ["Hats"] } })}>Hats</Menu.Item>
-                <Menu.Item onClick={() => navigate("/catalog", { state: { categories: ["Bags"] } })}>Bags</Menu.Item>
-                <Menu.Item onClick={() => navigate("/catalog", { state: { categories: ["Others"] } })}>Others</Menu.Item>
-                <Menu.Divider />
-                <Menu.Label>Digital Printing</Menu.Label>
-                <Menu.Item onClick={() => navigate("/catalog", { state: { categories: ["Stickers"] } })}>Stickers</Menu.Item>
-                <Menu.Item onClick={() => navigate("/catalog", { state: { categories: ["Banners"] } })}>Banners</Menu.Item>
-                <Menu.Item onClick={() => navigate("/catalog", { state: { categories: ["Brochures"] } })}>Brochures</Menu.Item>
-                <Menu.Divider />
-                <Menu.Label>Souvenirs & Gifts Printing</Menu.Label>
-                <Menu.Item onClick={() => navigate("/catalog", { state: { categories: ["Mugs"] } })}>Coffee Mugs</Menu.Item>
-                <Menu.Item onClick={() => navigate("/catalog", { state: { categories: ["Photo Slates"] } })}>Photo Slates</Menu.Item>
-                <Menu.Item onClick={() => navigate("/catalog", { state: { categories: ["Keychains"] } })}>Key Chain</Menu.Item>
-                <Menu.Item onClick={() => navigate("/catalog", { state: { categories: ["Bottles"] } })}>Water Bottle</Menu.Item>
+                <Box display={"flex"}>
+                  <Box mr="md">
+                    <Link style={{ textDecoration: "none" }} to="/catalog" state={{ categories: ["Clothing & Accessories Print"] }}>
+                      <Text size="md" mt={5} mb={5} ml="sm" className={classes.menuTitle}>
+                        Clothing & Accessories Print
+                      </Text>
+                    </Link>
+                    <Menu.Item>
+                      <Menu trigger="hover" position="right-start" arrowPosition="center" offset={20} openDelay={250}>
+                        <Menu.Target>
+                          <Box display="flex" style={{ justifyContent: "space-between", alignItems: "center" }} w="100%">
+                            <Text size="sm">T-Shirts</Text>
+                            <IconChevronRight style={{ width: "20px" }} />
+                          </Box>
+                        </Menu.Target>
+                        <Menu.Dropdown>
+                          <Menu.Item onClick={() => navigate("/catalog", { state: { categories: ["Mens & Unisex"] } })}>Mens & Unisex</Menu.Item>
+                          <Menu.Item onClick={() => navigate("/catalog", { state: { categories: ["Womens"] } })}>Womens</Menu.Item>
+                          <Menu.Item onClick={() => navigate("/catalog", { state: { categories: ["Youth"] } })}>Youth</Menu.Item>
+                          <Menu.Item onClick={() => navigate("/catalog", { state: { categories: ["Infants & Toddlers"] } })}>
+                            Infants & Toddlers
+                          </Menu.Item>
+                        </Menu.Dropdown>
+                      </Menu>
+                    </Menu.Item>
+                    <Menu.Item onClick={() => navigate("/catalog", { state: { categories: ["Sweatshirt", "Fleece"] } })}>
+                      Sweatshirt & Fleece
+                    </Menu.Item>
+                    <Menu.Item onClick={() => navigate("/catalog", { state: { categories: ["Activewear"] } })}>Activewear</Menu.Item>
+                    <Menu.Item onClick={() => navigate("/catalog", { state: { categories: ["Hats"] } })}>Hats</Menu.Item>
+                    <Menu.Item onClick={() => navigate("/catalog", { state: { categories: ["Bags"] } })}>Bags</Menu.Item>
+                    <Menu.Item onClick={() => navigate("/catalog", { state: { categories: ["Others"] } })}>Others</Menu.Item>
+                  </Box>
+                  <Box mr="md">
+                    <Link style={{ textDecoration: "none" }} to="/catalog" state={{ categories: ["Digital Printing"] }}>
+                      <Text size="md" mt={5} mb={5} ml="sm" className={classes.menuTitle}>
+                        Digital Printing
+                      </Text>
+                    </Link>
+                    <Menu.Item onClick={() => navigate("/catalog", { state: { categories: ["Stickers"] } })}>Stickers</Menu.Item>
+                    <Menu.Item onClick={() => navigate("/catalog", { state: { categories: ["Banners"] } })}>Banners</Menu.Item>
+                    <Menu.Item onClick={() => navigate("/catalog", { state: { categories: ["Brochures"] } })}>Brochures</Menu.Item>
+                  </Box>
+                  <Box mr="md">
+                    <Link style={{ textDecoration: "none" }} to="/catalog" state={{ categories: ["Souvenirs & Gifts Printing"] }}>
+                      <Text
+                        size="md"
+                        mt={5}
+                        mb={5}
+                        ml="sm"
+                        className={classes.menuTitle}
+                        onClick={() => navigate("/catalog", { state: { categories: ["Mugs"] } })}
+                      >
+                        Souvenirs & Gifts Printing
+                      </Text>
+                    </Link>
+                    <Menu.Item onClick={() => navigate("/catalog", { state: { categories: ["Mugs"] } })}>Coffee Mugs</Menu.Item>
+                    <Menu.Item onClick={() => navigate("/catalog", { state: { categories: ["Photo Slates"] } })}>Photo Slates</Menu.Item>
+                    <Menu.Item onClick={() => navigate("/catalog", { state: { categories: ["Keychains"] } })}>Key Chain</Menu.Item>
+                    <Menu.Item onClick={() => navigate("/catalog", { state: { categories: ["Bottles"] } })}>Water Bottle</Menu.Item>
+                  </Box>
+                </Box>
               </Menu.Dropdown>
               <Link to="/gallery" style={{ textDecoration: "none", color: "black" }}>
                 <Tabs.Tab value="gallery">Gallery</Tabs.Tab>
