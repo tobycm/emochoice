@@ -7,7 +7,6 @@ import SmallChangeHelmet from "../../components/Helmets/SmallChangeHelmet";
 import classes from "./index.module.css";
 
 export default function Contact() {
-  const [formSent, setFormSent] = useState(false);
   const [contactMethod, setContactMethod] = useState("Email");
   const form = useForm({
     initialValues: {
@@ -53,12 +52,12 @@ export default function Contact() {
             notifications.show({
               title: "Success",
               message: "Message sent successfully!",
-              color: "green",
+              color: "emochoice-green",
               icon: <IconCheck stroke={2} />,
               autoClose: 5000,
               withCloseButton: true,
             });
-            setFormSent(true);
+            form.reset();
           } catch (err: any) {
             notifications.show({
               title: "Error",
@@ -74,11 +73,10 @@ export default function Contact() {
         <Title mb="md">Get in Touch with Us</Title>
         <Text mb="md">If you'd like to contact us about a general inquiry, please fill out the form below, or contact our location directly.</Text>
         <Box className={classes.input} mb="md">
-          <TextInput disabled={formSent} withAsterisk label="Full name" placeholder="John Smith" {...form.getInputProps("name")} id="name" />
+          <TextInput withAsterisk label="Full name" placeholder="John Smith" {...form.getInputProps("name")} id="name" />
         </Box>
         <Box className={classes.input}>
           <NativeSelect
-            disabled={formSent}
             required
             withAsterisk
             label="Contact Method"
@@ -92,19 +90,10 @@ export default function Contact() {
             data={["Email", "Phone number", "Email & Phone number"]}
           />
           {contactMethod.includes("Email") ? (
-            <TextInput
-              disabled={formSent}
-              mb={"md"}
-              withAsterisk
-              label="Email"
-              placeholder="johnsmith@email.com"
-              {...form.getInputProps("email")}
-              id="email"
-            />
+            <TextInput mb={"md"} withAsterisk label="Email" placeholder="johnsmith@email.com" {...form.getInputProps("email")} id="email" />
           ) : null}
           {contactMethod.includes("Phone number") ? (
             <TextInput
-              disabled={formSent}
               mb={"md"}
               withAsterisk
               minLength={10}
@@ -118,7 +107,6 @@ export default function Contact() {
         </Box>
         <Box className={classes.input}>
           <Textarea
-            disabled={formSent}
             withAsterisk
             label="Message"
             autosize
@@ -130,7 +118,7 @@ export default function Contact() {
           />
         </Box>
         <Space h="md" />
-        <Button variant="filled" type="submit" disabled={formSent}>
+        <Button variant="filled" type="submit">
           Submit
         </Button>
       </Box>
