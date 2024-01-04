@@ -187,7 +187,7 @@ export default function Header() {
         </Group>
       </Container>
       <Container>
-        <Menu trigger="hover" openDelay={505}>
+        <Menu trigger="hover" openDelay={250}>
           <Tabs
             variant="outline"
             visibleFrom="xs"
@@ -208,11 +208,11 @@ export default function Header() {
               <Menu.Dropdown>
                 <Box display={"flex"}>
                   <Box mr="md">
-                    <Link style={{ textDecoration: "none" }} to="/catalog" state={{ categories: ["Clothing & Accessories Print"] }}>
-                      <Text size="md" mt={5} mb={5} ml="sm" className={classes.menuTitle}>
+                    <Menu.Item onClick={() => navigate("/catalog", { state: { categories: ["Clothing & Accessories Print"] } })}>
+                      <Text size="md" className={classes.menuTitle}>
                         Clothing & Accessories Print
                       </Text>
-                    </Link>
+                    </Menu.Item>
                     <Menu.Item>
                       <Menu trigger="hover" position="right-start" arrowPosition="center" offset={20} openDelay={250}>
                         <Menu.Target>
@@ -240,28 +240,21 @@ export default function Header() {
                     <Menu.Item onClick={() => navigate("/catalog", { state: { categories: ["Others"] } })}>Others</Menu.Item>
                   </Box>
                   <Box mr="md">
-                    <Link style={{ textDecoration: "none" }} to="/catalog" state={{ categories: ["Digital Printing"] }}>
-                      <Text size="md" mt={5} mb={5} ml="sm" className={classes.menuTitle}>
+                    <Menu.Item onClick={() => navigate("/catalog", { state: { categories: ["Digital Printing"] } })}>
+                      <Text size="md" className={classes.menuTitle}>
                         Digital Printing
                       </Text>
-                    </Link>
+                    </Menu.Item>
                     <Menu.Item onClick={() => navigate("/catalog", { state: { categories: ["Stickers"] } })}>Stickers</Menu.Item>
                     <Menu.Item onClick={() => navigate("/catalog", { state: { categories: ["Banners"] } })}>Banners</Menu.Item>
                     <Menu.Item onClick={() => navigate("/catalog", { state: { categories: ["Brochures"] } })}>Brochures</Menu.Item>
                   </Box>
                   <Box mr="md">
-                    <Link style={{ textDecoration: "none" }} to="/catalog" state={{ categories: ["Souvenirs & Gifts Printing"] }}>
-                      <Text
-                        size="md"
-                        mt={5}
-                        mb={5}
-                        ml="sm"
-                        className={classes.menuTitle}
-                        onClick={() => navigate("/catalog", { state: { categories: ["Mugs"] } })}
-                      >
+                    <Menu.Item onClick={() => navigate("/catalog", { state: { categories: ["Souvenirs & Gifts Printing"] } })}>
+                      <Text size="md" className={classes.menuTitle}>
                         Souvenirs & Gifts Printing
                       </Text>
-                    </Link>
+                    </Menu.Item>
                     <Menu.Item onClick={() => navigate("/catalog", { state: { categories: ["Mugs"] } })}>Coffee Mugs</Menu.Item>
                     <Menu.Item onClick={() => navigate("/catalog", { state: { categories: ["Photo Slates"] } })}>Photo Slates</Menu.Item>
                     <Menu.Item onClick={() => navigate("/catalog", { state: { categories: ["Keychains"] } })}>Key Chain</Menu.Item>
