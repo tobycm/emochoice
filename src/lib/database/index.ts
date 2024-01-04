@@ -42,11 +42,11 @@ export async function getProducts() {
 }
 
 export async function getHiddenStatus(id: string) {
-  return (await pocketbase.collection("products").getOne<{ hidden: boolean }>(id)).hidden;
+  return (await pocketbase.collection("products").getOne<{ hidden: boolean }>(id, { requestKey: null })).hidden;
 }
 
 export async function getTags(id: string) {
-  return (await pocketbase.collection("products").getOne<{ tags: string[] }>(id)).tags;
+  return (await pocketbase.collection("products").getOne<{ tags: string[] }>(id, { requestKey: null })).tags;
 }
 
 const metadataIds = {

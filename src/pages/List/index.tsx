@@ -17,7 +17,7 @@ export default function List() {
   const navigate = useNavigate();
 
   const changeHiddenStatus = async () => {
-    let newList = new ListClass(...list);
+    const newList = new ListClass(...list);
     await Promise.all(
       newList.map(async (item) => {
         item.product.hidden = await getHiddenStatus(item.product.id);
