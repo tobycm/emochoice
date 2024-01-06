@@ -39,7 +39,7 @@ export default function Header() {
     isMobile && toggleSearchbar();
   }
 
-  let tempSearchList = new Array<string>();
+  const tempSearchList = new Array<string>();
   function getProductsNames() {
     getProducts().then((products) => {
       products.forEach((product) => {
@@ -216,7 +216,12 @@ export default function Header() {
                     <Menu.Item>
                       <Menu trigger="hover" position="right-start" arrowPosition="center" offset={20} openDelay={250}>
                         <Menu.Target>
-                          <Box display="flex" style={{ justifyContent: "space-between", alignItems: "center" }} w="100%">
+                          <Box
+                            onClick={() => navigate("/catalog", { state: { categories: ["T-Shirts"] } })}
+                            display="flex"
+                            style={{ justifyContent: "space-between", alignItems: "center" }}
+                            w="100%"
+                          >
                             <Text size="sm">T-Shirts</Text>
                             <IconChevronRight style={{ width: "20px" }} />
                           </Box>
@@ -231,9 +236,7 @@ export default function Header() {
                         </Menu.Dropdown>
                       </Menu>
                     </Menu.Item>
-                    <Menu.Item onClick={() => navigate("/catalog", { state: { categories: ["Sweatshirt", "Fleece"] } })}>
-                      Sweatshirt & Fleece
-                    </Menu.Item>
+                    <Menu.Item onClick={() => navigate("/catalog", { state: { categories: ["Sweatshirts"] } })}>Sweatshirt & Fleece</Menu.Item>
                     <Menu.Item onClick={() => navigate("/catalog", { state: { categories: ["Activewear"] } })}>Activewear</Menu.Item>
                     <Menu.Item onClick={() => navigate("/catalog", { state: { categories: ["Hats"] } })}>Hats</Menu.Item>
                     <Menu.Item onClick={() => navigate("/catalog", { state: { categories: ["Bags"] } })}>Bags</Menu.Item>
