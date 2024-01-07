@@ -1,7 +1,9 @@
 import PocketBase, { RecordModel } from "pocketbase";
 import { Product, ProductCategory } from "./models";
 
-const pocketbase = new PocketBase("https://pocketbase.emochoice.ca");
+import Constants from "../constants";
+
+const pocketbase = new PocketBase(Constants.PocketBaseURL);
 
 export default pocketbase;
 
