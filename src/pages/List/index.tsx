@@ -5,7 +5,7 @@ import { IconShoppingCartExclamation, IconShoppingCartSearch, IconX } from "@tab
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import DefaultHelmet from "../../components/Helmets/DefaultHelmet";
-import { getHiddenStatus, getTags } from "../../lib/database";
+import { getProducts } from "../../lib/database";
 import proceedList, { Item, List as ListClass, useList } from "../../lib/list";
 import LoaderBox, { setDocumentTitle, toTitleCase } from "../../lib/utils";
 import classes from "./index.module.css";
@@ -18,10 +18,10 @@ export default function List() {
 
   const changeHiddenStatus = async () => {
     const newList = new ListClass(...list);
+    const newProducts = await getProducts();
     await Promise.all(
       newList.map(async (item) => {
-        item.product.hidden = await getHiddenStatus(item.product.id);
-        item.product.tags = await getTags(item.product.id);
+        item.product = newProducts.find((product) => product.id === item.product.id) as Item["product"];
       }),
     );
     updateList(
@@ -113,12 +113,11 @@ export default function List() {
                             {item.product.name}
                             {item.product.custom_id && ` - ${item.product.custom_id}`}
                           </Link>
-                          {item.product.hidden ||
-                            (item.product.tags.includes("out_of_stock") && (
-                              <Text fw={600} style={{ fontSize: "15px" }} c="red">
-                                This product is currently {item.product.hidden ? "unavailable" : "out of stock"}.
-                              </Text>
-                            ))}
+                          {(item.product.hidden || item.product.tags.includes("out_of_stock")) && (
+                            <Text fw={600} style={{ fontSize: "15px" }} c="red">
+                              This product is currently {item.product.hidden ? "unavailable" : "out of stock"}.
+                            </Text>
+                          )}
                         </Table.Td>
                         {isMobile ? null : (
                           <>

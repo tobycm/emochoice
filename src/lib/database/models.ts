@@ -17,7 +17,7 @@ export interface Product extends RecordModel {
   hidden: boolean;
   tags: string[];
   boundary: string;
-  custom_data: unknown | null;
+  custom_data: Record<string, string>;
   expand?: {
     category?: ProductCategory[];
     colors?: ProductColor[];

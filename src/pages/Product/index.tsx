@@ -389,7 +389,7 @@ export default function Product() {
                           <Table.Td>
                             <strong>{toTitleCase(key)}</strong>
                           </Table.Td>
-                          <Table.Td>{value instanceof Array ? value.join(", ") : String(value)}</Table.Td>
+                          <Table.Td>{value}</Table.Td>
                         </Table.Tr>
                       ))
                     : null}

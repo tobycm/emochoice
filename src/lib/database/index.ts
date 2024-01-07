@@ -1,7 +1,9 @@
 import PocketBase, { RecordModel } from "pocketbase";
 import { Product, ProductCategory } from "./models";
 
-const pocketbase = new PocketBase("https://pocketbase.emochoice.ca");
+import Constants from "../constants";
+
+const pocketbase = new PocketBase(Constants.PocketBaseURL);
 
 export default pocketbase;
 
@@ -39,14 +41,6 @@ export async function getProducts() {
   }
 
   return products;
-}
-
-export async function getHiddenStatus(id: string) {
-  return (await pocketbase.collection("products").getOne<{ hidden: boolean }>(id, { requestKey: null })).hidden;
-}
-
-export async function getTags(id: string) {
-  return (await pocketbase.collection("products").getOne<{ tags: string[] }>(id, { requestKey: null })).tags;
 }
 
 const metadataIds = {
