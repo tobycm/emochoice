@@ -285,7 +285,7 @@ export default function Product() {
             {product.expand?.types ? (
               <Box className={classes.input}>
                 <Text mr="md">Types</Text>
-                <SegmentedControl c="emochoice-yellow" data={product.expand.types.map((type) => type.name)} />
+                <SegmentedControl color="emochoice-yellow" data={product.expand.types.map((type) => type.name)} />
               </Box>
             ) : null}
             <Box className={classes.input}>
