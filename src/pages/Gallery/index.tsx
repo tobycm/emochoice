@@ -64,7 +64,9 @@ export default function Gallery(props: { home: boolean }) {
           </Carousel.Slide>
         ));
         setSlides((prevSlides) => ({ ...prevSlides, [type]: slides }));
-      } catch {}
+      } catch {
+        // bruh
+      }
     };
 
     if (window.location.href.includes("/gallery")) setDocumentTitle("Gallery");
@@ -90,9 +92,9 @@ export default function Gallery(props: { home: boolean }) {
 
   return (
     <Box display="flex" style={{ flexDirection: "column", alignItems: "center" }}>
-      {bigImage && !isMobile && (
+      {bigImage && !isMobile ? (
         <ImageZoom scrollHeight={scrollHeight} productImage={zoomImage} openBigImage={openBigImage} setProductImage={setZoomImage} />
-      )}
+      ) : null}
       {!props.home ? (
         <SmallChangeHelmet title="Gallery" gallery={true} location="gallery" description="Take a look at some of our great printing products!" />
       ) : null}

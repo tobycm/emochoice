@@ -1,4 +1,19 @@
-import { Badge, Box, Button, FileInput, Image, NumberInput, ScrollArea, Space, Table, Tabs, Text, Textarea, Title, rem } from "@mantine/core";
+import {
+  Badge,
+  Box,
+  Button,
+  FileInput,
+  Image,
+  NumberInput,
+  ScrollArea,
+  SegmentedControl,
+  Table,
+  Tabs,
+  Text,
+  Textarea,
+  Title,
+  rem,
+} from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useMediaQuery } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
@@ -145,7 +160,7 @@ export default function Product() {
 
   return (
     <Box w="80%" ml="auto" mr="auto">
-      {bigImage && !isMobile && (
+      {bigImage && !isMobile ? (
         <ImageZoom
           scrollHeight={scrollHeight}
           productImage={productImage}
@@ -154,24 +169,24 @@ export default function Product() {
           setProductImage={setProductImage}
           product={product}
         />
-      )}
+      ) : null}
 
       <Helmet>
         <title>
           {product.name}
-          {product.custom_id && ` - ${product.custom_id}`} - Emochoice
+          {product.custom_id ? ` - ${product.custom_id}` : null} - Emochoice
         </title>
         <meta name="description" content={HTMLtoText(product.description)} />
-        <meta name="title" content={`${product.name}${product.custom_id && ` - ${product.custom_id}`} - Emochoice`} />
+        <meta name="title" content={`${product.name}${product.custom_id ? ` - ${product.custom_id}` : null} - Emochoice`} />
         <meta name="description" content={HTMLtoText(product.description)} />
         <meta property="og:type" content="website" />
         <meta property="og:url" content={`https://emochoice.ca/product/${product.id}`} />
-        <meta property="og:title" content={`${product.name}${product.custom_id && ` - ${product.custom_id}`} - Emochoice`} />
+        <meta property="og:title" content={`${product.name}${product.custom_id ? ` - ${product.custom_id}` : null} - Emochoice`} />
         <meta property="og:description" content={HTMLtoText(product.description)} />
         <meta property="og:image" content={productImage} />
         <meta property="twitter:card" content="summary_large_image" />
         <meta property="twitter:url" content={`https://emochoice.ca/product/${product.id}`} />
-        <meta property="twitter:title" content={`${product.name}${product.custom_id && ` - ${product.custom_id}`} - Emochoice`} />
+        <meta property="twitter:title" content={`${product.name}${product.custom_id ? ` - ${product.custom_id}` : null} - Emochoice`} />
         <meta property="twitter:description" content={HTMLtoText(product.description)} />
         <meta property="twitter:image" content={productImage} />
       </Helmet>
@@ -210,16 +225,16 @@ export default function Product() {
         <Box ml={30} maw={!isMobile ? "70%" : "90%"}>
           <Title mb={"xs"}>
             {product.name}
-            {product.custom_id && ` - ${product.custom_id}`}
+            {product.custom_id ? ` - ${product.custom_id}` : null}
           </Title>
           <Title c={"emochoice-blue"} order={4}>
             {product.brand}
           </Title>
-          {product.tags.includes("on_sale") && (
+          {product.tags.includes("on_sale") ? (
             <Badge size="xl" mt="md" color="red">
               On Sale
             </Badge>
-          )}
+          ) : null}
           <Box
             mt="xl"
             component="form"
@@ -265,9 +280,14 @@ export default function Product() {
                 </Box>
               </Box>
             ) : null}
+            {product.expand?.types ? (
+              <Box className={classes.input}>
+                <Text mb="md">Types</Text>
+                <SegmentedControl data={product.expand.types.map((type) => type.name)} />
+              </Box>
+            ) : null}
             <Box className={classes.input}>
-              <Text>Quantity</Text>
-              <Space w="md" />
+              <Text mb="md">Quantity</Text>
               <NumberInput
                 style={{ width: "180px" }}
                 placeholder="Between 1 and 99"
@@ -279,15 +299,14 @@ export default function Product() {
             </Box>
             {product.customizable ? (
               <Box className={classes.input}>
-                <Text>Your image</Text>
-                <Space w="md" />
+                <Text mb="md">Your image</Text>
                 <FileInput
                   id="fileInput"
                   maw={250}
                   accept="image/png,image/jpeg,image/gif,image/webp,image/svg+xml,image/tiff,image/bmp,image/heif,image/heic,image/avif"
                   variant="default"
                   c={"emochoice-yellow"}
-                  // @ts-ignore
+                  // @ts-ignore they didn't fix the @types
                   placeholder="Upload"
                   {...form.getInputProps("fileInput")}
                   value={customImage}
@@ -301,8 +320,7 @@ export default function Product() {
               </Box>
             ) : null}
             <Box className={classes.input}>
-              <Text>Request</Text>
-              <Space w="md" />
+              <Text mb="md">Request</Text>
               <Textarea
                 autosize
                 className={classes.textarea}
@@ -357,7 +375,7 @@ export default function Product() {
                     </Table.Td>
                     <Table.Td>
                       {product.name}
-                      {product.custom_id && ` - ${product.custom_id}`}
+                      {product.custom_id ? ` - ${product.custom_id}` : null}
                     </Table.Td>
                   </Table.Tr>
                   <Table.Tr>

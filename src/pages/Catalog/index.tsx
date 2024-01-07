@@ -44,7 +44,7 @@ export default function Catalog() {
       getProducts().then((products) => {
         setSortedProducts(
           products.filter((product) =>
-            `${product.name}${product.custom_id && ` - ${product.custom_id}`}`.toLowerCase().includes(user!.searchQuery!.toLowerCase()),
+            `${product.name}${product.custom_id ? ` - ${product.custom_id}` : null}`.toLowerCase().includes(user!.searchQuery!.toLowerCase()),
           ),
         );
       });

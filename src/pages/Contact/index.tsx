@@ -38,7 +38,7 @@ export default function Contact() {
             const submitData = {
               name: form.values.name,
               message: form.values.message,
-              contact: `${form.values.email}${form.values.email && form.values.phone_number && ", "}${form.values.phone_number}`,
+              contact: `${form.values.email}${form.values.email && form.values.phone_number ? ", " : null}${form.values.phone_number}`,
             };
             await fetch("https://api.emochoice.ca/contact", {
               method: "POST",
@@ -58,10 +58,10 @@ export default function Contact() {
               withCloseButton: true,
             });
             form.reset();
-          } catch (err: any) {
+          } catch (err) {
             notifications.show({
               title: "Error",
-              message: err.message,
+              message: (err as Error).message,
               color: "red",
               icon: <IconX stroke={2} />,
               autoClose: 5000,

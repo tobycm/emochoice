@@ -11,6 +11,7 @@ export interface Product extends RecordModel {
   category: ID[];
   description: string;
   colors: ID[];
+  types: string[];
   images: Filename[];
   customizable: boolean;
   hidden: boolean;
@@ -20,7 +21,12 @@ export interface Product extends RecordModel {
   expand?: {
     category?: ProductCategory[];
     colors?: ProductColor[];
+    types: ProductType[];
   };
+}
+
+export interface ProductType extends RecordModel {
+  name: string;
 }
 
 export interface ProductCategory extends RecordModel {

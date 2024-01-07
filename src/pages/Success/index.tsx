@@ -70,7 +70,7 @@ export default function Success() {
                   <Table.Tr key={index}>
                     <Table.Td>
                       {item.product.name}
-                      {item.product.custom_id && ` - ${item.product.custom_id}`}
+                      {item.product.custom_id ? ` - ${item.product.custom_id}` : null}
                     </Table.Td>
                     {isMobile ? null : (
                       <>

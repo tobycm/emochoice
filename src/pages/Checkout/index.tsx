@@ -60,7 +60,7 @@ export default function Checkout() {
           onSubmit={form.onSubmit(async () => {
             const submitData = {
               name: `${form.values.firstName} ${form.values.lastName}`,
-              contact: `${form.values.email}${form.values.email && form.values.phone_number && ", "}${form.values.phone_number}`,
+              contact: `${form.values.email}${form.values.email && form.values.phone_number ? ", " : null}${form.values.phone_number}`,
               address: `${form.values.address}, ${form.values.city}, ${form.values.state} ${form.values.postalCode}, ${form.values.country}`,
               items: await Promise.all(
                 proceedList.map(async (item) => ({
@@ -211,7 +211,7 @@ export default function Checkout() {
                           <Table.Tr key={index}>
                             <Table.Td>
                               {item.product.name}
-                              {item.product.custom_id && ` - ${item.product.custom_id}`}
+                              {item.product.custom_id ? ` - ${item.product.custom_id}` : null}
                             </Table.Td>
                             {isMobile ? null : (
                               <>

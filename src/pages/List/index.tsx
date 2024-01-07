@@ -111,7 +111,7 @@ export default function List() {
                             }}
                           >
                             {item.product.name}
-                            {item.product.custom_id && ` - ${item.product.custom_id}`}
+                            {item.product.custom_id ? ` - ${item.product.custom_id}` : null}
                           </Link>
                           {item.product.hidden || item.product.tags.includes("out_of_stock") ? (
                             <Text fw={600} style={{ fontSize: "15px" }} c="red">
