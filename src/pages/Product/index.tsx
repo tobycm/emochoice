@@ -26,13 +26,14 @@ import ColorButton from "../../components/ColorButton";
 import ImageZoom from "../../components/ImageZoom";
 import CustomImageModal from "../../components/Modal/CustomImage";
 import pocketbase, { getProducts } from "../../lib/database";
-import { Color, Product } from "../../lib/database/models";
+import { Color, Product, Type } from "../../lib/database/models";
 import { List, useList } from "../../lib/list";
 import { HTMLtoText, filterProducts, pasteImage, toTitleCase } from "../../lib/utils";
 import classes from "./index.module.css";
 
 export interface OrderData {
   color?: Color;
+  type?: Type;
   quantity: number;
   request: string;
   fileInput?: File | null;

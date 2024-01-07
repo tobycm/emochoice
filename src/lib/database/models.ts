@@ -25,9 +25,11 @@ export interface Product extends RecordModel {
   };
 }
 
-export interface ProductType extends RecordModel {
+export interface Type {
   name: string;
 }
+
+export type ProductType = RecordModel & Type;
 
 export interface ProductCategory extends RecordModel {
   name: string;
