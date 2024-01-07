@@ -54,6 +54,7 @@ const routes: RouteObject[] = [
                 hidden: false,
                 tags: ["out_of_stock"],
                 colors: [],
+                types: [],
                 images: [],
                 boundary: "",
                 description:
