@@ -229,7 +229,7 @@ export default function Product() {
             {product.name}
             {product.custom_id ? ` - ${product.custom_id}` : null}
           </Title>
-          <Title c={"emochoice-green"} order={4}>
+          <Title c={"emochoice-blue"} order={4}>
             {product.brand}
           </Title>
           {product.tags.includes("on_sale") ? (
