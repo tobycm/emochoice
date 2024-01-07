@@ -285,7 +285,15 @@ export default function Product() {
             {product.expand?.types ? (
               <Box className={classes.input}>
                 <Text mr="md">Types</Text>
-                <SegmentedControl color="emochoice-yellow" data={product.expand.types.map((type) => type.name)} />
+                <SegmentedControl
+                  color="emochoice-yellow"
+                  data={product.expand.types.map((type) => type.name)}
+                  onChange={(value) => {
+                    const type = product.expand?.types?.find((type) => type.name === value);
+                    if (!type) return;
+                    form.setFieldValue("type", type);
+                  }}
+                />
               </Box>
             ) : null}
             <Box className={classes.input}>
