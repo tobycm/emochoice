@@ -60,14 +60,14 @@ export default function Checkout() {
           onSubmit={form.onSubmit(async () => {
             const submitData = {
               name: `${form.values.firstName} ${form.values.lastName}`,
-              contact: `${form.values.email}${form.values.email && form.values.phone_number ? ", " : null}${form.values.phone_number}`,
+              contact: `${form.values.email}${form.values.email && form.values.phone_number && ", "}${form.values.phone_number}`,
               address: `${form.values.address}, ${form.values.city}, ${form.values.state} ${form.values.postalCode}, ${form.values.country}`,
               items: await Promise.all(
                 proceedList.map(async (item) => ({
                   id: item.product.id,
                   quantity: item.quantity,
                   color: item.color?.id ?? null,
-                  image: item.fileInput ? await fileToBase64(item.fileInput) : null,
+                  image: item.fileInput && (await fileToBase64(item.fileInput)),
                   request: item.request ?? null,
                 })),
               ),
@@ -140,10 +140,10 @@ export default function Checkout() {
                       }}
                       data={["Email", "Phone number", "Email & Phone number"]}
                     />
-                    {contactMethod.includes("Email") ? (
+                    {contactMethod.includes("Email") && (
                       <TextInput mb={"md"} withAsterisk label="Email" placeholder="johnsmith@email.com" {...form.getInputProps("email")} id="email" />
-                    ) : null}
-                    {contactMethod.includes("Phone number") ? (
+                    )}
+                    {contactMethod.includes("Phone number") && (
                       <TextInput
                         mb={"md"}
                         withAsterisk
@@ -154,7 +154,7 @@ export default function Checkout() {
                         {...form.getInputProps("phone_number")}
                         id="phone_number"
                       />
-                    ) : null}
+                    )}
                     <NativeSelect
                       mb={"md"}
                       {...form.getInputProps("country")}
@@ -211,12 +211,12 @@ export default function Checkout() {
                           <Table.Tr key={index}>
                             <Table.Td>
                               {item.product.name}
-                              {item.product.custom_id ? ` - ${item.product.custom_id}` : null}
+                              {item.product.custom_id && ` - ${item.product.custom_id}`}
                             </Table.Td>
                             {isMobile ? null : (
                               <>
                                 <Table.Td>
-                                  {item.color ? (
+                                  {item.color && (
                                     <>
                                       <Tooltip label={toTitleCase(item.color.name)}>
                                         <Box
@@ -227,9 +227,9 @@ export default function Checkout() {
                                         ></Box>
                                       </Tooltip>
                                     </>
-                                  ) : null}
+                                  )}
                                 </Table.Td>
-                                <Table.Td maw={""}>{item.fileInput ? <Pill>{item.fileInput.name}</Pill> : null}</Table.Td>
+                                <Table.Td maw={""}>{item.fileInput && <Pill>{item.fileInput.name}</Pill>}</Table.Td>
                                 <Table.Td maw={""} style={{ overflow: "hidden", textOverflow: "ellipsis" }}>
                                   {item.request} {/* don't delete the blank maw */}
                                 </Table.Td>

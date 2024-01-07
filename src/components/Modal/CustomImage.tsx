@@ -33,7 +33,7 @@ export default function CustomImageModal(props: {
         <Box display={"flex"} style={{ justifyContent: "center" }} w="100%">
           <canvas id="previewCanvas" style={{ maxWidth: "100%" }}></canvas>
         </Box>
-        {modalState.fileUploaded ? (
+        {modalState.fileUploaded && (
           <Box>
             <Box mb={"md"}>
               <Text>
@@ -65,7 +65,7 @@ export default function CustomImageModal(props: {
               </Button>
             </Box>
           </Box>
-        ) : null}
+        )}
       </Box>
     </Modal>
   );

@@ -25,7 +25,7 @@ export default function Success() {
   return (
     <Box w="100%" mih="50vh" display="flex" style={{ flexDirection: "column", alignItems: "center" }}>
       <DefaultHelmet />
-      {user.order && user.name && user.contact && user.address ? (
+      {user.order && user.name && user.contact && user.address && (
         <>
           <Box
             w="90%"
@@ -70,12 +70,12 @@ export default function Success() {
                   <Table.Tr key={index}>
                     <Table.Td>
                       {item.product.name}
-                      {item.product.custom_id ? ` - ${item.product.custom_id}` : null}
+                      {item.product.custom_id && ` - ${item.product.custom_id}`}
                     </Table.Td>
                     {isMobile ? null : (
                       <>
                         <Table.Td>
-                          {item.color ? (
+                          {item.color && (
                             <>
                               <Tooltip label={toTitleCase(item.color.name)}>
                                 <Box
@@ -86,9 +86,9 @@ export default function Success() {
                                 ></Box>
                               </Tooltip>
                             </>
-                          ) : null}
+                          )}
                         </Table.Td>
-                        <Table.Td maw={""}>{item.fileInput ? <Pill>{item.fileInput.name}</Pill> : null}</Table.Td>
+                        <Table.Td maw={""}>{item.fileInput && <Pill>{item.fileInput.name}</Pill>}</Table.Td>
                         <Table.Td maw={""} style={{ overflow: "hidden", textOverflow: "ellipsis" }}>
                           {item.request} {/* don't delete the blank maw */}
                         </Table.Td>
@@ -124,7 +124,7 @@ export default function Success() {
             </Table>
           </Box>
         </>
-      ) : null}
+      )}
     </Box>
   );
 }

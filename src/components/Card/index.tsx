@@ -15,7 +15,7 @@ export default function ProductCard(props: { product: Product; inProductPage?: b
         {product.expand.colors.slice(0, 8).map((color) => (
           <Box w="15px" mr={5} style={{ backgroundColor: color.hex, border: "1px solid #777", borderRadius: "3px", aspectRatio: 1 / 1 }}></Box>
         ))}
-        {product.expand.colors.length > 8 ? <Text c="grey">+{product.expand.colors.length - 8}</Text> : null}
+        {product.expand.colors.length > 8 && <Text c="grey">+{product.expand.colors.length - 8}</Text>}
       </Box>
     );
   }
@@ -27,7 +27,7 @@ export default function ProductCard(props: { product: Product; inProductPage?: b
           <Card.Section display={"flex"}>
             <Box w="30%">
               <Image src={product.images ? pocketbase.getFileUrl(product, product.images[0]) : "/images/no_image.png"} h="calc(4/10*85vw)" />
-              {product.tags.includes("out_of_stock") ? (
+              {product.tags.includes("out_of_stock") && (
                 <Overlay w="30%" backgroundOpacity={0.4}>
                   <Center h="100%" w="100%">
                     <Title order={2} ta="center" c="white">
@@ -35,7 +35,7 @@ export default function ProductCard(props: { product: Product; inProductPage?: b
                     </Title>
                   </Center>
                 </Overlay>
-              ) : null}
+              )}
             </Box>
             <Box w="70%">
               <Box m={"4%"}>
@@ -44,16 +44,16 @@ export default function ProductCard(props: { product: Product; inProductPage?: b
                     {product.brand}
                   </Text>
                   <Box display="flex">
-                    {product.tags.includes("on_sale") ? (
+                    {product.tags.includes("on_sale") && (
                       <Badge color="red" size="sm">
                         On Sale
                       </Badge>
-                    ) : null}
-                    {product.custom_id ? (
+                    )}
+                    {product.custom_id && (
                       <Badge ml={5} color="emochoice-blue" size="sm">
                         {product.custom_id}
                       </Badge>
-                    ) : null}
+                    )}
                   </Box>
                 </Box>
                 <Group justify="space-between">
@@ -87,7 +87,7 @@ export default function ProductCard(props: { product: Product; inProductPage?: b
       >
         <Card.Section h="77%">
           <Image src={product.images ? pocketbase.getFileUrl(product, product.images[0]) : "/images/no_image.png"} h="100%" />
-          {product.tags.includes("out_of_stock") ? (
+          {product.tags.includes("out_of_stock") && (
             <Overlay h="66.15%" backgroundOpacity={0.4}>
               <Center h="100%">
                 <Title order={2} ta="center" c="white">
@@ -95,7 +95,7 @@ export default function ProductCard(props: { product: Product; inProductPage?: b
                 </Title>
               </Center>
             </Overlay>
-          ) : null}
+          )}
         </Card.Section>
         <Card.Section>
           <Box m={"5%"}>
@@ -104,16 +104,16 @@ export default function ProductCard(props: { product: Product; inProductPage?: b
                 {product.brand}
               </Text>
               <Box display="flex">
-                {product.tags.includes("on_sale") ? (
+                {product.tags.includes("on_sale") && (
                   <Badge color="red" size="sm">
                     On Sale
                   </Badge>
-                ) : null}
-                {product.custom_id ? (
+                )}
+                {product.custom_id && (
                   <Badge ml={5} color="emochoice-blue" size="sm">
                     {product.custom_id}
                   </Badge>
-                ) : null}
+                )}
               </Box>
             </Box>
             <Group justify="space-between">

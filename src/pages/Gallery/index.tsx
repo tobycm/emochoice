@@ -92,12 +92,12 @@ export default function Gallery(props: { home: boolean }) {
 
   return (
     <Box display="flex" style={{ flexDirection: "column", alignItems: "center" }}>
-      {bigImage && !isMobile ? (
+      {bigImage && !isMobile && (
         <ImageZoom scrollHeight={scrollHeight} productImage={zoomImage} openBigImage={openBigImage} setProductImage={setZoomImage} />
-      ) : null}
-      {!props.home ? (
+      )}
+      {!props.home && (
         <SmallChangeHelmet title="Gallery" gallery={true} location="gallery" description="Take a look at some of our great printing products!" />
-      ) : null}
+      )}
       <Title order={1} mb="lg">
         Gallery
       </Title>

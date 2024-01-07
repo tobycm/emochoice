@@ -3,7 +3,7 @@ import { Helmet } from "react-helmet-async";
 const SmallChangeHelmet = (props: { title: string; description: string; location: string; gallery: boolean }) => {
   return (
     <Helmet>
-      {!props.gallery ? <title>{props.title} - Emochoice</title> : null}
+      {!props.gallery && <title>{props.title} - Emochoice</title>}
       <meta name="title" content={`${props.title} - Emochoice`} />
       <meta name="description" content={props.description} />
       <meta property="og:type" content="website" />

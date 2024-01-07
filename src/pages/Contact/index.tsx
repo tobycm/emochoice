@@ -38,7 +38,7 @@ export default function Contact() {
             const submitData = {
               name: form.values.name,
               message: form.values.message,
-              contact: `${form.values.email}${form.values.email && form.values.phone_number ? ", " : null}${form.values.phone_number}`,
+              contact: `${form.values.email}${form.values.email && form.values.phone_number && ", "}${form.values.phone_number}`,
             };
             await fetch("https://api.emochoice.ca/contact", {
               method: "POST",
@@ -89,10 +89,10 @@ export default function Contact() {
             }}
             data={["Email", "Phone number", "Email & Phone number"]}
           />
-          {contactMethod.includes("Email") ? (
+          {contactMethod.includes("Email") && (
             <TextInput mb={"md"} withAsterisk label="Email" placeholder="johnsmith@email.com" {...form.getInputProps("email")} id="email" />
-          ) : null}
-          {contactMethod.includes("Phone number") ? (
+          )}
+          {contactMethod.includes("Phone number") && (
             <TextInput
               mb={"md"}
               withAsterisk
@@ -103,7 +103,7 @@ export default function Contact() {
               {...form.getInputProps("phone_number")}
               id="phone_number"
             />
-          ) : null}
+          )}
         </Box>
         <Box className={classes.input}>
           <Textarea

@@ -1,19 +1,4 @@
-import {
-  Badge,
-  Box,
-  Button,
-  FileInput,
-  Image,
-  NumberInput,
-  ScrollArea,
-  SegmentedControl,
-  Table,
-  Tabs,
-  Text,
-  Textarea,
-  Title,
-  rem,
-} from "@mantine/core";
+import { Badge, Box, Button, FileInput, Image, NativeSelect, NumberInput, ScrollArea, Table, Tabs, Text, Textarea, Title, rem } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useMediaQuery } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
@@ -162,7 +147,7 @@ export default function Product() {
 
   return (
     <Box w="80%" ml="auto" mr="auto">
-      {bigImage && !isMobile ? (
+      {bigImage && !isMobile && (
         <ImageZoom
           scrollHeight={scrollHeight}
           productImage={productImage}
@@ -171,24 +156,23 @@ export default function Product() {
           setProductImage={setProductImage}
           product={product}
         />
-      ) : null}
-
+      )}
       <Helmet>
         <title>
           {product.name}
-          {product.custom_id ? ` - ${product.custom_id}` : null} - Emochoice
+          {product.custom_id && ` - ${product.custom_id}`} - Emochoice
         </title>
         <meta name="description" content={HTMLtoText(product.description)} />
-        <meta name="title" content={`${product.name}${product.custom_id ? ` - ${product.custom_id}` : null} - Emochoice`} />
+        <meta name="title" content={`${product.name}${product.custom_id && ` - ${product.custom_id}`} - Emochoice`} />
         <meta name="description" content={HTMLtoText(product.description)} />
         <meta property="og:type" content="website" />
         <meta property="og:url" content={`https://emochoice.ca/product/${product.id}`} />
-        <meta property="og:title" content={`${product.name}${product.custom_id ? ` - ${product.custom_id}` : null} - Emochoice`} />
+        <meta property="og:title" content={`${product.name}${product.custom_id && ` - ${product.custom_id}`} - Emochoice`} />
         <meta property="og:description" content={HTMLtoText(product.description)} />
         <meta property="og:image" content={productImage} />
         <meta property="twitter:card" content="summary_large_image" />
         <meta property="twitter:url" content={`https://emochoice.ca/product/${product.id}`} />
-        <meta property="twitter:title" content={`${product.name}${product.custom_id ? ` - ${product.custom_id}` : null} - Emochoice`} />
+        <meta property="twitter:title" content={`${product.name}${product.custom_id && ` - ${product.custom_id}`} - Emochoice`} />
         <meta property="twitter:description" content={HTMLtoText(product.description)} />
         <meta property="twitter:image" content={productImage} />
       </Helmet>
@@ -210,7 +194,7 @@ export default function Product() {
             }}
             style={{ cursor: "pointer" }}
           />
-          {images.length > 1 ? (
+          {images.length > 1 && (
             <ScrollArea mt="xl" mb="sm">
               <Box display={"flex"} mb="md">
                 {images.map((image) => (
@@ -222,21 +206,21 @@ export default function Product() {
                 ))}
               </Box>
             </ScrollArea>
-          ) : null}
+          )}
         </Box>
         <Box ml={30} maw={!isMobile ? "70%" : "90%"}>
           <Title mb={"xs"}>
             {product.name}
-            {product.custom_id ? ` - ${product.custom_id}` : null}
+            {product.custom_id && ` - ${product.custom_id}`}
           </Title>
           <Title c={"emochoice-blue"} order={4}>
             {product.brand}
           </Title>
-          {product.tags.includes("on_sale") ? (
+          {product.tags.includes("on_sale") && (
             <Badge size="xl" mt="md" c="red">
               On Sale
             </Badge>
-          ) : null}
+          )}
           <Box
             mt="xl"
             component="form"
@@ -261,9 +245,9 @@ export default function Product() {
               });
             })}
           >
-            {product.colors.length > 0 ? (
+            {product.colors.length > 0 && (
               <Box className={classes.input} style={{ flexDirection: "column", alignItems: "start" }}>
-                <Text mr="md">Color: {toTitleCase(form.values.color?.name) ?? ""}</Text>
+                <Text mb="md">Color: {toTitleCase(form.values.color?.name) ?? ""}</Text>
                 <Box display={"flex"} style={{ flexWrap: "wrap" }}>
                   {product.expand!.colors!.map((color) => (
                     <ColorButton
@@ -281,21 +265,24 @@ export default function Product() {
                   ))}
                 </Box>
               </Box>
-            ) : null}
-            {product.expand?.types ? (
+            )}
+            {product.expand?.types && (
               <Box className={classes.input}>
                 <Text mr="md">Types</Text>
-                <SegmentedControl
-                  color="emochoice-yellow"
+                <NativeSelect
                   data={product.expand.types.map((type) => type.name)}
-                  onChange={(value) => {
-                    const type = product.expand?.types?.find((type) => type.name === value);
+                  onChange={(e) => {
+                    const type = product.expand?.types?.find((type) => type.name === e.currentTarget.value);
                     if (!type) return;
                     form.setFieldValue("type", type);
+                    // const imageWithType = product.images.filter((image) => image.includes(replaceAll(type.name, " ", "_"))); <= replace by id later
+                    // if (imageWithType.length < 0) return;
+                    // const imageFile = imageWithType[0];
+                    // setProductImage(imageFile ? pocketbase.getFileUrl(product, imageFile) : "/images/no_image.png");
                   }}
                 />
               </Box>
-            ) : null}
+            )}
             <Box className={classes.input}>
               <Text mr={"md"}>Quantity</Text>
               <NumberInput
@@ -307,7 +294,7 @@ export default function Product() {
                 {...form.getInputProps("quantity")}
               />
             </Box>
-            {product.customizable ? (
+            {product.customizable && (
               <Box className={classes.input}>
                 <Text mr={"md"}>Your image</Text>
                 <FileInput
@@ -328,7 +315,7 @@ export default function Product() {
                   }}
                 />
               </Box>
-            ) : null}
+            )}
             <Box className={classes.input}>
               <Text mr={"md"}>Request</Text>
               <Textarea
@@ -385,7 +372,7 @@ export default function Product() {
                     </Table.Td>
                     <Table.Td>
                       {product.name}
-                      {product.custom_id ? ` - ${product.custom_id}` : null}
+                      {product.custom_id && ` - ${product.custom_id}`}
                     </Table.Td>
                   </Table.Tr>
                   <Table.Tr>
@@ -412,7 +399,7 @@ export default function Product() {
           </Tabs.Panel>
         </Tabs>
       </Box>
-      {relatedProducts.length > 0 ? (
+      {relatedProducts.length > 0 && (
         <Box mt="xl">
           <Title order={2} mb="sm">
             You may also like
@@ -427,7 +414,7 @@ export default function Product() {
             </Box>
           </ScrollArea>
         </Box>
-      ) : null}
+      )}
     </Box>
   );
 }

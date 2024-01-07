@@ -50,7 +50,7 @@ export default function List() {
       <Title order={1} mb={20}>
         My List
       </Title>
-      {deletedList.length > 0 ? (
+      {deletedList.length > 0 && (
         <Box mb={20} style={{ textAlign: "center", fontWeight: "600" }} c={"emochoice-blue"}>
           {deletedList.length} item{`${deletedList.length != 1 ? "s" : ""}`} removed from list.{" "}
           <Link
@@ -65,7 +65,7 @@ export default function List() {
             Restore all
           </Link>
         </Box>
-      ) : null}
+      )}
       {isDataLoaded ? (
         list && list.length > 0 ? (
           <Box w="100%">
@@ -111,18 +111,19 @@ export default function List() {
                             }}
                           >
                             {item.product.name}
-                            {item.product.custom_id ? ` - ${item.product.custom_id}` : null}
+                            {item.product.custom_id && ` - ${item.product.custom_id}`}
                           </Link>
-                          {item.product.hidden || item.product.tags.includes("out_of_stock") ? (
-                            <Text fw={600} style={{ fontSize: "15px" }} c="red">
-                              This product is currently {item.product.hidden ? "unavailable" : "out of stock"}.
-                            </Text>
-                          ) : null}
+                          {item.product.hidden ||
+                            (item.product.tags.includes("out_of_stock") && (
+                              <Text fw={600} style={{ fontSize: "15px" }} c="red">
+                                This product is currently {item.product.hidden ? "unavailable" : "out of stock"}.
+                              </Text>
+                            ))}
                         </Table.Td>
                         {isMobile ? null : (
                           <>
                             <Table.Td>
-                              {item.color ? (
+                              {item.color && (
                                 <>
                                   <Tooltip label={toTitleCase(item.color.name)}>
                                     <Box
@@ -133,9 +134,9 @@ export default function List() {
                                     ></Box>
                                   </Tooltip>
                                 </>
-                              ) : null}
+                              )}
                             </Table.Td>
-                            <Table.Td maw={""}>{item.fileInput ? <Pill>{item.fileInput.name}</Pill> : null}</Table.Td>
+                            <Table.Td maw={""}>{item.fileInput && <Pill>{item.fileInput.name}</Pill>}</Table.Td>
                             <Table.Td maw={""} style={{ overflow: "hidden", textOverflow: "ellipsis" }}>
                               {item.request}
                             </Table.Td>
