@@ -91,6 +91,7 @@ export default function Product() {
   );
 
   if (product.colors.length > 0) initialValues.color = product.expand!.colors![0];
+  if (product.types.length > 0) initialValues.type = product.expand!.types![0];
   if (product.boundary) {
     boundaryPoints = product.boundary.split(",").map((point) => Number(point)) as BoundaryPoints;
     initialValues.fileInput = null;
@@ -228,11 +229,11 @@ export default function Product() {
             {product.name}
             {product.custom_id ? ` - ${product.custom_id}` : null}
           </Title>
-          <Title c={"emochoice-blue"} order={4}>
+          <Title c={"emochoice-green"} order={4}>
             {product.brand}
           </Title>
           {product.tags.includes("on_sale") ? (
-            <Badge size="xl" mt="md" color="red">
+            <Badge size="xl" mt="md" c="red">
               On Sale
             </Badge>
           ) : null}
@@ -262,7 +263,7 @@ export default function Product() {
           >
             {product.colors.length > 0 ? (
               <Box className={classes.input} style={{ flexDirection: "column", alignItems: "start" }}>
-                <Text mb="md">Color: {toTitleCase(form.values.color?.name) ?? ""}</Text>
+                <Text mr="md">Color: {toTitleCase(form.values.color?.name) ?? ""}</Text>
                 <Box display={"flex"} style={{ flexWrap: "wrap" }}>
                   {product.expand!.colors!.map((color) => (
                     <ColorButton
@@ -283,12 +284,12 @@ export default function Product() {
             ) : null}
             {product.expand?.types ? (
               <Box className={classes.input}>
-                <Text mb="md">Types</Text>
-                <SegmentedControl data={product.expand.types.map((type) => type.name)} />
+                <Text mr="md">Types</Text>
+                <SegmentedControl c="emochoice-yellow" data={product.expand.types.map((type) => type.name)} />
               </Box>
             ) : null}
             <Box className={classes.input}>
-              <Text mb="md">Quantity</Text>
+              <Text mr={"md"}>Quantity</Text>
               <NumberInput
                 style={{ width: "180px" }}
                 placeholder="Between 1 and 99"
@@ -300,7 +301,7 @@ export default function Product() {
             </Box>
             {product.customizable ? (
               <Box className={classes.input}>
-                <Text mb="md">Your image</Text>
+                <Text mr={"md"}>Your image</Text>
                 <FileInput
                   id="fileInput"
                   maw={250}
@@ -321,7 +322,7 @@ export default function Product() {
               </Box>
             ) : null}
             <Box className={classes.input}>
-              <Text mb="md">Request</Text>
+              <Text mr={"md"}>Request</Text>
               <Textarea
                 autosize
                 className={classes.textarea}

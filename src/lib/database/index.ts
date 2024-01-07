@@ -18,7 +18,7 @@ let products: Product[] | undefined;
 
 export async function getProducts() {
   if (!products) {
-    products = await pocketbase.collection("products").getFullList<Product>(1000, { expand: "category,colors", sort: "-created" });
+    products = await pocketbase.collection("products").getFullList<Product>(1000, { expand: "category,colors,types", sort: "-created" });
     pocketbase.collection("products").subscribe<Product>(
       "*",
       (event) => {
