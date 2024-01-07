@@ -15,7 +15,7 @@ export default function ProductCard(props: { product: Product; inProductPage?: b
         {product.expand.colors.slice(0, 8).map((color) => (
           <Box w="15px" mr={5} style={{ backgroundColor: color.hex, border: "1px solid #777", borderRadius: "3px", aspectRatio: 1 / 1 }}></Box>
         ))}
-        {product.expand.colors.length > 8 ? <Text c="grey">+{product.expand.colors.length - 8}</Text> : null}
+        {product.expand.colors.length > 8 && <Text c="grey">+{product.expand.colors.length - 8}</Text>}
       </Box>
     );
   }
@@ -40,7 +40,7 @@ export default function ProductCard(props: { product: Product; inProductPage?: b
             <Box w="70%">
               <Box m={"4%"}>
                 <Box display="flex" style={{ justifyContent: "space-between" }}>
-                  <Text c={"emochoice-blue"} style={{ fontSize: "13px" }} fw={600}>
+                  <Text c={"emochoice-blue"} style={{ fontSize: "13px" }} fw={600} lineClamp={1}>
                     {product.brand}
                   </Text>
                   <Box display="flex">
@@ -100,7 +100,7 @@ export default function ProductCard(props: { product: Product; inProductPage?: b
         <Card.Section>
           <Box m={"5%"}>
             <Box display="flex" style={{ justifyContent: "space-between" }}>
-              <Text c={"emochoice-blue"} style={{ fontSize: "13px" }} fw={600}>
+              <Text c={"emochoice-blue"} style={{ fontSize: "13px" }} fw={600} lineClamp={1}>
                 {product.brand}
               </Text>
               <Box display="flex">

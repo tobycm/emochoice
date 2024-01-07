@@ -109,7 +109,7 @@ export default function ImageZoom(props: {
         >
           <IconX size={30} />
         </Avatar>
-        {props.images.length > 1 ? (
+        {props.images.length > 1 && (
           <ScrollArea
             w="60%"
             maw={800}
@@ -143,7 +143,7 @@ export default function ImageZoom(props: {
               ))}
             </Box>
           </ScrollArea>
-        ) : null}
+        )}
       </Box>
     </Overlay>
   );

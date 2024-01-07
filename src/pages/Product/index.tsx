@@ -1,4 +1,4 @@
-import { Badge, Box, Button, FileInput, Image, NumberInput, ScrollArea, Space, Table, Tabs, Text, Textarea, Title, rem } from "@mantine/core";
+import { Badge, Box, Button, FileInput, Image, NativeSelect, NumberInput, ScrollArea, Table, Tabs, Text, Textarea, Title, rem } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useMediaQuery } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
@@ -11,13 +11,14 @@ import ColorButton from "../../components/ColorButton";
 import ImageZoom from "../../components/ImageZoom";
 import CustomImageModal from "../../components/Modal/CustomImage";
 import pocketbase, { getProducts } from "../../lib/database";
-import { Color, Product } from "../../lib/database/models";
+import { Color, Product, Type } from "../../lib/database/models";
 import { List, useList } from "../../lib/list";
 import { HTMLtoText, filterProducts, pasteImage, toTitleCase } from "../../lib/utils";
 import classes from "./index.module.css";
 
 export interface OrderData {
   color?: Color;
+  type?: Type;
   quantity: number;
   request: string;
   fileInput?: File | null;
@@ -75,6 +76,7 @@ export default function Product() {
   );
 
   if (product.colors.length > 0) initialValues.color = product.expand!.colors![0];
+  if (product.types.length > 0) initialValues.type = product.expand!.types![0];
   if (product.boundary) {
     boundaryPoints = product.boundary.split(",").map((point) => Number(point)) as BoundaryPoints;
     initialValues.fileInput = null;
@@ -155,7 +157,6 @@ export default function Product() {
           product={product}
         />
       )}
-
       <Helmet>
         <title>
           {product.name}
@@ -193,7 +194,7 @@ export default function Product() {
             }}
             style={{ cursor: "pointer" }}
           />
-          {images.length > 1 ? (
+          {images.length > 1 && (
             <ScrollArea mt="xl" mb="sm">
               <Box display={"flex"} mb="md">
                 {images.map((image) => (
@@ -205,7 +206,7 @@ export default function Product() {
                 ))}
               </Box>
             </ScrollArea>
-          ) : null}
+          )}
         </Box>
         <Box ml={30} maw={!isMobile ? "70%" : "90%"}>
           <Title mb={"xs"}>
@@ -216,7 +217,7 @@ export default function Product() {
             {product.brand}
           </Title>
           {product.tags.includes("on_sale") && (
-            <Badge size="xl" mt="md" color="red">
+            <Badge size="xl" mt="md" c="red">
               On Sale
             </Badge>
           )}
@@ -244,7 +245,7 @@ export default function Product() {
               });
             })}
           >
-            {product.colors.length > 0 ? (
+            {product.colors.length > 0 && (
               <Box className={classes.input} style={{ flexDirection: "column", alignItems: "start" }}>
                 <Text mb="md">Color: {toTitleCase(form.values.color?.name) ?? ""}</Text>
                 <Box display={"flex"} style={{ flexWrap: "wrap" }}>
@@ -264,10 +265,26 @@ export default function Product() {
                   ))}
                 </Box>
               </Box>
-            ) : null}
+            )}
+            {product.expand?.types && (
+              <Box className={classes.input}>
+                <Text mr="md">Types</Text>
+                <NativeSelect
+                  data={product.expand.types.map((type) => type.name)}
+                  onChange={(e) => {
+                    const type = product.expand?.types?.find((type) => type.name === e.currentTarget.value);
+                    if (!type) return;
+                    form.setFieldValue("type", type);
+                    // const imageWithType = product.images.filter((image) => image.includes(replaceAll(type.name, " ", "_"))); <= replace by id later
+                    // if (imageWithType.length < 0) return;
+                    // const imageFile = imageWithType[0];
+                    // setProductImage(imageFile ? pocketbase.getFileUrl(product, imageFile) : "/images/no_image.png");
+                  }}
+                />
+              </Box>
+            )}
             <Box className={classes.input}>
-              <Text>Quantity</Text>
-              <Space w="md" />
+              <Text mr={"md"}>Quantity</Text>
               <NumberInput
                 style={{ width: "180px" }}
                 placeholder="Between 1 and 99"
@@ -277,17 +294,16 @@ export default function Product() {
                 {...form.getInputProps("quantity")}
               />
             </Box>
-            {product.customizable ? (
+            {product.customizable && (
               <Box className={classes.input}>
-                <Text>Your image</Text>
-                <Space w="md" />
+                <Text mr={"md"}>Your image</Text>
                 <FileInput
                   id="fileInput"
                   maw={250}
                   accept="image/png,image/jpeg,image/gif,image/webp,image/svg+xml,image/tiff,image/bmp,image/heif,image/heic,image/avif"
                   variant="default"
                   c={"emochoice-yellow"}
-                  // @ts-ignore
+                  // @ts-ignore they didn't fix the @types
                   placeholder="Upload"
                   {...form.getInputProps("fileInput")}
                   value={customImage}
@@ -299,10 +315,9 @@ export default function Product() {
                   }}
                 />
               </Box>
-            ) : null}
+            )}
             <Box className={classes.input}>
-              <Text>Request</Text>
-              <Space w="md" />
+              <Text mr={"md"}>Request</Text>
               <Textarea
                 autosize
                 className={classes.textarea}
@@ -384,7 +399,7 @@ export default function Product() {
           </Tabs.Panel>
         </Tabs>
       </Box>
-      {relatedProducts.length > 0 ? (
+      {relatedProducts.length > 0 && (
         <Box mt="xl">
           <Title order={2} mb="sm">
             You may also like
@@ -399,7 +414,7 @@ export default function Product() {
             </Box>
           </ScrollArea>
         </Box>
-      ) : null}
+      )}
     </Box>
   );
 }
