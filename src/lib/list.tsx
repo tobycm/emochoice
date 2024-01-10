@@ -1,5 +1,5 @@
 import { ReactNode, createContext, useContext, useState } from "react";
-import { Product, ProductColor } from "./database/models";
+import { Product, ProductColor, ProductType } from "./database/models";
 
 export interface Item {
   product: Product;
@@ -7,6 +7,7 @@ export interface Item {
   request: string;
   fileInput?: File | null;
   color?: ProductColor;
+  type?: ProductType;
 }
 
 export class List extends Array<Item> {

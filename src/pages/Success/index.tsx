@@ -10,22 +10,22 @@ import { setDocumentTitle, toTitleCase } from "../../lib/utils";
 export default function Success() {
   const navigate = useNavigate();
   const isMobile = useMediaQuery(`(max-width: 36em)`);
-  let user: { order?: List; name?: string; contact?: string; address?: string } = {};
+  let user: { quote?: List; name?: string; contact?: string; address?: string } = {};
 
   const location = useLocation();
   if (location.state) {
-    user = location.state as { order: List; name: string; contact: string; address: string };
+    user = location.state as { quote: List; name: string; contact: string; address: string };
   }
 
   useEffect(() => {
-    setDocumentTitle("Order Success");
-    if (!user.address || !user.contact || !user.name || !user.order) return navigate("/", { replace: true });
+    setDocumentTitle("Quote placed successfully");
+    if (!user.address || !user.contact || !user.name || !user.quote) return navigate("/", { replace: true });
   });
 
   return (
     <Box w="100%" mih="50vh" display="flex" style={{ flexDirection: "column", alignItems: "center" }}>
       <DefaultHelmet />
-      {user.order && user.name && user.contact && user.address && (
+      {user.quote && user.name && user.contact && user.address && (
         <>
           <Box
             w="90%"
@@ -36,9 +36,9 @@ export default function Success() {
             <Avatar variant="filled" radius="xl" size="lg" color="emochoice-green" mb="md">
               <IconCheck stroke={3} size="2rem" />
             </Avatar>
-            <Title mb={"md"}>You've Successfully Placed Your Order!</Title>
+            <Title mb={"md"}>You've Successfully Placed Your Quote!</Title>
             <Text mb="xl">
-              We'll be in touch with you shortly to confirm your order and to arrange payment. If you have any questions, please contact us{" "}
+              We'll be in touch with you shortly to confirm your quote and to arrange payment. If you have any questions, please contact us{" "}
               <Link to="/contact" style={{ textDecoration: "none" }}>
                 <Text component="span" style={{ textDecoration: "underline", color: "black" }}>
                   here
@@ -48,7 +48,7 @@ export default function Success() {
             </Text>
           </Box>
           <Title order={4} mt={"xl"} mb="md">
-            Order Details
+            Quote Details
           </Title>
           <Box w={isMobile ? "90%" : "70%"}>
             <Table verticalSpacing="md">
@@ -66,7 +66,7 @@ export default function Success() {
                 </Table.Tr>
               </Table.Thead>
               <Table.Tbody>
-                {user.order.map((item, index) => (
+                {user.quote.map((item, index) => (
                   <Table.Tr key={index}>
                     <Table.Td>
                       {item.product.name}

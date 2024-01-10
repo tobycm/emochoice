@@ -67,7 +67,8 @@ export default function Checkout() {
                   id: item.product.id,
                   quantity: item.quantity,
                   color: item.color?.id ?? null,
-                  image: item.fileInput && (await fileToBase64(item.fileInput)),
+                  type: item.type?.id ?? null,
+                  image: item.fileInput ? await fileToBase64(item.fileInput) : null,
                   request: item.request ?? null,
                 })),
               ),
@@ -77,7 +78,7 @@ export default function Checkout() {
                 method: "POST",
                 body: JSON.stringify(submitData),
               });
-              if (res.status !== 200) throw new Error("There was an error placing your order. Please try again later.");
+              if (res.status !== 200) throw new Error("There was an error placing your quote. Please try again later.");
               const newList = new ListClass(
                 ...list.filter((_, index) => {
                   return !proceedList.includes(list[index]);
@@ -250,11 +251,11 @@ export default function Checkout() {
           <Box className={classes.card}>
             <Card shadow="sm" padding="lg" radius="md" withBorder>
               <Box w="100%" display="flex" style={{ justifyContent: "space-between", alignItems: "center" }} mb="md">
-                <Title order={3}>Place your Order</Title>
+                <Title order={3}>Get a Quote</Title>
                 <IconLock></IconLock>
               </Box>
               <Text size="sm" c="dimmed">
-                By clicking "Place Order" you agree to our{" "}
+                By clicking "Get a Quote" you agree to our{" "}
                 <Link to="/terms-of-service" target="_blank" style={{ textDecoration: "none", color: "#0468B0" }}>
                   Terms of Service
                 </Link>
@@ -269,7 +270,7 @@ export default function Checkout() {
                 .
               </Text>
               <Button variant="light" color="emochoice-blue" fullWidth mt="md" radius="md" type="submit">
-                Place Order
+                Get a Quote
               </Button>
             </Card>
           </Box>

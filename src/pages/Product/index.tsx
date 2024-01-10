@@ -227,9 +227,11 @@ export default function Product() {
             onSubmit={form.onSubmit((values) => {
               const { quantity, request, fileInput } = values;
               const color = product.expand?.colors?.find((color) => color.hex === values.color?.hex);
+              const type = product.expand?.types?.find((type) => type.name === values.type?.name);
               const newList = new List(...list, {
                 product,
                 color,
+                type,
                 quantity,
                 request,
                 fileInput,
