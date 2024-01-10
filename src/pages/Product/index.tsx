@@ -7,11 +7,12 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { useLoaderData, useLocation, useNavigate } from "react-router-dom";
 import ProductCard from "../../components/Card";
-import ColorButton from "../../components/ColorButton";
+import MultiColorButton from "../../components/ColorButton/Multi";
+import SingleColorButton from "../../components/ColorButton/Single";
 import ImageZoom from "../../components/ImageZoom";
 import CustomImageModal from "../../components/Modal/CustomImage";
 import pocketbase, { getProducts } from "../../lib/database";
-import { Color, Product, Type } from "../../lib/database/models";
+import { Color, Product, ProductColor, Type } from "../../lib/database/models";
 import { List, useList } from "../../lib/list";
 import { HTMLtoText, filterProducts, pasteImage, toTitleCase } from "../../lib/utils";
 import classes from "./index.module.css";
@@ -145,6 +146,15 @@ export default function Product() {
     };
   });
 
+  const setImageWithColor = (color: ProductColor) => {
+    form.setFieldValue("color", color);
+    const imageWithColor = product.images.filter((image) => image.startsWith(color.id));
+    if (imageWithColor.length < 0) return;
+    const imageFile = imageWithColor[0];
+    setProductImage(imageFile ? pocketbase.getFileUrl(product, imageFile) : "/images/no_image.png");
+    setImages(imageWithColor);
+  };
+
   return (
     <Box w="80%" ml="auto" mr="auto">
       {bigImage && !isMobile && (
@@ -249,20 +259,25 @@ export default function Product() {
               <Box className={classes.input} style={{ flexDirection: "column", alignItems: "start" }}>
                 <Text mb="md">Color: {toTitleCase(form.values.color?.name) ?? ""}</Text>
                 <Box display={"flex"} style={{ flexWrap: "wrap" }}>
-                  {product.expand!.colors!.map((color) => (
-                    <ColorButton
-                      key={color.hex}
-                      color={color}
-                      onClick={() => {
-                        form.setFieldValue("color", color);
-                        const imageWithColor = product.images.filter((image) => image.startsWith(color.id));
-                        if (imageWithColor.length < 0) return;
-                        const imageFile = imageWithColor[0];
-                        setProductImage(imageFile ? pocketbase.getFileUrl(product, imageFile) : "/images/no_image.png");
-                        setImages(imageWithColor);
-                      }}
-                    />
-                  ))}
+                  {product.expand!.colors!.map((color) =>
+                    !color.hex.includes(",") ? (
+                      <SingleColorButton
+                        key={color.hex}
+                        color={color}
+                        onClick={() => {
+                          setImageWithColor(color);
+                        }}
+                      />
+                    ) : (
+                      <MultiColorButton
+                        key={color.hex}
+                        color={color}
+                        onClick={() => {
+                          setImageWithColor(color);
+                        }}
+                      />
+                    ),
+                  )}
                 </Box>
               </Box>
             )}
