@@ -16,7 +16,7 @@ function linearProperties(color: Color) {
 }
 
 export default function MultiColorButton({ color, onClick }: { color: Color; onClick: () => void }) {
-  const [background, setBackground] = useState(linearProperties(color));
+  const [background, setBackground] = useState("");
 
   useEffect(() => setBackground(linearProperties(color)), [color]);
 
