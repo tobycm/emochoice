@@ -1,6 +1,6 @@
 import { Box, Text } from "@mantine/core";
 import { Color } from "../../../lib/database/models";
-import { brightness as darkOrLight, toTitleCase } from "../../../lib/utils";
+import { darkOrLight, toTitleCase } from "../../../lib/utils";
 
 export default function SingleColorButton(props: { color: Color; onClick: () => void }) {
   const { color, onClick } = props;
