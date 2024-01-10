@@ -80,7 +80,7 @@ function hexToRgb(hex: string) {
   };
 }
 
-export function brightness(hex: string): "light" | "dark" {
+export function darkOrLight(hex: string): "light" | "dark" {
   const rgb = hexToRgb(hex);
   if (!rgb) return "dark";
 

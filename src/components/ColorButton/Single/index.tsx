@@ -1,8 +1,8 @@
 import { Box, Text } from "@mantine/core";
-import { Color } from "../lib/database/models";
-import { brightness as darkOrLight, toTitleCase } from "../lib/utils";
+import { Color } from "../../../lib/database/models";
+import { darkOrLight, toTitleCase } from "../../../lib/utils";
 
-export default function ColorButton(props: { color: Color; onClick: () => void }) {
+export default function SingleColorButton(props: { color: Color; onClick: () => void }) {
   const { color, onClick } = props;
 
   return (
@@ -11,10 +11,8 @@ export default function ColorButton(props: { color: Color; onClick: () => void }
       onClick={onClick}
       mr={4}
       mb={4}
-      mih={40}
-      miw={60}
-      mah={35}
-      maw={60}
+      h={40}
+      w={60}
       style={{
         cursor: "pointer",
         border: "1px solid #777",
@@ -27,7 +25,9 @@ export default function ColorButton(props: { color: Color; onClick: () => void }
     >
       <Text
         size="11px"
-        p={2}
+        pt={2}
+        pl={2}
+        lineClamp={3}
         style={{
           color: darkOrLight(color.hex) === "light" ? "#000000" : "#ffffff",
         }}
