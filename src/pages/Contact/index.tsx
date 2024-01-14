@@ -103,13 +103,9 @@ export default function Contact() {
               id="phone_number"
               maxLength={14}
               onChange={(e) => {
-                if (e.currentTarget.value.length == 0) form.setFieldValue("phone_number", "");
+                if (e.currentTarget.value.length == 0) return form.setFieldValue("phone_number", "");
                 if (!/^[0-9() -]+$/.test(e.currentTarget.value)) return;
-                if (e.currentTarget.value.length < form.values.phone_number.length) {
-                  form.setFieldValue("phone_number", e.currentTarget.value);
-                  return;
-                }
-                form.setFieldValue("phone_number", formatPhoneNumber(e.currentTarget.value));
+                form.setFieldValue("phone_number", e.currentTarget.value.length < form.values.phone_number.length ? e.currentTarget.value : formatPhoneNumber(e.currentTarget.value));
               }}
             />
           )}
