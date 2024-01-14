@@ -1,6 +1,6 @@
 /* eslint-disable react-refresh/only-export-components */
 import { Box, Loader } from "@mantine/core";
-import { Product } from "./database/models";
+import { Color, Product } from "./database/models";
 
 export function toTitleCase(str: string = "") {
   return str.replace(/\w\S*/g, function (txt) {
@@ -111,4 +111,16 @@ export function fileToBase64(file: File): Promise<string> {
 
     reader.readAsDataURL(file);
   });
+}
+
+export function linearProperties(color: Color) {
+  const colors = color.hex.split(",").map((hex) => hex.trim());
+
+  return `linear-gradient(to bottom, ${colors
+    .reduce(
+      (last, color, index) =>
+        `${last}${color} ${Math.ceil((100 / colors.length) * index)}%, ${color} ${Math.ceil((100 / colors.length) * (index + 1))}%, `,
+      "",
+    )
+    .slice(0, -2)})`;
 }

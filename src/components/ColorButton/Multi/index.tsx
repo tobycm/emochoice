@@ -1,19 +1,7 @@
 import { Box, Text } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { Color } from "../../../lib/database/models";
-import { darkOrLight, toTitleCase } from "../../../lib/utils";
-
-function linearProperties(color: Color) {
-  const colors = color.hex.split(",").map((hex) => hex.trim());
-
-  return `linear-gradient(to bottom, ${colors
-    .reduce(
-      (last, color, index) =>
-        `${last}${color} ${Math.ceil((100 / colors.length) * index)}%, ${color} ${Math.ceil((100 / colors.length) * (index + 1))}%, `,
-      "",
-    )
-    .slice(0, -2)})`;
-}
+import { darkOrLight, linearProperties, toTitleCase } from "../../../lib/utils";
 
 export default function MultiColorButton({ color, onClick }: { color: Color; onClick: () => void }) {
   const [background, setBackground] = useState("");

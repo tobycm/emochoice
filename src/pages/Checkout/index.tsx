@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import DefaultHelmet from "../../components/Helmets/DefaultHelmet";
 import proceedList, { List as ListClass, useList } from "../../lib/list";
-import { fileToBase64, setDocumentTitle, toTitleCase } from "../../lib/utils";
+import { fileToBase64, linearProperties, setDocumentTitle, toTitleCase } from "../../lib/utils";
 import classes from "./index.module.css";
 
 export default function Checkout() {
@@ -224,7 +224,7 @@ export default function Checkout() {
                                           w={"2vh"}
                                           h={"2vh"}
                                           mr={5}
-                                          style={{ backgroundColor: item.color.hex, border: "1px solid #777", borderRadius: "3px" }}
+                                          style={{ background: linearProperties(item.color), border: "1px solid #777", borderRadius: "3px" }}
                                         ></Box>
                                       </Tooltip>
                                     </>

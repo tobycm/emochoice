@@ -2,6 +2,7 @@ import { Badge, Box, Card, Center, Group, Image, Overlay, Text, Title } from "@m
 import { Link } from "react-router-dom";
 import pocketbase from "../../lib/database";
 import { Product } from "../../lib/database/models";
+import { linearProperties } from "../../lib/utils";
 
 export default function ProductCard(props: { product: Product; inProductPage?: boolean; isMobile?: boolean }) {
   const { product, isMobile } = props;
@@ -13,7 +14,11 @@ export default function ProductCard(props: { product: Product; inProductPage?: b
     colors = (
       <Box display={"flex"} style={{ alignItems: "center" }} mih={24.8}>
         {product.expand.colors.slice(0, 8).map((color) => (
-          <Box w="15px" mr={5} style={{ backgroundColor: color.hex, border: "1px solid #777", borderRadius: "3px", aspectRatio: 1 / 1 }}></Box>
+          <Box
+            w="15px"
+            mr={5}
+            style={{ background: linearProperties(color), border: "1px solid #777", borderRadius: "3px", aspectRatio: 1 / 1 }}
+          ></Box>
         ))}
         {product.expand.colors.length > 8 && <Text c="grey">+{product.expand.colors.length - 8}</Text>}
       </Box>
