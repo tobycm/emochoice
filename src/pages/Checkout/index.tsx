@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import DefaultHelmet from "../../components/Helmets/DefaultHelmet";
 import proceedList, { List as ListClass, useList } from "../../lib/list";
-import { fileToBase64, setDocumentTitle, toTitleCase } from "../../lib/utils";
+import { fileToBase64, formatPhoneNumber, setDocumentTitle, toTitleCase } from "../../lib/utils";
 import classes from "./index.module.css";
 
 export default function Checkout() {
@@ -88,7 +88,7 @@ export default function Checkout() {
               navigate("/success", {
                 replace: true,
                 state: {
-                  order: proceedList,
+                  quote: proceedList,
                   name: submitData.name,
                   contact: submitData.contact,
                   address: submitData.address,
@@ -148,12 +148,20 @@ export default function Checkout() {
                       <TextInput
                         mb={"md"}
                         withAsterisk
-                        minLength={10}
-                        maxLength={10}
                         label="Phone number"
-                        placeholder="1234567890"
+                        placeholder="(123) 456-7890"
                         {...form.getInputProps("phone_number")}
                         id="phone_number"
+                        maxLength={14}
+                        onChange={(e) => {
+                          if (e.currentTarget.value.length == 0) form.setFieldValue("phone_number", "");
+                          if (!/^[0-9() -]+$/.test(e.currentTarget.value)) return;
+                          if (e.currentTarget.value.length < form.values.phone_number.length) {
+                            form.setFieldValue("phone_number", e.currentTarget.value);
+                            return;
+                          }
+                          form.setFieldValue("phone_number", formatPhoneNumber(e.currentTarget.value));
+                        }}
                       />
                     )}
                     <NativeSelect

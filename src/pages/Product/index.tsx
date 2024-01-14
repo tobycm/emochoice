@@ -317,7 +317,7 @@ export default function Product() {
                 <FileInput
                   id="fileInput"
                   maw={250}
-                  accept="image/png,image/jpeg,image/gif,image/webp,image/svg+xml,image/tiff,image/bmp,image/heif,image/heic,image/avif"
+                  accept="image/png,image/jpeg,image/gif,image/webp,image/svg+xml"
                   variant="default"
                   c={"emochoice-yellow"}
                   // @ts-ignore they didn't fix the @types
