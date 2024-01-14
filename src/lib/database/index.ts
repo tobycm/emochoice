@@ -36,7 +36,7 @@ export async function getProducts() {
             break;
         }
       },
-      { expand: "category,colors" },
+      { expand: "category,colors,types" },
     );
   }
 

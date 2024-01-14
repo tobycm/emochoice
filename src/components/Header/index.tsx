@@ -35,24 +35,21 @@ export default function Header() {
   function search(wide: boolean) {
     const searchQuery = document.getElementById(wide ? "searchbarWide" : "searchbarMobile")?.getAttribute("value");
     if (!searchQuery) return;
-    navigate("/catalog", { state: { searchQuery: searchQuery } });
-    isMobile && toggleSearchbar();
+    navigate("/catalog", { state: { searchQuery } });
+    if (isMobile) toggleSearchbar();
   }
 
-  const tempSearchList = new Array<string>();
-  function getProductsNames() {
+  const searchResults: string[] = [];
+
+  useEffect(() => {
     getProducts().then((products) => {
       products.forEach((product) => {
-        if (!tempSearchList.includes(`${product.name}${product.custom_id && ` - ${product.custom_id}`}`)) {
+        if (!searchResults.includes(`${product.name}${product.custom_id && ` - ${product.custom_id}`}`)) {
           setProductsNames((prev) => [...prev, `${product.name}${product.custom_id && ` - ${product.custom_id}`}`]);
-          tempSearchList.push(`${product.name}${product.custom_id && ` - ${product.custom_id}`}`);
+          searchResults.push(`${product.name}${product.custom_id && ` - ${product.custom_id}`}`);
         }
       });
     });
-  }
-
-  useEffect(() => {
-    getProductsNames();
   }, []);
 
   useEffect(() => {
@@ -63,6 +60,7 @@ export default function Header() {
     <Box className={classes.header}>
       <Container className={classes.mainSection}>
         <Modal opened={searchbarOpened} onClose={toggleSearchbar} title={"Search"} size="md">
+          {/** Search modal on mobile */}
           <Box display={"flex"} style={{ justifyContent: "space-between" }}>
             <Autocomplete
               radius="xl"
@@ -92,6 +90,7 @@ export default function Header() {
           </Box>
         </Modal>
         <Drawer opened={drawerOpened} onClose={toggleDrawer} title={"Menu"} size="xs">
+          {/** Categories "dropdown" on mobile */}
           <NavLink
             leftSection={<IconSearch size="1rem" stroke={1.5} />}
             label="Search"
