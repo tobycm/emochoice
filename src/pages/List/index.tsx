@@ -7,7 +7,7 @@ import { Link, useNavigate } from "react-router-dom";
 import DefaultHelmet from "../../components/Helmets/DefaultHelmet";
 import { getProducts } from "../../lib/database";
 import proceedList, { Item, List as ListClass, useList } from "../../lib/list";
-import LoaderBox, { linearProperties, setDocumentTitle, toTitleCase } from "../../lib/utils";
+import LoaderBox, { linearBackgroundProperties, setDocumentTitle, toTitleCase } from "../../lib/utils";
 import classes from "./index.module.css";
 
 export default function List() {
@@ -129,7 +129,7 @@ export default function List() {
                                       w={"2vh"}
                                       h={"2vh"}
                                       mr={5}
-                                      style={{ background: linearProperties(item.color), border: "1px solid #777", borderRadius: "3px" }}
+                                      style={{ background: linearBackgroundProperties(item.color), border: "1px solid #777", borderRadius: "3px" }}
                                     ></Box>
                                   </Tooltip>
                                 </>
