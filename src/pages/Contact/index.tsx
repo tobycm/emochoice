@@ -4,6 +4,7 @@ import { notifications } from "@mantine/notifications";
 import { IconCheck, IconX } from "@tabler/icons-react";
 import { useState } from "react";
 import SmallChangeHelmet from "../../components/Helmets/SmallChangeHelmet";
+import { formatPhoneNumber } from "../../lib/utils";
 import classes from "./index.module.css";
 
 export default function Contact() {
@@ -96,12 +97,16 @@ export default function Contact() {
             <TextInput
               mb={"md"}
               withAsterisk
-              minLength={10}
-              maxLength={10}
               label="Phone number"
-              placeholder="1234567890"
+              placeholder="(123) 456-7890"
               {...form.getInputProps("phone_number")}
               id="phone_number"
+              maxLength={14}
+              onChange={(e) => {
+                if (e.currentTarget.value.length == 0) return form.setFieldValue("phone_number", "");
+                if (!/^[0-9() -]+$/.test(e.currentTarget.value)) return;
+                form.setFieldValue("phone_number", e.currentTarget.value.length < form.values.phone_number.length ? e.currentTarget.value : formatPhoneNumber(e.currentTarget.value));
+              }}
             />
           )}
         </Box>
