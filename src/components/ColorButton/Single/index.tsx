@@ -25,6 +25,7 @@ export default function SingleColorButton(props: { color: Color; onClick: () => 
     >
       <Text
         size="11px"
+        pr={2}
         pt={2}
         pl={2}
         lineClamp={3}

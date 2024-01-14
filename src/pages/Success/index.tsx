@@ -5,7 +5,7 @@ import { useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import DefaultHelmet from "../../components/Helmets/DefaultHelmet";
 import { List } from "../../lib/list";
-import { setDocumentTitle, toTitleCase } from "../../lib/utils";
+import { linearBackgroundProperties, setDocumentTitle, toTitleCase } from "../../lib/utils";
 
 export default function Success() {
   const navigate = useNavigate();
@@ -82,7 +82,7 @@ export default function Success() {
                                   w={"2vh"}
                                   h={"2vh"}
                                   mr={5}
-                                  style={{ backgroundColor: item.color.hex, border: "1px solid #777", borderRadius: "3px" }}
+                                  style={{ background: linearBackgroundProperties(item.color), border: "1px solid #777", borderRadius: "3px" }}
                                 ></Box>
                               </Tooltip>
                             </>
