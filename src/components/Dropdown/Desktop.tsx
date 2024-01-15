@@ -1,11 +1,13 @@
 import { Box, Menu, Tabs, Text } from "@mantine/core";
 import { IconChevronRight } from "@tabler/icons-react";
 import { Link, useNavigate } from "react-router-dom";
-import { DropdownMenuItem } from "../../lib/database/models";
+import { Tree } from "../../lib/utils";
 import classes from "./index.module.css";
 
-export default function DesktopDropdown({ dropdownSettings }: { dropdownSettings: DropdownMenuItem[] }) {
+export default function DesktopDropdown({ tree }: { tree: Tree }) {
   const navigate = useNavigate();
+
+  console.log(tree);
 
   return (
     <Menu trigger="hover" openDelay={250}>

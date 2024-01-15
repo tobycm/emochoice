@@ -1,6 +1,6 @@
 /* eslint-disable react-refresh/only-export-components */
 import { Box, Loader } from "@mantine/core";
-import { Color, Product } from "./database/models";
+import { Color, DropdownMenuItem, Product } from "./database/models";
 
 export function toTitleCase(str: string = "") {
   return str.replace(/\w\S*/g, function (txt) {
@@ -151,4 +151,24 @@ export function formatPhoneNumber(phoneNumber: string): string {
   if (phoneNumber.length === 9) return `(${phoneNumber.slice(1, 4)}) ${phoneNumber.slice(6, 9)}-`;
   if (phoneNumber.length === 14) return `(${phoneNumber.slice(1, 4)}) ${phoneNumber.slice(6, 9)}-${phoneNumber.slice(10, 14)}`;
   return phoneNumber;
+}
+
+// https://i.imgur.com/fEXYCgz.jpg
+
+export interface Tree {
+  [key: string]: Record<"", ""> | Tree;
+}
+
+export function makeDropdownTree(currentItem: DropdownMenuItem, root: DropdownMenuItem[]) {
+  const tree: Tree = {};
+
+  for (const item of currentItem.expand?.children ?? []) {
+    tree[item.name] = {};
+
+    const dad = root.find((menuItem) => menuItem.expand?.parent?.id === item.id);
+
+    if (dad?.expand?.children) tree[item.name] = makeDropdownTree(dad, root);
+  }
+
+  return tree;
 }

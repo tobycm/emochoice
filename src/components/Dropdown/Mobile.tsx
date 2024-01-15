@@ -1,12 +1,14 @@
 import { NavLink } from "@mantine/core";
 import { IconShirt } from "@tabler/icons-react";
 import { Link } from "react-router-dom";
-import { DropdownMenuItem } from "../../lib/database/models";
+import { Tree } from "../../lib/utils";
 
-export default function MobileDropdown({ toggleDrawer, dropdownSettings }: { toggleDrawer: () => void; dropdownSettings: DropdownMenuItem[] }) {
+export default function MobileDropdown({ closeDrawer, tree }: { closeDrawer: () => void; tree: Tree }) {
+  console.log(tree);
+
   return (
     <NavLink label="All Products" leftSection={<IconShirt size="1rem" stroke={1.5} />} defaultOpened childrenOffset={28}>
-      <Link to="/catalog" style={{ textDecoration: "none", color: "black" }} onClick={toggleDrawer}>
+      <Link to="/catalog" style={{ textDecoration: "none", color: "black" }} onClick={closeDrawer}>
         <NavLink label="Catalog" />
       </Link>
       <NavLink label="Clothing & Accessories Print" childrenOffset={28}>

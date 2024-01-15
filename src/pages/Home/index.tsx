@@ -25,7 +25,9 @@ export default function Home() {
           </Carousel.Slide>
         ));
         setSlides([...slide]);
-      } catch {}
+      } catch {
+        // do nothing
+      }
     };
 
     fetchAndSetGallery("home_carousel").then(async () => {

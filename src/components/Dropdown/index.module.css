@@ -1,34 +1,3 @@
-.header {
-  width: 100%;
-  padding-top: var(--mantine-spacing-sm);
-  background-color: light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-6));
-  border-bottom: rem(1px) solid light-dark(var(--mantine-color-gray-2), transparent);
-  margin-bottom: 5vh;
-}
-
-.mainSection {
-  padding-bottom: var(--mantine-spacing-sm);
-}
-
-.user {
-  color: light-dark(var(--mantine-color-black), var(--mantine-color-dark-0));
-  padding: var(--mantine-spacing-xs) var(--mantine-spacing-sm);
-  border-radius: var(--mantine-radius-sm);
-  transition: background-color 100ms ease;
-
-  &:hover {
-    background-color: light-dark(var(--mantine-color-white), var(--mantine-color-dark-8));
-  }
-
-  @media (max-width: $mantine-breakpoint-xs) {
-    display: none;
-  }
-}
-
-.userActive {
-  background-color: light-dark(var(--mantine-color-white), var(--mantine-color-dark-8));
-}
-
 .tabsList {
   &::before {
     display: none;
