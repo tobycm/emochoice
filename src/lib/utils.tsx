@@ -113,7 +113,7 @@ export function fileToBase64(file: File): Promise<string> {
   });
 }
 
-export function linearProperties(color: Color) {
+export function linearBackgroundProperties(color: Color) {
   const colors = color.hex.split(",").map((hex) => hex.trim());
 
   return `linear-gradient(to bottom, ${colors
@@ -123,4 +123,32 @@ export function linearProperties(color: Color) {
       "",
     )
     .slice(0, -2)})`;
+}
+
+export function linearTextColorProperties(color: Color) {
+  const colors = color.hex.split(",").map((hex) => hex.trim());
+
+  return `linear-gradient(to bottom, ${colors
+    .reduce(
+      (last, color, index) =>
+        `${last}${darkOrLight(color) == "dark" ? "#ffffff" : "#000000"} ${Math.ceil((100 / colors.length) * index)}%, ${
+          darkOrLight(color) == "dark" ? "#ffffff" : "#000000"
+        } ${Math.ceil((100 / colors.length) * (index + 1))}%, `,
+      "",
+    )
+    .slice(0, -2)})`;
+}
+
+export function formatPhoneNumber(phoneNumber: string): string {
+  phoneNumber = phoneNumber.replace("+1", "").trim();
+  if (phoneNumber.length === 10 && !phoneNumber.includes("("))
+    return `(${phoneNumber.slice(0, 3)}) ${phoneNumber.slice(3, 6)}-${phoneNumber.slice(6, 10)}`;
+  if (phoneNumber.length === 12 && phoneNumber.match(/^\d{3} \d{3}-\d{4}$/))
+    return `(${phoneNumber.slice(0, 3)}) ${phoneNumber.slice(4, 7)}-${phoneNumber.slice(8, 12)}`;
+  if (phoneNumber.length === 12 && phoneNumber.match(/^\d{3}-\d{3}-\d{4}$/))
+    return `(${phoneNumber.slice(0, 3)}) ${phoneNumber.slice(3, 6)}-${phoneNumber.slice(6, 10)}`;
+  if (phoneNumber.length === 3) return `(${phoneNumber}) `;
+  if (phoneNumber.length === 9) return `(${phoneNumber.slice(1, 4)}) ${phoneNumber.slice(6, 9)}-`;
+  if (phoneNumber.length === 14) return `(${phoneNumber.slice(1, 4)}) ${phoneNumber.slice(6, 9)}-${phoneNumber.slice(10, 14)}`;
+  return phoneNumber;
 }

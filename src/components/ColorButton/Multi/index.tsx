@@ -1,12 +1,12 @@
 import { Box, Text } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { Color } from "../../../lib/database/models";
-import { darkOrLight, linearProperties, toTitleCase } from "../../../lib/utils";
+import { linearBackgroundProperties, linearTextColorProperties, toTitleCase } from "../../../lib/utils";
 
 export default function MultiColorButton({ color, onClick }: { color: Color; onClick: () => void }) {
   const [background, setBackground] = useState("");
 
-  useEffect(() => setBackground(linearProperties(color)), [color]);
+  useEffect(() => setBackground(linearBackgroundProperties(color)), [color]);
 
   return (
     <Box
@@ -26,8 +26,21 @@ export default function MultiColorButton({ color, onClick }: { color: Color; onC
         borderRadius: "5px",
       }}
     >
-      <Text size="11px" pt={2} pl={2} lineClamp={3} style={{ color: darkOrLight(color.hex.split(",")[0]) === "light" ? "#000000" : "#ffffff" }}>
-        {toTitleCase(color.name)}
+      <Text
+        size="11px"
+        h="38px"
+        pr={2}
+        pt={2}
+        pl={2}
+        lineClamp={3}
+        style={{
+          background: linearTextColorProperties(color),
+          WebkitBackgroundClip: "text",
+          color: "transparent",
+          display: "inline-block",
+        }}
+      >
+        {toTitleCase(color.name).replace("/", " / ")}
       </Text>
     </Box>
   );
