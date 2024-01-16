@@ -285,7 +285,7 @@ export default function Product() {
             )}
             {product.expand?.types && (
               <Box className={classes.input}>
-                <Text mr="md">Types</Text>
+                <Text mr="md">Type</Text>
                 <NativeSelect
                   data={product.expand.types.map((type) => type.name)}
                   onChange={(e) => {
