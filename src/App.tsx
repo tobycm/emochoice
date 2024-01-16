@@ -46,7 +46,7 @@ const routes: RouteObject[] = [
                 collectionName: "products",
                 created: Date(),
                 updated: Date(),
-                brand: "Eggu no Toby",
+                brand: "Eggu to Toby",
                 id: "messikimochi",
                 name: "Sui-chan wa kyou mo Kawaii~ Mug",
                 custom_id: "messikimochi",

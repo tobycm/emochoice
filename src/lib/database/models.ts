@@ -25,6 +25,15 @@ export interface Product extends RecordModel {
   };
 }
 
+export interface DropdownMenuItem extends RecordModel {
+  parent: ID;
+  children: ID[];
+  expand?: {
+    parent?: ProductCategory;
+    children?: ProductCategory[];
+  };
+}
+
 export interface Type {
   name: string;
 }

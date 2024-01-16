@@ -1,26 +1,13 @@
-import {
-  ActionIcon,
-  Autocomplete,
-  Box,
-  Burger,
-  Container,
-  Drawer,
-  Group,
-  Image,
-  Indicator,
-  Menu,
-  Modal,
-  NavLink,
-  Space,
-  Tabs,
-  Text,
-} from "@mantine/core";
+import { ActionIcon, Autocomplete, Box, Burger, Container, Drawer, Group, Image, Indicator, Modal, NavLink, Space } from "@mantine/core";
 import { useDisclosure, useMediaQuery } from "@mantine/hooks";
-import { IconChevronRight, IconPhone, IconPhoto, IconSearch, IconShirt, IconShoppingCart } from "@tabler/icons-react";
+import { IconPhone, IconPhoto, IconSearch, IconShoppingCart } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { getProducts } from "../../lib/database";
+import { getDropdownMenuList, getProducts } from "../../lib/database";
 import { useList } from "../../lib/list";
+import { Tree, makeDropdownTree } from "../../lib/utils";
+import DesktopDropdown from "../Dropdown/Desktop";
+import MobileDropdown from "../Dropdown/Mobile";
 import classes from "./index.module.css";
 
 export default function Header() {
@@ -32,27 +19,46 @@ export default function Header() {
   const navigate = useNavigate();
   const isMobile = useMediaQuery("(max-width: 36em)");
 
+  const [dropdownTree, setDropdownTree] = useState<Tree>({});
+
+  useEffect(() => {
+    getDropdownMenuList().then((items) => {
+      const existingItems: string[] = [];
+
+      for (const item of items)
+        setDropdownTree((prev) => {
+          if (existingItems.includes(item.expand?.parent?.name ?? "")) return prev;
+
+          const [tree, eItems] = makeDropdownTree(item, items);
+
+          existingItems.push(...eItems);
+
+          return {
+            ...prev,
+            [item.expand?.parent?.name ?? ""]: tree,
+          };
+        });
+    });
+  }, []);
+
   function search(wide: boolean) {
     const searchQuery = document.getElementById(wide ? "searchbarWide" : "searchbarMobile")?.getAttribute("value");
     if (!searchQuery) return;
-    navigate("/catalog", { state: { searchQuery: searchQuery } });
-    isMobile && toggleSearchbar();
+    navigate("/catalog", { state: { searchQuery } });
+    if (isMobile) toggleSearchbar();
   }
 
-  const tempSearchList = new Array<string>();
-  function getProductsNames() {
+  const searchResults: string[] = [];
+
+  useEffect(() => {
     getProducts().then((products) => {
       products.forEach((product) => {
-        if (!tempSearchList.includes(`${product.name}${product.custom_id && ` - ${product.custom_id}`}`)) {
+        if (!searchResults.includes(`${product.name}${product.custom_id && ` - ${product.custom_id}`}`)) {
           setProductsNames((prev) => [...prev, `${product.name}${product.custom_id && ` - ${product.custom_id}`}`]);
-          tempSearchList.push(`${product.name}${product.custom_id && ` - ${product.custom_id}`}`);
+          searchResults.push(`${product.name}${product.custom_id && ` - ${product.custom_id}`}`);
         }
       });
     });
-  }
-
-  useEffect(() => {
-    getProductsNames();
   }, []);
 
   useEffect(() => {
@@ -63,6 +69,7 @@ export default function Header() {
     <Box className={classes.header}>
       <Container className={classes.mainSection}>
         <Modal opened={searchbarOpened} onClose={toggleSearchbar} title={"Search"} size="md">
+          {/** Search modal on mobile */}
           <Box display={"flex"} style={{ justifyContent: "space-between" }}>
             <Autocomplete
               radius="xl"
@@ -92,6 +99,7 @@ export default function Header() {
           </Box>
         </Modal>
         <Drawer opened={drawerOpened} onClose={toggleDrawer} title={"Menu"} size="xs">
+          {/** Categories "dropdown" on mobile */}
           <NavLink
             leftSection={<IconSearch size="1rem" stroke={1.5} />}
             label="Search"
@@ -101,35 +109,7 @@ export default function Header() {
             }}
             hiddenFrom="mn"
           />
-          <NavLink label="All Products" leftSection={<IconShirt size="1rem" stroke={1.5} />} defaultOpened childrenOffset={28}>
-            <Link to="/catalog" style={{ textDecoration: "none", color: "black" }} onClick={toggleDrawer}>
-              <NavLink label="Catalog"></NavLink>
-            </Link>
-            <NavLink label="Clothing & Accessories Print" childrenOffset={28}>
-              <NavLink label="T-Shirts" childrenOffset={28}>
-                <NavLink label="Mens & Unisex" />
-                <NavLink label="Womens" />
-                <NavLink label="Youth" />
-                <NavLink label="Infants & Toddlers" />
-              </NavLink>
-              <NavLink label="Sweatshirt & Fleece" />
-              <NavLink label="Activewear" />
-              <NavLink label="Hats" />
-              <NavLink label="Bags" />
-              <NavLink label="Others" />
-            </NavLink>
-            <NavLink label="Digital Printing" childrenOffset={28}>
-              <NavLink label="Stickers" />
-              <NavLink label="Banners" />
-              <NavLink label="Brochures" />
-            </NavLink>
-            <NavLink label="Souvenirs & Gifts Printing" childrenOffset={28}>
-              <NavLink label="Coffee Mugs" />
-              <NavLink label="Photo Slates" />
-              <NavLink label="Key Chain" />
-              <NavLink label="Water Bottle" />
-            </NavLink>
-          </NavLink>
+          <MobileDropdown closeDrawer={toggleDrawer} tree={dropdownTree} />
           <Link to="/gallery" style={{ textDecoration: "none", color: "black" }} onClick={toggleDrawer}>
             <NavLink label="Gallery" leftSection={<IconPhoto size="1rem" stroke={1.5} />} />
           </Link>
@@ -187,93 +167,7 @@ export default function Header() {
         </Group>
       </Container>
       <Container>
-        <Menu trigger="hover" openDelay={250}>
-          <Tabs
-            variant="outline"
-            visibleFrom="xs"
-            classNames={{
-              root: classes.tabs,
-              list: classes.tabsList,
-              tab: classes.tab,
-            }}
-          >
-            <Tabs.List>
-              <Menu.Target>
-                <Link to="/catalog" style={{ textDecoration: "none", color: "black" }}>
-                  <Tabs.Tab value="catalog" key={"catalog"}>
-                    All Products
-                  </Tabs.Tab>
-                </Link>
-              </Menu.Target>
-              <Menu.Dropdown>
-                <Box display={"flex"}>
-                  <Box mr="md">
-                    <Menu.Item onClick={() => navigate("/catalog", { state: { categories: ["Clothing & Accessories Print"] } })}>
-                      <Text size="md" className={classes.menuTitle}>
-                        Clothing & Accessories Print
-                      </Text>
-                    </Menu.Item>
-                    <Menu.Item>
-                      <Menu trigger="hover" position="right-start" arrowPosition="center" offset={20} openDelay={250}>
-                        <Menu.Target>
-                          <Box
-                            onClick={() => navigate("/catalog", { state: { categories: ["T-Shirts"] } })}
-                            display="flex"
-                            style={{ justifyContent: "space-between", alignItems: "center" }}
-                            w="100%"
-                          >
-                            <Text size="sm">T-Shirts</Text>
-                            <IconChevronRight style={{ width: "20px" }} />
-                          </Box>
-                        </Menu.Target>
-                        <Menu.Dropdown>
-                          <Menu.Item onClick={() => navigate("/catalog", { state: { categories: ["Mens & Unisex"] } })}>Mens & Unisex</Menu.Item>
-                          <Menu.Item onClick={() => navigate("/catalog", { state: { categories: ["Womens"] } })}>Womens</Menu.Item>
-                          <Menu.Item onClick={() => navigate("/catalog", { state: { categories: ["Youth"] } })}>Youth</Menu.Item>
-                          <Menu.Item onClick={() => navigate("/catalog", { state: { categories: ["Infants & Toddlers"] } })}>
-                            Infants & Toddlers
-                          </Menu.Item>
-                        </Menu.Dropdown>
-                      </Menu>
-                    </Menu.Item>
-                    <Menu.Item onClick={() => navigate("/catalog", { state: { categories: ["Sweatshirts"] } })}>Sweatshirt & Fleece</Menu.Item>
-                    <Menu.Item onClick={() => navigate("/catalog", { state: { categories: ["Activewear"] } })}>Activewear</Menu.Item>
-                    <Menu.Item onClick={() => navigate("/catalog", { state: { categories: ["Hats"] } })}>Hats</Menu.Item>
-                    <Menu.Item onClick={() => navigate("/catalog", { state: { categories: ["Bags"] } })}>Bags</Menu.Item>
-                    <Menu.Item onClick={() => navigate("/catalog", { state: { categories: ["Others"] } })}>Others</Menu.Item>
-                  </Box>
-                  <Box mr="md">
-                    <Menu.Item onClick={() => navigate("/catalog", { state: { categories: ["Digital Printing"] } })}>
-                      <Text size="md" className={classes.menuTitle}>
-                        Digital Printing
-                      </Text>
-                    </Menu.Item>
-                    <Menu.Item onClick={() => navigate("/catalog", { state: { categories: ["Stickers"] } })}>Stickers</Menu.Item>
-                    <Menu.Item onClick={() => navigate("/catalog", { state: { categories: ["Banners"] } })}>Banners</Menu.Item>
-                    <Menu.Item onClick={() => navigate("/catalog", { state: { categories: ["Brochures"] } })}>Brochures</Menu.Item>
-                  </Box>
-                  <Box mr="md">
-                    <Menu.Item onClick={() => navigate("/catalog", { state: { categories: ["Souvenirs & Gifts Printing"] } })}>
-                      <Text size="md" className={classes.menuTitle}>
-                        Souvenirs & Gifts Printing
-                      </Text>
-                    </Menu.Item>
-                    <Menu.Item onClick={() => navigate("/catalog", { state: { categories: ["Mugs"] } })}>Coffee Mugs</Menu.Item>
-                    <Menu.Item onClick={() => navigate("/catalog", { state: { categories: ["Photo Slates"] } })}>Photo Slates</Menu.Item>
-                    <Menu.Item onClick={() => navigate("/catalog", { state: { categories: ["Keychains"] } })}>Key Chain</Menu.Item>
-                    <Menu.Item onClick={() => navigate("/catalog", { state: { categories: ["Bottles"] } })}>Water Bottle</Menu.Item>
-                  </Box>
-                </Box>
-              </Menu.Dropdown>
-              <Link to="/gallery" style={{ textDecoration: "none", color: "black" }}>
-                <Tabs.Tab value="gallery">Gallery</Tabs.Tab>
-              </Link>
-              <Link to="/contact" style={{ textDecoration: "none", color: "black" }}>
-                <Tabs.Tab value="contact">Contact</Tabs.Tab>
-              </Link>
-            </Tabs.List>
-          </Tabs>
-        </Menu>
+        <DesktopDropdown tree={dropdownTree} />
       </Container>
     </Box>
   );

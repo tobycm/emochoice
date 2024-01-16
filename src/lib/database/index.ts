@@ -1,5 +1,5 @@
 import PocketBase, { RecordModel } from "pocketbase";
-import { Product, ProductCategory } from "./models";
+import { DropdownMenuItem, Product, ProductCategory } from "./models";
 
 import Constants from "../constants";
 
@@ -36,7 +36,7 @@ export async function getProducts() {
             break;
         }
       },
-      { expand: "category,colors" },
+      { expand: "category,colors,types" },
     );
   }
 
@@ -53,4 +53,10 @@ export async function getMetadata(key: keyof typeof metadataIds): Promise<unknow
 
 export async function getDocument(id: string) {
   return await pocketbase.collection("documents").getOne(id);
+}
+
+let dropdownMenuList: DropdownMenuItem[] | undefined;
+export async function getDropdownMenuList() {
+  if (!dropdownMenuList) dropdownMenuList = await pocketbase.collection("dropdown_menu").getFullList<DropdownMenuItem>({ expand: "parent,children" });
+  return dropdownMenuList;
 }
