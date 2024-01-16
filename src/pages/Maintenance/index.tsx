@@ -17,7 +17,7 @@ export default function Maintenance() {
         The webstore is undergoing maintenance and will be back soon.
       </Text>
       <Divider my="xl" size="sm" w={"100%"}></Divider>
-      <Title order={3}>Meet us in-person at</Title>
+      <Title ta="center" order={3}>Meet us in-person at</Title>
       <Box display="flex" mt="xl" style={{ flexDirection: isMobile ? "column" : "row" }}>
         <Box>
           <Box display={"flex"} style={{ alignItems: "center" }} mb={10}>

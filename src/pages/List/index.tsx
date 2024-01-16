@@ -47,7 +47,7 @@ export default function List() {
   return (
     <Box className={classes.outerBox}>
       <DefaultHelmet />
-      <Title order={1} mb={20}>
+      <Title ta="center" order={1} mb={20}>
         My List
       </Title>
       {deletedList.length > 0 && (

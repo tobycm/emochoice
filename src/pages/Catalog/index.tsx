@@ -7,7 +7,7 @@ import ProductCard from "../../components/Card";
 import SmallChangeHelmet from "../../components/Helmets/SmallChangeHelmet";
 import { getProducts } from "../../lib/database";
 import { Product } from "../../lib/database/models";
-import LoaderBox, { setDocumentTitle, toTitleCase } from "../../lib/utils";
+import LoaderBox, { replaceAll, setDocumentTitle, toTitleCase } from "../../lib/utils";
 import classes from "./index.module.css";
 
 type FilterTypes = "color" | "category" | "brand";
@@ -142,7 +142,7 @@ export default function Catalog() {
                   if (product.expand?.category)
                     for (const category of product.expand.category) if (!categories.includes(category.name)) categories.push(category.name);
 
-                return categories.map((category) => <Checkbox mb={5} mt={5} label={category} value={category} key={category} />);
+                return categories.map((category) => <Checkbox mb={5} mt={5} label={replaceAll(category, "/", " / ")} value={category} key={category} />);
               })()}
             </ScrollArea.Autosize>
           </Checkbox.Group>
@@ -209,7 +209,7 @@ export default function Catalog() {
         <FilterNavBar />
       </Box>
       <Box w="80%" display={"flex"} style={{ alignItems: "center", flexDirection: "column" }} mb="5%" hiddenFrom="xs">
-        <Title order={1} mb="5%">
+        <Title ta="center" order={1} mb="5%">
           Catalog
         </Title>
         <Button
@@ -252,7 +252,7 @@ export default function Catalog() {
         ) : products.length === 0 ? (
           <Box display="flex" style={{ justifyContent: "center", alignItems: "center", flexDirection: "column" }} w="100%" h="50vh">
             <IconSearchOff style={{ width: "30%", height: "30%", marginBottom: "1em" }} stroke={1} />
-            <Title order={1} mb="md">
+            <Title ta="center" order={1} mb="md">
               No Products Found
             </Title>
             <Text>

@@ -36,7 +36,7 @@ export default function Success() {
             <Avatar variant="filled" radius="xl" size="lg" color="emochoice-green" mb="md">
               <IconCheck stroke={3} size="2rem" />
             </Avatar>
-            <Title mb={"md"}>You've Successfully Placed Your Quote!</Title>
+            <Title ta="center" mb={"md"}>You've Successfully Placed Your Quote!</Title>
             <Text mb="xl">
               We'll be in touch with you shortly to confirm your quote and to arrange payment. If you have any questions, please contact us{" "}
               <Link to="/contact" style={{ textDecoration: "none" }}>
@@ -47,7 +47,7 @@ export default function Success() {
               .
             </Text>
           </Box>
-          <Title order={4} mt={"xl"} mb="md">
+          <Title ta="center" order={4} mt={"xl"} mb="md">
             Quote Details
           </Title>
           <Box w={isMobile ? "90%" : "70%"}>
@@ -102,7 +102,7 @@ export default function Success() {
               </Table.Tbody>
             </Table>
           </Box>
-          <Title order={4} mt={"xl"} mb="md">
+          <Title ta="center" order={4} mt={"xl"} mb="md">
             Customer Information
           </Title>
           <Box w={isMobile ? "90%" : "70%"}>
