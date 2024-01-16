@@ -1,13 +1,11 @@
 import { Box, Menu, Tabs, Text } from "@mantine/core";
 import { IconChevronRight } from "@tabler/icons-react";
 import { Link, useNavigate } from "react-router-dom";
-import { Tree } from "../../lib/utils";
+import { Tree, isNotEmptyObject } from "../../lib/utils";
 import classes from "./index.module.css";
 
 export default function DesktopDropdown({ tree }: { tree: Tree }) {
   const navigate = useNavigate();
-
-  console.log(tree);
 
   return (
     <Menu trigger="hover" openDelay={250}>
@@ -30,62 +28,46 @@ export default function DesktopDropdown({ tree }: { tree: Tree }) {
           </Menu.Target>
           <Menu.Dropdown>
             <Box display={"flex"}>
-              <Box mr="md">
-                <Menu.Item onClick={() => navigate("/catalog", { state: { categories: ["Clothing & Accessories Print"] } })}>
-                  <Text size="md" className={classes.menuTitle}>
-                    Clothing & Accessories Print
-                  </Text>
-                </Menu.Item>
-                <Menu.Item>
-                  <Menu trigger="hover" position="right-start" arrowPosition="center" offset={20} openDelay={250}>
-                    <Menu.Target>
-                      <Box
-                        onClick={() => navigate("/catalog", { state: { categories: ["T-Shirts"] } })}
-                        display="flex"
-                        style={{ justifyContent: "space-between", alignItems: "center" }}
-                        w="100%"
-                      >
-                        <Text size="sm">T-Shirts</Text>
-                        <IconChevronRight style={{ width: "20px" }} />
-                      </Box>
-                    </Menu.Target>
-                    <Menu.Dropdown>
-                      <Menu.Item onClick={() => navigate("/catalog", { state: { categories: ["Mens & Unisex"] } })}>Mens & Unisex</Menu.Item>
-                      <Menu.Item onClick={() => navigate("/catalog", { state: { categories: ["Womens"] } })}>Womens</Menu.Item>
-                      <Menu.Item onClick={() => navigate("/catalog", { state: { categories: ["Youth"] } })}>Youth</Menu.Item>
-                      <Menu.Item onClick={() => navigate("/catalog", { state: { categories: ["Infants & Toddlers"] } })}>
-                        Infants & Toddlers
+              {Object.keys(tree).map((key) => (
+                <Box mr="xs">
+                  <Menu.Item onClick={() => navigate("/catalog", { state: { categories: [key] } })}>
+                    <Text size="md" className={classes.menuTitle}>
+                      {key}
+                    </Text>
+                  </Menu.Item>
+                  {Object.keys(tree[key]).map((key2) => {
+                    const subTree = (tree[key] as Record<string, string>)[key2];
+                    return isNotEmptyObject(subTree) ? (
+                      <Menu.Item key={key2}>
+                        <Menu trigger="hover" position="right-start" arrowPosition="center" offset={20} openDelay={250}>
+                          <Menu.Target>
+                            <Box
+                              onClick={() => navigate("/catalog", { state: { categories: ["T-Shirts"] } })}
+                              display="flex"
+                              style={{ justifyContent: "space-between", alignItems: "center" }}
+                              w="100%"
+                            >
+                              <Text size="sm">{key2}</Text>
+                              <IconChevronRight style={{ width: "20px" }} />
+                            </Box>
+                          </Menu.Target>
+                          <Menu.Dropdown>
+                            {Object.keys(subTree).map((key3) => (
+                              <Menu.Item key={key3} onClick={() => navigate("/catalog", { state: { categories: [key3] } })}>
+                                {key3}
+                              </Menu.Item>
+                            ))}
+                          </Menu.Dropdown>
+                        </Menu>
                       </Menu.Item>
-                    </Menu.Dropdown>
-                  </Menu>
-                </Menu.Item>
-                <Menu.Item onClick={() => navigate("/catalog", { state: { categories: ["Sweatshirts"] } })}>Sweatshirt & Fleece</Menu.Item>
-                <Menu.Item onClick={() => navigate("/catalog", { state: { categories: ["Activewear"] } })}>Activewear</Menu.Item>
-                <Menu.Item onClick={() => navigate("/catalog", { state: { categories: ["Hats"] } })}>Hats</Menu.Item>
-                <Menu.Item onClick={() => navigate("/catalog", { state: { categories: ["Bags"] } })}>Bags</Menu.Item>
-                <Menu.Item onClick={() => navigate("/catalog", { state: { categories: ["Others"] } })}>Others</Menu.Item>
-              </Box>
-              <Box mr="md">
-                <Menu.Item onClick={() => navigate("/catalog", { state: { categories: ["Digital Printing"] } })}>
-                  <Text size="md" className={classes.menuTitle}>
-                    Digital Printing
-                  </Text>
-                </Menu.Item>
-                <Menu.Item onClick={() => navigate("/catalog", { state: { categories: ["Stickers"] } })}>Stickers</Menu.Item>
-                <Menu.Item onClick={() => navigate("/catalog", { state: { categories: ["Banners"] } })}>Banners</Menu.Item>
-                <Menu.Item onClick={() => navigate("/catalog", { state: { categories: ["Brochures"] } })}>Brochures</Menu.Item>
-              </Box>
-              <Box mr="md">
-                <Menu.Item onClick={() => navigate("/catalog", { state: { categories: ["Souvenirs & Gifts Printing"] } })}>
-                  <Text size="md" className={classes.menuTitle}>
-                    Souvenirs & Gifts Printing
-                  </Text>
-                </Menu.Item>
-                <Menu.Item onClick={() => navigate("/catalog", { state: { categories: ["Mugs"] } })}>Coffee Mugs</Menu.Item>
-                <Menu.Item onClick={() => navigate("/catalog", { state: { categories: ["Photo Slates"] } })}>Photo Slates</Menu.Item>
-                <Menu.Item onClick={() => navigate("/catalog", { state: { categories: ["Keychains"] } })}>Key Chain</Menu.Item>
-                <Menu.Item onClick={() => navigate("/catalog", { state: { categories: ["Bottles"] } })}>Water Bottle</Menu.Item>
-              </Box>
+                    ) : (
+                      <Menu.Item key={key2} onClick={() => navigate("/catalog", { state: { categories: [key2] } })}>
+                        {key2}
+                      </Menu.Item>
+                    );
+                  })}
+                </Box>
+              ))}
             </Box>
           </Menu.Dropdown>
           <Link to="/gallery" style={{ textDecoration: "none", color: "black" }}>

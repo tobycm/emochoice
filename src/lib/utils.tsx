@@ -154,6 +154,7 @@ export function formatPhoneNumber(phoneNumber: string): string {
 }
 
 // https://i.imgur.com/fEXYCgz.jpg
+// wtf
 
 export interface Tree {
   [key: string]: Record<"", ""> | Tree;
@@ -181,4 +182,8 @@ export function makeDropdownTree(currentItem: DropdownMenuItem, root: DropdownMe
   }
 
   return [tree, existingItems];
+}
+
+export function isNotEmptyObject(obj: Object) {
+  return obj !== null && typeof obj === "object" && Object.keys(obj).length > 0;
 }
