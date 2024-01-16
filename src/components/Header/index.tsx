@@ -23,13 +23,19 @@ export default function Header() {
 
   useEffect(() => {
     getDropdownMenuList().then((items) => {
+      const existingItems: string[] = [];
+
       for (const item of items)
         setDropdownTree((prev) => {
-          console.log(item.name);
-          console.log(prev);
+          if (existingItems.includes(item.expand?.parent?.name ?? "")) return prev;
+
+          const [tree, eItems] = makeDropdownTree(item, items);
+
+          existingItems.push(...eItems);
+
           return {
             ...prev,
-            [item.expand?.parent?.name ?? ""]: makeDropdownTree(item, items),
+            [item.expand?.parent?.name ?? ""]: tree,
           };
         });
     });

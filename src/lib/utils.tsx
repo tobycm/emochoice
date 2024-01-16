@@ -159,16 +159,26 @@ export interface Tree {
   [key: string]: Record<"", ""> | Tree;
 }
 
-export function makeDropdownTree(currentItem: DropdownMenuItem, root: DropdownMenuItem[]) {
+export function makeDropdownTree(currentItem: DropdownMenuItem, root: DropdownMenuItem[]): [Tree, string[]] {
   const tree: Tree = {};
+
+  const existingItems: string[] = [];
 
   for (const item of currentItem.expand?.children ?? []) {
     tree[item.name] = {};
 
     const dad = root.find((menuItem) => menuItem.expand?.parent?.id === item.id);
 
-    if (dad?.expand?.children) tree[item.name] = makeDropdownTree(dad, root);
+    if (dad?.expand?.children) {
+      const [childTree, eItems] = makeDropdownTree(dad, root);
+
+      tree[item.name] = childTree;
+
+      existingItems.push(...eItems);
+    }
+
+    existingItems.push(item.name);
   }
 
-  return tree;
+  return [tree, existingItems];
 }
