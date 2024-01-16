@@ -148,7 +148,7 @@ export default function Product() {
 
   const setImageWithColor = (color: ProductColor) => {
     form.setFieldValue("color", color);
-    const imageWithColor = product.images.filter((image) => image.startsWith(color.id));
+    const imageWithColor = product.images.filter((image) => image.includes(color.id));
     if (imageWithColor.length < 0) return;
     const imageFile = imageWithColor[0];
     setProductImage(imageFile ? pocketbase.getFileUrl(product, imageFile) : "/images/no_image.png");

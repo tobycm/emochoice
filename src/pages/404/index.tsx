@@ -19,11 +19,9 @@ export default function NotFound() {
       <Title mb={"md"}>Oops, content not found!</Title>
       <Text>
         You will be automatically redirected to the{" "}
-        {
-          <Link to="/" style={{ color: "black" }}>
-            homepage
-          </Link>
-        }{" "}
+        <Link to="/" style={{ color: "black" }}>
+          homepage
+        </Link>{" "}
         shortly.
       </Text>
     </Box>
