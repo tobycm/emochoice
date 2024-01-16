@@ -4,7 +4,7 @@
   border-bottom: rem(1px) solid light-dark(var(--mantine-color-gray-2), transparent);
   margin-top: 5vh;
   padding: 3.5vh 7vw 3.5vh 7vw;
-  border-top: rgb(230, 230, 230) 1px solid;
+  border-top: rem(1px) solid light-dark(var(--mantine-color-gray-2), transparent);
   display: flex;
   justify-content: space-between;
 
@@ -15,14 +15,15 @@
 
 .innerFooter {
   width: 100%;
-  padding: 2.5vh 7vw 2.5vh 7vw;
-  background-color: rgb(200, 200, 200);
+  padding-right: 7vw;
+  padding-left: 7vw;
+  background-color: #e9ecef;
 }
 
 .information {
   max-width: calc(90vw / 4);
 
-  @media screen and (max-width: $mantine-breakpoint-xs) {
+  @media screen and (max-width: 48em) {
     margin-top: 1vh;
     margin-bottom: 1vh;
     max-width: 80vw;
@@ -30,7 +31,7 @@
 }
 
 .icon {
-  color: black;
+  color: #485665;
   margin-right: 5px;
   min-width: 24px;
 }
