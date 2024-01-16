@@ -1,15 +1,38 @@
 import { Box, Menu, Tabs, Text } from "@mantine/core";
 import { IconChevronRight } from "@tabler/icons-react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Tree, isNotEmptyObject } from "../../lib/utils";
 import classes from "./index.module.css";
 
 export default function DesktopDropdown({ tree }: { tree: Tree }) {
   const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState<string | null>(null);
+
+  useEffect(() => {
+    const handlePathnameChange = () => {
+      setActiveTab(
+        ["/product", "/catalog"].some((path) => window.location.pathname.includes(path))
+          ? "catalog"
+          : window.location.pathname.includes("/gallery")
+            ? "gallery"
+            : window.location.pathname.includes("/contact")
+              ? "contact"
+              : null,
+      );
+    };
+    handlePathnameChange();
+    window.addEventListener("popstate", handlePathnameChange);
+    return () => {
+      window.removeEventListener("popstate", handlePathnameChange);
+    };
+  });
 
   return (
     <Menu trigger="hover" openDelay={250}>
       <Tabs
+        value={activeTab}
+        onChange={(tab) => setActiveTab(tab)}
         variant="outline"
         visibleFrom="xs"
         classNames={{

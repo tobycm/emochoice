@@ -75,11 +75,11 @@ export default function Footer() {
             Connect with us!
           </Title>
           <Box display={"flex"} style={{ alignItems: "center" }}>
-            <Link to="https://www.facebook.com/emochoicecanada" target="_blank">
-              <IconBrandFacebook style={{ color: "black", scale: "130%", marginRight: "20px" }} />
+            <Link to="https://www.facebook.com/emochoicecanada" target="_blank" style={{ marginRight: "20px" }}>
+              <IconBrandFacebook style={{ color: "black" }} size={30} />
             </Link>
-            <Link to="https://www.instagram.com/emochoicecanada/" target="_blank">
-              <IconBrandInstagram style={{ color: "black", scale: "130%", marginRight: "20px" }} />
+            <Link to="https://www.instagram.com/emochoicecanada/" target="_blank" style={{ marginRight: "20px" }}>
+              <IconBrandInstagram style={{ color: "black" }} size={30} />
             </Link>
           </Box>
         </Box>

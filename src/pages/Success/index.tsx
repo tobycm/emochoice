@@ -36,7 +36,9 @@ export default function Success() {
             <Avatar variant="filled" radius="xl" size="lg" color="emochoice-green" mb="md">
               <IconCheck stroke={3} size="2rem" />
             </Avatar>
-            <Title ta="center" mb={"md"}>You've Successfully Placed Your Quote!</Title>
+            <Title ta="center" mb={"md"}>
+              You've Successfully Placed Your Quote!
+            </Title>
             <Text mb="xl">
               We'll be in touch with you shortly to confirm your quote and to arrange payment. If you have any questions, please contact us{" "}
               <Link to="/contact" style={{ textDecoration: "none" }}>
@@ -54,12 +56,13 @@ export default function Success() {
             <Table verticalSpacing="md">
               <Table.Thead>
                 <Table.Tr>
-                  <Table.Th w={isMobile ? "80%" : "35%"}>Name</Table.Th>
+                  <Table.Th w={isMobile ? "65%" : "30%"}>Name</Table.Th>
                   {isMobile ? null : (
                     <>
                       <Table.Th w="10%">Color</Table.Th>
-                      <Table.Th w="10%">Uploaded Image</Table.Th>
-                      <Table.Th w="25%">Request</Table.Th>
+                      <Table.Th w="10%">Type</Table.Th>
+                      <Table.Th w="15%">Uploaded Image</Table.Th>
+                      <Table.Th w="20%">Request</Table.Th>
                     </>
                   )}
                   <Table.Th w={isMobile ? "20%" : "15%"}>Quantity</Table.Th>
@@ -88,6 +91,7 @@ export default function Success() {
                             </>
                           )}
                         </Table.Td>
+                        <Table.Td maw={""}>{item.type?.name}</Table.Td>
                         <Table.Td maw={""}>{item.fileInput && <Pill>{item.fileInput.name}</Pill>}</Table.Td>
                         <Table.Td maw={""} style={{ overflow: "hidden", textOverflow: "ellipsis" }}>
                           {item.request} {/* don't delete the blank maw */}

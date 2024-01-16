@@ -75,12 +75,13 @@ export default function List() {
                   <Table.Thead>
                     <Table.Tr>
                       <Table.Th w="5%"></Table.Th>
-                      <Table.Th w={isMobile ? "75%" : "30%"}>Name</Table.Th>
+                      <Table.Th w={isMobile ? "65%" : "30%"}>Name</Table.Th>
                       {isMobile ? null : (
                         <>
                           <Table.Th w="10%">Color</Table.Th>
-                          <Table.Th w="10%">Uploaded Image</Table.Th>
-                          <Table.Th w="25%">Request</Table.Th>
+                          <Table.Th w="10%">Type</Table.Th>
+                          <Table.Th w="15%">Uploaded Image</Table.Th>
+                          <Table.Th w="20%">Request</Table.Th>
                         </>
                       )}
                       <Table.Th w={isMobile ? "20%" : "15%"}>Quantity</Table.Th>
@@ -135,6 +136,7 @@ export default function List() {
                                 </>
                               )}
                             </Table.Td>
+                            <Table.Td maw={""}>{item.type?.name}</Table.Td>
                             <Table.Td maw={""}>{item.fileInput && <Pill>{item.fileInput.name}</Pill>}</Table.Td>
                             <Table.Td maw={""} style={{ overflow: "hidden", textOverflow: "ellipsis" }}>
                               {item.request}

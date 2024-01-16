@@ -156,7 +156,12 @@ export default function Checkout() {
                         onChange={(e) => {
                           if (e.currentTarget.value.length == 0) return form.setFieldValue("phone_number", "");
                           if (!/^[0-9() -]+$/.test(e.currentTarget.value)) return;
-                          form.setFieldValue("phone_number", e.currentTarget.value.length < form.values.phone_number.length ? e.currentTarget.value : formatPhoneNumber(e.currentTarget.value));
+                          form.setFieldValue(
+                            "phone_number",
+                            e.currentTarget.value.length < form.values.phone_number.length
+                              ? e.currentTarget.value
+                              : formatPhoneNumber(e.currentTarget.value),
+                          );
                         }}
                       />
                     )}
@@ -200,12 +205,13 @@ export default function Checkout() {
                     <Table verticalSpacing="md">
                       <Table.Thead>
                         <Table.Tr>
-                          <Table.Th w={isMobile ? "80%" : "35%"}>Name</Table.Th>
+                          <Table.Th w={isMobile ? "65%" : "30%"}>Name</Table.Th>
                           {isMobile ? null : (
                             <>
                               <Table.Th w="10%">Color</Table.Th>
-                              <Table.Th w="10%">Uploaded Image</Table.Th>
-                              <Table.Th w="25%">Request</Table.Th>
+                              <Table.Th w="10%">Type</Table.Th>
+                              <Table.Th w="15%">Uploaded Image</Table.Th>
+                              <Table.Th w="20%">Request</Table.Th>
                             </>
                           )}
                           <Table.Th w={isMobile ? "20%" : "15%"}>Quantity</Table.Th>
@@ -238,6 +244,7 @@ export default function Checkout() {
                                     </>
                                   )}
                                 </Table.Td>
+                                <Table.Td maw={""}>{item.type?.name}</Table.Td>
                                 <Table.Td maw={""}>{item.fileInput && <Pill>{item.fileInput.name}</Pill>}</Table.Td>
                                 <Table.Td maw={""} style={{ overflow: "hidden", textOverflow: "ellipsis" }}>
                                   {item.request} {/* don't delete the blank maw */}
