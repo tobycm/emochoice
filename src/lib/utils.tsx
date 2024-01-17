@@ -157,7 +157,7 @@ export function formatPhoneNumber(phoneNumber: string): string {
 // wtf
 
 export interface Tree {
-  [key: string]: Record<"", ""> | Tree;
+  [key: string]: Record<string, never> | Tree;
 }
 
 export function makeDropdownTree(currentItem: DropdownMenuItem, root: DropdownMenuItem[]): [Tree, string[]] {
@@ -184,6 +184,6 @@ export function makeDropdownTree(currentItem: DropdownMenuItem, root: DropdownMe
   return [tree, existingItems];
 }
 
-export function isNotEmptyObject(obj: Object) {
+export function isNotEmptyObject(obj: unknown) {
   return obj !== null && typeof obj === "object" && Object.keys(obj).length > 0;
 }
