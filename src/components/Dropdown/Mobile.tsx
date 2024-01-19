@@ -29,7 +29,7 @@ export default function MobileDropdown({ closeDrawer, tree }: { closeDrawer: () 
                   <NavLink
                     label={key3}
                     onClick={() => {
-                      navigate("/catalog", { state: { categories: [key3] } });
+                      navigate("/catalog", { state: { categories: [key, key2, key3] } });
                       closeDrawer();
                     }}
                   />
@@ -39,7 +39,7 @@ export default function MobileDropdown({ closeDrawer, tree }: { closeDrawer: () 
               <NavLink
                 label={key2}
                 onClick={() => {
-                  navigate("/catalog", { state: { categories: [key2] } });
+                  navigate("/catalog", { state: { categories: [key, key2] } });
                   closeDrawer();
                 }}
               />

@@ -65,7 +65,7 @@ export default function DesktopDropdown({ tree }: { tree: Tree }) {
                         <Menu trigger="hover" position="right-start" arrowPosition="center" offset={20} openDelay={250}>
                           <Menu.Target>
                             <Box
-                              onClick={() => navigate("/catalog", { state: { categories: ["T-Shirts"] } })}
+                              onClick={() => navigate("/catalog", { state: { categories: [key, key2] } })}
                               display="flex"
                               style={{ justifyContent: "space-between", alignItems: "center" }}
                               w="100%"
@@ -76,7 +76,7 @@ export default function DesktopDropdown({ tree }: { tree: Tree }) {
                           </Menu.Target>
                           <Menu.Dropdown>
                             {Object.keys(subTree).map((key3) => (
-                              <Menu.Item key={key3} onClick={() => navigate("/catalog", { state: { categories: [key3] } })}>
+                              <Menu.Item key={key3} onClick={() => navigate("/catalog", { state: { categories: [key, key2, key3] } })}>
                                 {key3}
                               </Menu.Item>
                             ))}
@@ -84,7 +84,7 @@ export default function DesktopDropdown({ tree }: { tree: Tree }) {
                         </Menu>
                       </Menu.Item>
                     ) : (
-                      <Menu.Item key={key2} onClick={() => navigate("/catalog", { state: { categories: [key2] } })}>
+                      <Menu.Item key={key2} onClick={() => navigate("/catalog", { state: { categories: [key, key2] } })}>
                         {key2}
                       </Menu.Item>
                     );
