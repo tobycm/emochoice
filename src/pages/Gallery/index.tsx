@@ -43,7 +43,7 @@ export default function Gallery(props: { home: boolean }) {
   useEffect(() => {
     const fetchAndSetGallery = async (type: string) => {
       try {
-        const slides = (await getGallery(type, isMobile ? { thumb: "600x0" } : {})).map((link, index) => (
+        const slides = (await getGallery(type, { thumb: "600x0" })).map((link, index) => (
           <Carousel.Slide w="60%" key={link} mb="xl">
             <Box w="100%" mr={!isMobile ? 5 : 0} ml={!isMobile ? 5 : 0}>
               <Image
