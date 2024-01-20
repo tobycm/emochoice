@@ -1,5 +1,5 @@
 import { Carousel, Embla } from "@mantine/carousel";
-import { Box, Image, Title } from "@mantine/core";
+import { Box, Image, Skeleton, Title } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import React, { useEffect, useState } from "react";
 import SmallChangeHelmet from "../../components/Helmets/SmallChangeHelmet";
@@ -110,24 +110,26 @@ export default function Gallery(props: { home: boolean }) {
       <Title ta="center" order={1} mb="lg">
         Gallery
       </Title>
-      {["gallery_1", "gallery_2", "gallery_3"].map((type) => (
-        <Box mb={1} display={"flex"} style={{ flexDirection: "column", alignItems: "center" }} key={type} mih={100}>
-          <Title ta="center" order={2} c="emochoice-blue" mb="md">
-            {type === "gallery_1" ? "Clothing & Accessories" : type === "gallery_2" ? "Digital Printing" : "Souvenirs & Gifts Printing"}
-          </Title>
-          <Carousel
-            w="80vw"
-            loop
-            className={classes.carousel}
-            getEmblaApi={(api) => setEmbla((prevEmbla) => ({ ...prevEmbla, [type]: api }))}
-            draggable
-            slideSize={isMobile ? "100%" : "15%"}
-            mb="xs"
-          >
-            {slides[type]}
-          </Carousel>
-        </Box>
-      ))}
+      <Skeleton height={200} visible={!!(slides.gallery_1.length && slides.gallery_2.length && slides.gallery_3.length)}>
+        {["gallery_1", "gallery_2", "gallery_3"].map((type) => (
+          <Box mb={1} display={"flex"} style={{ flexDirection: "column", alignItems: "center" }} key={type} mih={100}>
+            <Title ta="center" order={2} c="emochoice-blue" mb="md">
+              {type === "gallery_1" ? "Clothing & Accessories" : type === "gallery_2" ? "Digital Printing" : "Souvenirs & Gifts Printing"}
+            </Title>
+            <Carousel
+              w="80vw"
+              loop
+              className={classes.carousel}
+              getEmblaApi={(api) => setEmbla((prevEmbla) => ({ ...prevEmbla, [type]: api }))}
+              draggable
+              slideSize={isMobile ? "100%" : "15%"}
+              mb="xs"
+            >
+              {slides[type]}
+            </Carousel>
+          </Box>
+        ))}
+      </Skeleton>
     </Box>
   );
 }
