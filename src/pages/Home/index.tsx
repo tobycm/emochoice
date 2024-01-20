@@ -19,17 +19,23 @@ export default function Home() {
 
   useEffect(() => {
     getGallery("home_carousel").then(async (links) => {
-      setSlides(
-        links.map((link, index) => (
+      for (const link of links) {
+        const index = links.indexOf(link);
+
+        // @ts-ignore update later
+        if (index == 0) await fetch(link, { priority: "high" });
+
+        setSlides((prev) => [
+          ...prev,
           <Carousel.Slide key={link}>
             <Image
               src={link}
               // @ts-ignore update later
               fetchpriority={index == 0 ? "high" : "low"}
             />
-          </Carousel.Slide>
-        )),
-      );
+          </Carousel.Slide>,
+        ]);
+      }
 
       while (true) {
         try {
@@ -52,7 +58,7 @@ export default function Home() {
     <>
       <Box style={{ display: "flex", alignItems: "center", flexDirection: "column" }}>
         <DefaultHelmet />
-        <Skeleton visible={slides.length == 0} height={isMobile ? 125 : 370}>
+        <Skeleton visible={slides.length == 0} height={slides.length == 0 ? (isMobile ? 125 : 550) : "100%"}>
           <Carousel
             classNames={classes}
             w={"100%"}

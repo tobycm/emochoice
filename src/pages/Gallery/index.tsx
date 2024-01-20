@@ -110,7 +110,10 @@ export default function Gallery(props: { home: boolean }) {
       <Title ta="center" order={1} mb="lg">
         Gallery
       </Title>
-      <Skeleton height={200} visible={!!(slides.gallery_1.length && slides.gallery_2.length && slides.gallery_3.length)}>
+      <Skeleton
+        height={(isMobile ? 100 : 250) * 2}
+        visible={slides.gallery_1.length > 0 && slides.gallery_2.length > 0 && slides.gallery_3.length > 0}
+      >
         {["gallery_1", "gallery_2", "gallery_3"].map((type) => (
           <Box mb={1} display={"flex"} style={{ flexDirection: "column", alignItems: "center" }} key={type} mih={100}>
             <Title ta="center" order={2} c="emochoice-blue" mb="md">
