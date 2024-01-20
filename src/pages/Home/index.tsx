@@ -58,14 +58,17 @@ export default function Home() {
     <>
       <Box style={{ display: "flex", alignItems: "center", flexDirection: "column" }}>
         <DefaultHelmet />
-        <Skeleton visible={slides.length == 0} height={slides.length == 0 ? (isMobile ? 125 : 550) : "100%"}>
+        <Skeleton
+          visible={slides.length == 0}
+          height={slides.length == 0 ? (isMobile ? 125 : 547) : "100%"}
+          style={{ transform: "translate(0, -5vh)" }}
+        >
           <Carousel
             classNames={classes}
             w={"100%"}
             loop
             withIndicators
             getEmblaApi={setEmbla}
-            style={{ transform: "translate(0, -5vh)" }}
             plugins={[autoplay.current]}
             onMouseEnter={autoplay.current.stop}
             onMouseLeave={autoplay.current.reset}
