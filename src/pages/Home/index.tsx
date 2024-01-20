@@ -20,12 +20,12 @@ export default function Home() {
   useEffect(() => {
     getGallery("home_carousel").then(async (links) => {
       setSlides(
-        links.map((link) => (
+        links.map((link, i) => (
           <Carousel.Slide key={link}>
             <Image
               src={link}
               // @ts-ignore update later
-              fetchpriority="high"
+              fetchpriority={i == 0 ? "high" : "low"}
             />
           </Carousel.Slide>
         )),
