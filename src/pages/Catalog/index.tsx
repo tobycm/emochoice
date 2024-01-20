@@ -2,7 +2,7 @@ import { Box, Button, Checkbox, InputBase, Modal, NavLink, Pill, ScrollArea, Tex
 import { useDisclosure, useMediaQuery } from "@mantine/hooks";
 import { IconCategory, IconColorFilter, IconFilter, IconIcons, IconSearchOff } from "@tabler/icons-react";
 import React, { useEffect, useState } from "react";
-import { useLocation } from "react-router";
+import { useNavigate } from "react-router-dom";
 import ProductCard from "../../components/Card";
 import SmallChangeHelmet from "../../components/Helmets/SmallChangeHelmet";
 import { getProducts } from "../../lib/database";
@@ -24,56 +24,35 @@ export default function Catalog() {
   const [modalOpened, setModalOpened] = React.useState<boolean>(false);
   const [isFiltered, setIsFiltered] = useState(true);
   const isMobile = useMediaQuery("(max-width: 36em)");
-
-  let user: {
-    categories?: string[];
-    searchQuery?: string;
-  } | null = null;
-
-  const location = useLocation();
-  if (location.state) {
-    user = location.state;
-  }
+  const navigate = useNavigate();
 
   const setSortedProducts = (products: Product[]) => {
     setProducts(products.filter((p) => !p.tags.includes("out_of_stock")).concat(products.filter((p) => p.tags.includes("out_of_stock"))));
   };
 
+  const searchProducts = () => {
+    const search = decodeURIComponent(window.location.href.split("?search=")[1].toLowerCase());
+    getProducts().then((products) => {
+      setSortedProducts(
+        products.filter((product) => `${product.name}${product.custom_id && ` - ${product.custom_id}`}`.toLowerCase().includes(search)),
+      );
+    });
+    setIsLoaded(true);
+  };
+
   useEffect(() => {
-    if (user?.searchQuery) {
+    setDocumentTitle("Catalog");
+
+    if (!window.location.href.includes("?filters=") && !window.location.href.includes("?search="))
       getProducts().then((products) => {
-        setSortedProducts(
-          products.filter((product) =>
-            `${product.name}${product.custom_id && ` - ${product.custom_id}`}`.toLowerCase().includes(user!.searchQuery!.toLowerCase()),
-          ),
-        );
-      });
-      setIsLoaded(true);
-    }
-    if (user?.categories) {
-      // fetch with first category
-      getProducts().then((products) => {
-        products = products.filter((product) => !!product.expand?.category);
-
-        // filter products with other categories
-        for (const category of user!.categories!) {
-          products = products.filter((product) => product.expand!.category!.find((productCategory) => productCategory.name === category));
-        }
-
-        setFilters(
-          user!.categories!.map((category) => ({
-            type: "category",
-            value: category,
-          })),
-        );
-
         setSortedProducts(products);
         setIsLoaded(true);
       });
-    }
-  }, [user]);
 
-  const filterProducts = (newFilters: Filter[]) => {
+    if (window.location.href.includes("?search=")) searchProducts();
+  }, []);
+
+  const filterProducts = (newFilters: Filter[], fromFilterList: boolean = true) => {
     getProducts().then((products) => {
       for (const filter of newFilters) {
         switch (filter.type) {
@@ -88,11 +67,35 @@ export default function Catalog() {
             break;
         }
       }
-
       setSortedProducts(products);
       setIsFiltered(true);
+      !isLoaded && setIsLoaded(true);
+      fromFilterList &&
+        navigate(newFilters.length > 0 ? `/catalog?filters=${newFilters.map((filter) => `${filter.type}:${filter.value}`).join(",")}` : "/catalog");
     });
   };
+
+  useEffect(() => {
+    if (window.location.href.includes("?filters=")) {
+      const filters = window.location.href
+        .split("?filters=")[1]
+        .split(",")
+        .map((filter) => {
+          const [type, value] = decodeURIComponent(filter).split(":");
+          return { type: type as FilterTypes, value: decodeURIComponent(value) } as Filter;
+        });
+      setIsFiltered(false);
+      setFilters(filters);
+      filterProducts(filters, false);
+    } else if (window.location.href.includes("?search=")) {
+      setFilters([]);
+      searchProducts();
+    } else {
+      setIsFiltered(false);
+      setFilters([]);
+      filterProducts([], false);
+    }
+  }, [window.location.href]);
 
   const updateFilters = (type: FilterTypes) => {
     return (values: string[]) => {
@@ -108,16 +111,6 @@ export default function Catalog() {
   };
 
   const getFilterValues = (type: FilterTypes) => filters.filter((filter) => filter.type === type).map((value) => value.value);
-
-  useEffect(() => {
-    setDocumentTitle("Catalog");
-
-    if (!user)
-      getProducts().then((products) => {
-        setSortedProducts(products);
-        setIsLoaded(true);
-      });
-  }, [user]);
 
   const [openCategoryFilter, categoryFilter] = useDisclosure(true);
   const [openBrandFilter, brandFilter] = useDisclosure(true);
@@ -142,7 +135,9 @@ export default function Catalog() {
                   if (product.expand?.category)
                     for (const category of product.expand.category) if (!categories.includes(category.name)) categories.push(category.name);
 
-                return categories.map((category) => <Checkbox mb={5} mt={5} label={replaceAll(category, "/", " / ")} value={category} key={category} />);
+                return categories.map((category) => (
+                  <Checkbox mb={5} mt={5} label={replaceAll(category, "/", " / ")} value={category} key={category} />
+                ));
               })()}
             </ScrollArea.Autosize>
           </Checkbox.Group>
@@ -258,8 +253,6 @@ export default function Catalog() {
             <Text>
               <UnstyledButton
                 onClick={() => {
-                  location.state = null;
-                  user = null;
                   getProducts().then(setSortedProducts);
                   setFilters([]);
                 }}

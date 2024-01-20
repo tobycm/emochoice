@@ -17,7 +17,7 @@ export default function MobileDropdown({ closeDrawer, tree }: { closeDrawer: () 
             leftSection={<IconTags size="1rem" stroke={1.5} />}
             label={"Explore all"}
             onClick={() => {
-              navigate("/catalog", { state: { categories: [key] } });
+              navigate(`/catalog?filters=category:${key}`);
               closeDrawer();
             }}
           />
@@ -29,7 +29,7 @@ export default function MobileDropdown({ closeDrawer, tree }: { closeDrawer: () 
                   <NavLink
                     label={key3}
                     onClick={() => {
-                      navigate("/catalog", { state: { categories: [key, key2, key3] } });
+                      navigate(`/catalog?filters=category:${key},category:${key2},category:${key3}`);
                       closeDrawer();
                     }}
                   />
@@ -39,7 +39,7 @@ export default function MobileDropdown({ closeDrawer, tree }: { closeDrawer: () 
               <NavLink
                 label={key2}
                 onClick={() => {
-                  navigate("/catalog", { state: { categories: [key, key2] } });
+                  navigate(`/catalog?filters=category:${key},category:${key2}`);
                   closeDrawer();
                 }}
               />

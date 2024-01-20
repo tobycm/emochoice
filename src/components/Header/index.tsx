@@ -44,18 +44,18 @@ export default function Header() {
   function search(wide: boolean) {
     const searchQuery = document.getElementById(wide ? "searchbarWide" : "searchbarMobile")?.getAttribute("value");
     if (!searchQuery) return;
-    navigate("/catalog", { state: { searchQuery } });
+    navigate(`/catalog?search=${searchQuery}`);
     if (isMobile) toggleSearchbar();
   }
 
-  const searchResults: string[] = [];
+  const [searchResults, setSearchResults] = useState<string[]>([]);
 
   useEffect(() => {
     getProducts().then((products) => {
       products.forEach((product) => {
         if (!searchResults.includes(`${product.name}${product.custom_id && ` - ${product.custom_id}`}`)) {
           setProductsNames((prev) => [...prev, `${product.name}${product.custom_id && ` - ${product.custom_id}`}`]);
-          searchResults.push(`${product.name}${product.custom_id && ` - ${product.custom_id}`}`);
+          setSearchResults((prev) => [...prev, `${product.name}${product.custom_id && ` - ${product.custom_id}`}`]);
         }
       });
     });
