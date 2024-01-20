@@ -11,20 +11,24 @@ import classes from "./index.module.css";
 
 export default function Home() {
   const autoplay = useRef(Autoplay({ delay: 5000 }));
-  const [slides, setSlides] = useState<JSX.Element[]>([]);
+  const [slides, setSlides] = useState<JSX.Element[]>([
+    <Carousel.Slide key="1">
+      <Box style={{ width: 735 }} />
+    </Carousel.Slide>,
+  ]);
   const [threeCards, setThreeCards] = useState<string[]>([]);
   const [embla, setEmbla] = useState<Embla | null>(null);
 
   useEffect(() => {
     const fetchAndSetGallery = async (type: string) => {
       try {
-        const gallery = await getGallery(type);
-        const slide = gallery.map((link) => (
-          <Carousel.Slide key={link}>
-            <Image src={link + "?thumb=1903x546"} />
-          </Carousel.Slide>
-        ));
-        setSlides([...slide]);
+        setSlides(
+          (await getGallery(type)).map((link) => (
+            <Carousel.Slide key={link}>
+              <Image src={link} />
+            </Carousel.Slide>
+          )),
+        );
       } catch {
         // do nothing
       }
@@ -42,12 +46,7 @@ export default function Home() {
       }
     });
 
-    const setHomeCards = async () => {
-      const images = await getGallery("3_cards");
-      setThreeCards(images.map((image) => image + "?thumb=375x477")); // check this out lol
-    };
-
-    setHomeCards();
+    getGallery("3_cards", { thumb: "0x341" }).then(setThreeCards);
   }, [embla]);
 
   useEffect(() => {

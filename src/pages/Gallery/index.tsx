@@ -43,22 +43,20 @@ export default function Gallery(props: { home: boolean }) {
   useEffect(() => {
     const fetchAndSetGallery = async (type: string) => {
       try {
-        const gallery = await getGallery(type);
-        const slides = gallery.map((link) => (
+        const slides = (await getGallery(type, { thumb: "250x0" })).map((link) => (
           <Carousel.Slide w="60%" key={link} mb="xl">
             <Box w="100%" mr={!isMobile ? 5 : 0} ml={!isMobile ? 5 : 0}>
               <Image
                 onClick={() => {
-                  if (!isMobile) {
-                    setZoomImage(link);
-                    openBigImage(true);
-                  }
+                  if (isMobile) return;
+                  setZoomImage(link);
+                  openBigImage(true);
                 }}
                 w={isMobile ? "80vw" : "250px"}
                 ml="auto"
                 mr="auto"
                 style={{ aspectRatio: 9 / 11, cursor: "pointer" }}
-                src={isMobile ? link : link + "?thumb=250x306"}
+                src={link}
               />
             </Box>
           </Carousel.Slide>

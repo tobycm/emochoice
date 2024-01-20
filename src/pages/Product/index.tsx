@@ -209,7 +209,7 @@ export default function Product() {
               <Box display={"flex"} mb="md">
                 {images.map((image) => (
                   <Image
-                    src={pocketbase.getFileUrl(product, image)}
+                    src={pocketbase.getFileUrl(product, image, { thumb: "0x100" })}
                     onClick={() => setProductImage(pocketbase.getFileUrl(product, image))}
                     style={{ height: "100px", width: "auto", marginRight: "10px", cursor: "pointer", border: "1px solid #cccccc" }}
                   />
