@@ -1,5 +1,5 @@
 import { Carousel, Embla } from "@mantine/carousel";
-import { Box, Container, Divider, Image, Title } from "@mantine/core";
+import { Box, Container, Divider, Image, Skeleton, Title } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import Autoplay from "embla-carousel-autoplay";
 import { useEffect, useRef, useState } from "react";
@@ -52,19 +52,21 @@ export default function Home() {
     <>
       <Box style={{ display: "flex", alignItems: "center", flexDirection: "column" }}>
         <DefaultHelmet />
-        <Carousel
-          classNames={classes}
-          w={slides.length > 0 ? "100%" : isMobile ? 125 : 735}
-          loop
-          withIndicators
-          getEmblaApi={setEmbla}
-          style={{ transform: "translate(0, -5vh)" }}
-          plugins={[autoplay.current]}
-          onMouseEnter={autoplay.current.stop}
-          onMouseLeave={autoplay.current.reset}
-        >
-          {slides}
-        </Carousel>
+        <Skeleton visible={slides.length == 0} height={isMobile ? 125 : 370}>
+          <Carousel
+            classNames={classes}
+            w={"100%"}
+            loop
+            withIndicators
+            getEmblaApi={setEmbla}
+            style={{ transform: "translate(0, -5vh)" }}
+            plugins={[autoplay.current]}
+            onMouseEnter={autoplay.current.stop}
+            onMouseLeave={autoplay.current.reset}
+          >
+            {slides}
+          </Carousel>
+        </Skeleton>
       </Box>
       <Container style={{ display: "flex", alignItems: "center", flexDirection: "column" }}>
         <Divider mb="xl" size="xs" w={"100%"}></Divider>
