@@ -1,5 +1,6 @@
 import { Carousel, Embla } from "@mantine/carousel";
 import { Box, Container, Divider, Image, Title } from "@mantine/core";
+import { useMediaQuery } from "@mantine/hooks";
 import Autoplay from "embla-carousel-autoplay";
 import { useEffect, useRef, useState } from "react";
 import DefaultHelmet from "../../components/Helmets/DefaultHelmet";
@@ -11,11 +12,8 @@ import classes from "./index.module.css";
 
 export default function Home() {
   const autoplay = useRef(Autoplay({ delay: 5000 }));
-  const [slides, setSlides] = useState<JSX.Element[]>([
-    <Carousel.Slide key="1">
-      <Box style={{ width: 735 }} />
-    </Carousel.Slide>,
-  ]);
+  const isMobile = useMediaQuery(`(max-width: 48em)`);
+  const [slides, setSlides] = useState<JSX.Element[]>([<Carousel.Slide key="1" h={isMobile ? 735 : 125}></Carousel.Slide>]);
   const [threeCards, setThreeCards] = useState<string[]>([]);
   const [embla, setEmbla] = useState<Embla | null>(null);
 
