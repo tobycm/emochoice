@@ -43,7 +43,7 @@ export default function Gallery(props: { home: boolean }) {
   useEffect(() => {
     const fetchAndSetGallery = async (type: string) => {
       try {
-        const slides = (await getGallery(type, { thumb: isMobile ? "600x0" : undefined })).map((link) => (
+        const slides = (await getGallery(type, { thumb: isMobile ? "600x0" : undefined })).map((link, index) => (
           <Carousel.Slide w="60%" key={link} mb="xl">
             <Box w="100%" mr={!isMobile ? 5 : 0} ml={!isMobile ? 5 : 0}>
               <Image
@@ -58,7 +58,7 @@ export default function Gallery(props: { home: boolean }) {
                 style={{ aspectRatio: 9 / 11, cursor: "pointer" }}
                 src={link}
                 // @ts-ignore update later
-                fetchpriority="low"
+                fetchpriority={index == 0 ? "high" : "low"}
               />
             </Box>
           </Carousel.Slide>
