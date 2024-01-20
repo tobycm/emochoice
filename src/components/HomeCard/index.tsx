@@ -13,7 +13,14 @@ export default function HomeCard(props: { name: string; image: string }) {
           <Card.Section>
             <Box display={"flex"}>
               <Box w="40%">
-                <Image src={props.image} alt={`${props.name}`} h="calc(1/2*80vw)" mah="300px" />
+                <Image
+                  src={props.image}
+                  alt={`${props.name}`}
+                  h="calc(1/2*80vw)"
+                  mah="300px"
+                  // @ts-ignore update later
+                  fetchpriority="high"
+                />
               </Box>
               <Box w="60%" display="flex">
                 <Title order={3} style={{ textAlign: "center" }} m="auto" p={5} c="emochoice-blue">

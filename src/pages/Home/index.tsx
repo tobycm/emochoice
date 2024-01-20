@@ -13,27 +13,24 @@ import classes from "./index.module.css";
 export default function Home() {
   const autoplay = useRef(Autoplay({ delay: 5000 }));
   const isMobile = useMediaQuery(`(max-width: 48em)`);
-  const [slides, setSlides] = useState<JSX.Element[]>([<Carousel.Slide key="1" h={isMobile ? 735 : 125}></Carousel.Slide>]);
+  const [slides, setSlides] = useState<ReturnType<typeof Carousel.Slide>[]>([]);
   const [threeCards, setThreeCards] = useState<string[]>([]);
   const [embla, setEmbla] = useState<Embla | null>(null);
 
   useEffect(() => {
-    const fetchAndSetGallery = async (type: string) => {
-      try {
-        setSlides(
-          (await getGallery(type)).map((link) => (
-            <Carousel.Slide key={link}>
-              <Image src={link} />
-            </Carousel.Slide>
-          )),
-        );
-      } catch {
-        // do nothing
-      }
-    };
+    getGallery("home_carousel").then(async (links) => {
+      setSlides(
+        links.map((link) => (
+          <Carousel.Slide key={link}>
+            <Image
+              src={link}
+              // @ts-ignore update later
+              fetchpriority="high"
+            />
+          </Carousel.Slide>
+        )),
+      );
 
-    fetchAndSetGallery("home_carousel").then(async () => {
-      // eslint-disable-next-line no-constant-condition
       while (true) {
         try {
           if (embla) embla.reInit();
@@ -44,7 +41,7 @@ export default function Home() {
       }
     });
 
-    getGallery("3_cards", { thumb: "0x341" }).then(setThreeCards);
+    getGallery("3_cards", { thumb: "0x350" }).then(setThreeCards);
   }, [embla]);
 
   useEffect(() => {
@@ -57,7 +54,7 @@ export default function Home() {
         <DefaultHelmet />
         <Carousel
           classNames={classes}
-          w={"100%"}
+          w={slides.length > 0 ? "100%" : isMobile ? 125 : 735}
           loop
           withIndicators
           getEmblaApi={setEmbla}
