@@ -88,7 +88,16 @@ export default function Gallery(props: { home: boolean }) {
     };
   });
 
-  if (!slides.gallery_1.length || !slides.gallery_2.length || !slides.gallery_3.length) return <LoaderBox />;
+  if (!slides.gallery_1.length || !slides.gallery_2.length || !slides.gallery_3.length)
+    return (
+      <Box display="flex" style={{ flexDirection: "column", alignItems: "center" }}>
+        <Title ta="center" order={1} mb="lg">
+          Gallery
+        </Title>
+
+        <LoaderBox />
+      </Box>
+    );
 
   return (
     <Box display="flex" style={{ flexDirection: "column", alignItems: "center" }}>
