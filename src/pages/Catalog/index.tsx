@@ -117,7 +117,7 @@ export default function Catalog() {
           allFilters
             .filter((filter) => filter.startsWith("category:"))
             .map(async (filter) => {
-              const categoryIDs = filter.replace("category:", "").replace(" ", "+").split("+");
+              const categoryIDs = filter.replace("category:", "").replaceAll(" ", "+").split("+");
               const categoryPromises = categoryIDs.map(async (id) => {
                 const category = await getCategory(id);
                 return category?.name;
