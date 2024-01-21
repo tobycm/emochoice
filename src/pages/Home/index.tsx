@@ -55,12 +55,13 @@ export default function Home() {
     setDocumentTitle();
 
     const fetchIDs = async () => {
-      ["Clothing & Accessories Print", "Digital Printing", "Souvenirs & Gifts Printing"].forEach(async (name) => {
+      ["Clothing & Accessories Print", "Digital Printing", "Souvenirs & Gifts Printing"].forEach(async (name, index) => {
         const id = (await searchCategory(decodeURIComponent(name))).id;
         setCategoryIDList((prev) => [
           ...prev,
           {
             name,
+            index: index.toString(),
             id,
           },
         ]);
@@ -99,9 +100,11 @@ export default function Home() {
           Shop by category
         </Title>
         <Box className={classes.cardsBox}>
-          {categoryIDList.map((category, index) => (
-            <HomeCard name={category.name} image={threeCards[index]} key={index} id={category.id} />
-          ))}
+          {categoryIDList
+            .sort((a, b) => parseInt(a.index) - parseInt(b.index))
+            .map((category) => (
+              <HomeCard name={category.name} image={threeCards[parseInt(category.index)]} key={category.index} id={category.id} />
+            ))}
         </Box>
         <Divider my="xl" size="xs" w={"100%"}></Divider>
       </Container>
