@@ -288,7 +288,7 @@ export default function Product() {
                 <Text mr="md">Type</Text>
                 <NativeSelect
                   data={product.expand.types.map((type) => type.name)}
-                  onChange={(e) => {
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                     const type = product.expand?.types?.find((type) => type.name === e.currentTarget.value);
                     if (!type) return;
                     form.setFieldValue("type", type);

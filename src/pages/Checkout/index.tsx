@@ -134,7 +134,7 @@ export default function Checkout() {
                       label="Contact Method"
                       mb="md"
                       value={contactMethod}
-                      onChange={(event) => {
+                      onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                         setContactMethod(event.currentTarget.value);
                         if (event.currentTarget.value === "Email") form.setFieldValue("phone_number", "");
                         if (event.currentTarget.value === "Phone number") form.setFieldValue("email", "");
@@ -153,7 +153,7 @@ export default function Checkout() {
                         {...form.getInputProps("phone_number")}
                         id="phone_number"
                         maxLength={14}
-                        onChange={(e) => {
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                           if (e.currentTarget.value.length == 0) return form.setFieldValue("phone_number", "");
                           if (!/^[0-9() -]+$/.test(e.currentTarget.value)) return;
                           form.setFieldValue(

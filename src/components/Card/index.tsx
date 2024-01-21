@@ -16,6 +16,7 @@ export default function ProductCard(props: { product: Product; inProductPage?: b
         {product.expand.colors.slice(0, 8).map((color) => (
           <Box
             w="15px"
+            h="15px"
             mr={5}
             style={{ background: linearBackgroundProperties(color), border: "1px solid #777", borderRadius: "3px", aspectRatio: 1 / 1 }}
           ></Box>
