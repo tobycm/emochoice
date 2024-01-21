@@ -1,7 +1,7 @@
 import { Carousel, Embla } from "@mantine/carousel";
 import { Box, Image, Title } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "preact/hooks";
 import SmallChangeHelmet from "../../components/Helmets/SmallChangeHelmet";
 import ImageZoom from "../../components/ImageZoom";
 import { getGallery } from "../../lib/database";
@@ -22,8 +22,8 @@ export default function Gallery(props: { home: boolean }) {
 
   const isMobile = useMediaQuery(`(max-width: 48em)`);
 
-  const [zoomImage, setZoomImage] = React.useState<string>("");
-  const [bigImage, openBigImage] = React.useState(false);
+  const [zoomImage, setZoomImage] = useState<string>("");
+  const [bigImage, openBigImage] = useState(false);
   const [scrollHeight, setScrollHeight] = useState(0);
 
   const reInitEmblas = async () => {
@@ -57,14 +57,15 @@ export default function Gallery(props: { home: boolean }) {
                 mr="auto"
                 style={{ aspectRatio: "calc(9/11)", cursor: "pointer" }}
                 src={link}
-                // @ts-ignore update later
                 fetchpriority={index == 0 ? "high" : "low"}
               />
             </Box>
           </Carousel.Slide>
         ));
         setSlides((prevSlides) => ({ ...prevSlides, [type]: slides }));
-      } catch {}
+      } catch {
+        // do nothing
+      }
     };
 
     if (window.location.href.includes("/gallery")) setDocumentTitle("Gallery");

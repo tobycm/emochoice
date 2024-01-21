@@ -1,7 +1,7 @@
 import { Box, Button, Checkbox, InputBase, Modal, NavLink, Pill, ScrollArea, Text, Title, UnstyledButton } from "@mantine/core";
 import { useDisclosure, useMediaQuery } from "@mantine/hooks";
 import { IconCategory, IconColorFilter, IconFilter, IconIcons, IconSearchOff } from "@tabler/icons-react";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "preact/hooks";
 import { useNavigate } from "react-router-dom";
 import ProductCard from "../../components/Card";
 import SmallChangeHelmet from "../../components/Helmets/SmallChangeHelmet";
@@ -21,7 +21,7 @@ export default function Catalog() {
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
   const [filters, setFilters] = useState<Filter[]>([]);
-  const [modalOpened, setModalOpened] = React.useState<boolean>(false);
+  const [modalOpened, setModalOpened] = useState<boolean>(false);
   const [isFiltered, setIsFiltered] = useState(true);
   const isMobile = useMediaQuery("(max-width: 36em)");
   const navigate = useNavigate();

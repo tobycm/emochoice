@@ -1,4 +1,5 @@
-import { ReactNode, createContext, useContext, useState } from "react";
+import { FC, ReactNode, createContext } from "preact/compat";
+import { useContext, useState } from "preact/hooks";
 import { Product, ProductColor, ProductType } from "./database/models";
 
 export interface Item {
@@ -20,7 +21,7 @@ export class List extends Array<Item> {
 
 const ListContext = createContext<{ list: List; updateList: (newList: List) => void } | undefined>(undefined);
 
-export const ListProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+export const ListProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [list, setList] = useState(new List());
 
   const updateList = (newList: List) => {

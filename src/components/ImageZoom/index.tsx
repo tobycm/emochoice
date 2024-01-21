@@ -1,8 +1,6 @@
-import { useState } from "react";
-
 import { Avatar, Box, Image, Overlay, ScrollArea } from "@mantine/core";
 import { IconX } from "@tabler/icons-react";
-import { useEffect } from "react";
+import { useEffect, useState } from "preact/hooks";
 import pocketbase from "../../lib/database";
 import { Product } from "../../lib/database/models";
 

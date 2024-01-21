@@ -1,6 +1,6 @@
 import { Box, Container, Text, Title } from "@mantine/core";
 import { RecordModel } from "pocketbase";
-import { useEffect, useState } from "react";
+import { useEffect, useState } from "preact/hooks";
 import SmallChangeHelmet from "../../components/Helmets/SmallChangeHelmet";
 import { getDocument } from "../../lib/database";
 import LoaderBox, { monthsKey } from "../../lib/utils";

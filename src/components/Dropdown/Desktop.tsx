@@ -1,6 +1,6 @@
 import { Box, Menu, Tabs, Text } from "@mantine/core";
 import { IconChevronRight } from "@tabler/icons-react";
-import { useEffect, useState } from "react";
+import { useEffect, useState } from "preact/hooks";
 import { Link, useNavigate } from "react-router-dom";
 import { ProductCategory } from "../../lib/database/models";
 import { Tree } from "../../lib/utils";
