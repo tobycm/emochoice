@@ -27,32 +27,41 @@ export default function Catalog() {
   const navigate = useNavigate();
 
   const setSortedProducts = (products: Product[]) => {
-    setProducts(products.filter((p) => !p.tags.includes("out_of_stock")).concat(products.filter((p) => p.tags.includes("out_of_stock"))));
+    setProducts(
+      products
+        .filter((product) => !product.tags.includes("out_of_stock"))
+        .concat(products.filter((product) => product.tags.includes("out_of_stock"))),
+    );
   };
 
   const searchProducts = () => {
-    const search = decodeURIComponent(window.location.href.split("search=")[1].toLowerCase());
-    getProducts().then((products) => {
+    const url = new URL(window.location.href);
+    const search = url.searchParams.get("search")?.toLowerCase();
+    if (!search) return;
+
+    getProducts().then((products) =>
       setSortedProducts(
         products.filter((product) => `${product.name}${product.custom_id && ` - ${product.custom_id}`}`.toLowerCase().includes(search)),
-      );
-    });
+      ),
+    );
     setIsLoaded(true);
   };
 
   useEffect(() => {
     setDocumentTitle("Catalog");
 
-    if (!window.location.href.includes("filters=") && !window.location.href.includes("?search="))
+    const url = new URL(window.location.href);
+
+    if (url.searchParams.get("search")) return searchProducts();
+
+    if (!url.searchParams.get("filters"))
       getProducts().then((products) => {
         setSortedProducts(products);
         setIsLoaded(true);
       });
-
-    if (window.location.href.includes("search=")) searchProducts();
   }, []);
 
-  const filterProducts = (newFilters: Filter[], fromFilterList: boolean = true) => {
+  function filterProducts(newFilters: Filter[], fromFilterList: boolean = true) {
     getProducts().then(async (products) => {
       for (const filter of newFilters) {
         switch (filter.type) {
@@ -67,9 +76,11 @@ export default function Catalog() {
             break;
         }
       }
+
       setSortedProducts(products);
       setIsFiltered(true);
       !isLoaded && setIsLoaded(true);
+
       if (fromFilterList && newFilters.length > 0) {
         const categoryFilters = newFilters
           .filter((filter) => filter.type === "category")
@@ -93,7 +104,7 @@ export default function Catalog() {
       }
       if (fromFilterList && newFilters.length === 0) navigate("/catalog");
     });
-  };
+  }
 
   useEffect(() => {
     const handleHrefChange = async () => {
