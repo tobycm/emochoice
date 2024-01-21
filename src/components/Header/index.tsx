@@ -33,10 +33,7 @@ export default function Header() {
 
           existingItems.push(...eItems);
 
-          return {
-            ...prev,
-            [item.expand?.parent?.name ?? ""]: tree,
-          };
+          return prev.set(item.expand!.parent!, tree);
         });
     });
   }, []);

@@ -156,10 +156,6 @@ export function formatPhoneNumber(phoneNumber: string): string {
 // https://i.imgur.com/fEXYCgz.jpg
 // wtf
 
-// export interface Tree {
-//   [key: ProductCategory]: Record<string, never> | Tree;
-// }
-
 export class Tree extends Map<ProductCategory, Tree> {}
 
 export function makeDropdownTree(currentItem: DropdownMenuItem, root: DropdownMenuItem[]): [Tree, string[]] {
