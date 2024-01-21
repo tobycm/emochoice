@@ -3,6 +3,7 @@ import { useForm } from "@mantine/form";
 import { useMediaQuery } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
 import { IconInfoCircle, IconNumber, IconShoppingCartPlus } from "@tabler/icons-react";
+import { ChangeEvent } from "preact/compat";
 import { useEffect, useMemo, useState } from "preact/hooks";
 import { Helmet } from "react-helmet-async";
 import { useLoaderData, useLocation, useNavigate } from "react-router-dom";
@@ -288,7 +289,7 @@ export default function Product() {
                 <Text mr="md">Type</Text>
                 <NativeSelect
                   data={product.expand.types.map((type) => type.name)}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  onChange={(e: ChangeEvent<HTMLInputElement>) => {
                     const type = product.expand?.types?.find((type) => type.name === e.currentTarget.value);
                     if (!type) return;
                     form.setFieldValue("type", type);

@@ -1,5 +1,5 @@
 import { Box, Text } from "@mantine/core";
-import { useEffect, useState } from "react";
+import { useEffect, useState } from "preact/hooks";
 import { Color } from "../../../lib/database/models";
 import { linearBackgroundProperties, linearTextColorProperties, toTitleCase } from "../../../lib/utils";
 

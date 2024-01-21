@@ -3,7 +3,8 @@ import { isEmail, isNotEmpty, useForm } from "@mantine/form";
 import { useMediaQuery } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
 import { IconLock, IconX } from "@tabler/icons-react";
-import { useEffect, useState } from "react";
+import { ChangeEvent } from "preact/compat";
+import { useEffect, useState } from "preact/hooks";
 import { Link, useNavigate } from "react-router-dom";
 import DefaultHelmet from "../../components/Helmets/DefaultHelmet";
 import proceedList, { List as ListClass, useList } from "../../lib/list";
@@ -13,7 +14,7 @@ import classes from "./index.module.css";
 export default function Checkout() {
   const navigate = useNavigate();
   const { list, updateList } = useList();
-  const [contactMethod, setContactMethod] = useState("Email");
+  const [contactMethod, setContactMethod] = useState("Email & Phone number");
   const isMobile = useMediaQuery(`(max-width: 36em)`);
   const form = useForm({
     initialValues: {
@@ -134,7 +135,7 @@ export default function Checkout() {
                       label="Contact Method"
                       mb="md"
                       value={contactMethod}
-                      onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                      onChange={(event: ChangeEvent<HTMLInputElement>) => {
                         setContactMethod(event.currentTarget.value);
                         if (event.currentTarget.value === "Email") form.setFieldValue("phone_number", "");
                         if (event.currentTarget.value === "Phone number") form.setFieldValue("email", "");
@@ -153,7 +154,7 @@ export default function Checkout() {
                         {...form.getInputProps("phone_number")}
                         id="phone_number"
                         maxLength={14}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        onChange={(e: ChangeEvent<HTMLInputElement>) => {
                           if (e.currentTarget.value.length == 0) return form.setFieldValue("phone_number", "");
                           if (!/^[0-9() -]+$/.test(e.currentTarget.value)) return;
                           form.setFieldValue(
