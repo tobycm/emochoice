@@ -1,5 +1,6 @@
 import { Carousel, Embla } from "@mantine/carousel";
-import { Box, Container, Divider, Image, Title } from "@mantine/core";
+import { Box, Container, Divider, Image, Skeleton, Title } from "@mantine/core";
+import { useMediaQuery } from "@mantine/hooks";
 import Autoplay from "embla-carousel-autoplay";
 import { useEffect, useRef, useState } from "react";
 import DefaultHelmet from "../../components/Helmets/DefaultHelmet";
@@ -11,28 +12,32 @@ import classes from "./index.module.css";
 
 export default function Home() {
   const autoplay = useRef(Autoplay({ delay: 5000 }));
-  const [slides, setSlides] = useState<JSX.Element[]>([]);
+  const isMobile = useMediaQuery(`(max-width: 48em)`);
+  const [slides, setSlides] = useState<ReturnType<typeof Carousel.Slide>[]>([]);
   const [threeCards, setThreeCards] = useState<string[]>([]);
   const [embla, setEmbla] = useState<Embla | null>(null);
   const [categoryIDList, setCategoryIDList] = useState<Record<string, string>[]>([]);
 
   useEffect(() => {
-    const fetchAndSetGallery = async (type: string) => {
-      try {
-        const gallery = await getGallery(type);
-        const slide = gallery.map((link) => (
-          <Carousel.Slide key={link}>
-            <Image src={link + "?thumb=1903x546"} />
-          </Carousel.Slide>
-        ));
-        setSlides([...slide]);
-      } catch {
-        // do nothing
-      }
-    };
+    getGallery("home_carousel").then(async (links) => {
+      for (const link of links) {
+        const index = links.indexOf(link);
 
-    fetchAndSetGallery("home_carousel").then(async () => {
-      // eslint-disable-next-line no-constant-condition
+        // @ts-ignore update later
+        if (index == 0) await fetch(link, { priority: "high" });
+
+        setSlides((prev) => [
+          ...prev,
+          <Carousel.Slide key={link}>
+            <Image
+              src={link}
+              // @ts-ignore update later
+              fetchpriority={index == 0 ? "high" : "low"}
+            />
+          </Carousel.Slide>,
+        ]);
+      }
+
       while (true) {
         try {
           if (embla) embla.reInit();
@@ -43,12 +48,7 @@ export default function Home() {
       }
     });
 
-    const setHomeCards = async () => {
-      const images = await getGallery("3_cards");
-      setThreeCards(images.map((image) => image + "?thumb=375x477")); // check this out lol
-    };
-
-    setHomeCards();
+    getGallery("3_cards", { thumb: "0x350" }).then(setThreeCards);
   }, [embla]);
 
   useEffect(() => {
@@ -74,19 +74,24 @@ export default function Home() {
     <>
       <Box style={{ display: "flex", alignItems: "center", flexDirection: "column" }}>
         <DefaultHelmet />
-        <Carousel
-          classNames={classes}
-          w={"100%"}
-          loop
-          withIndicators
-          getEmblaApi={setEmbla}
+        <Skeleton
+          visible={slides.length == 0}
+          height={slides.length == 0 ? (isMobile ? 125 : 547) : "100%"}
           style={{ transform: "translate(0, -5vh)" }}
-          plugins={[autoplay.current]}
-          onMouseEnter={autoplay.current.stop}
-          onMouseLeave={autoplay.current.reset}
         >
-          {slides}
-        </Carousel>
+          <Carousel
+            classNames={classes}
+            w={"100%"}
+            loop
+            withIndicators
+            getEmblaApi={setEmbla}
+            plugins={[autoplay.current]}
+            onMouseEnter={autoplay.current.stop}
+            onMouseLeave={autoplay.current.reset}
+          >
+            {slides}
+          </Carousel>
+        </Skeleton>
       </Box>
       <Container style={{ display: "flex", alignItems: "center", flexDirection: "column" }}>
         <Divider mb="xl" size="xs" w={"100%"}></Divider>

@@ -31,7 +31,10 @@ export default function ProductCard(props: { product: Product; inProductPage?: b
         <Card w="85vw" h="calc(4/10*85vw)" maw={750} mah={1600} shadow="sm" padding="sm" radius="md" pb="xl" mb="lg" display={"flex"} withBorder>
           <Card.Section display={"flex"}>
             <Box w="30%">
-              <Image src={product.images ? pocketbase.getFileUrl(product, product.images[0]) : "/images/no_image.png"} h="calc(4/10*85vw)" />
+              <Image
+                src={product.images ? pocketbase.getFileUrl(product, product.images[0], { thumb: "0x146" }) : "/images/no_image.png"}
+                h="calc(4/10*85vw)"
+              />
               {product.tags.includes("out_of_stock") && (
                 <Overlay w="30%" backgroundOpacity={0.4}>
                   <Center h="100%" w="100%">
@@ -91,7 +94,7 @@ export default function ProductCard(props: { product: Product; inProductPage?: b
         withBorder
       >
         <Card.Section h="77%">
-          <Image src={product.images ? pocketbase.getFileUrl(product, product.images[0]) : "/images/no_image.png"} h="100%" />
+          <Image src={product.images ? pocketbase.getFileUrl(product, product.images[0], { thumb: "0x244" }) : "/images/no_image.png"} h="100%" />
           {product.tags.includes("out_of_stock") && (
             <Overlay h="66.15%" backgroundOpacity={0.4}>
               <Center h="100%">

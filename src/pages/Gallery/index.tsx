@@ -43,22 +43,22 @@ export default function Gallery(props: { home: boolean }) {
   useEffect(() => {
     const fetchAndSetGallery = async (type: string) => {
       try {
-        const gallery = await getGallery(type);
-        const slides = gallery.map((link) => (
+        const slides = (await getGallery(type, { thumb: "600x0" })).map((link, index) => (
           <Carousel.Slide w="60%" key={link} mb="xl">
             <Box w="100%" mr={!isMobile ? 5 : 0} ml={!isMobile ? 5 : 0}>
               <Image
                 onClick={() => {
-                  if (!isMobile) {
-                    setZoomImage(link);
-                    openBigImage(true);
-                  }
+                  if (isMobile) return;
+                  setZoomImage(link);
+                  openBigImage(true);
                 }}
                 w={isMobile ? "80vw" : "250px"}
                 ml="auto"
                 mr="auto"
                 style={{ aspectRatio: 9 / 11, cursor: "pointer" }}
-                src={isMobile ? link : link + "?thumb=250x306"}
+                src={link}
+                // @ts-ignore update later
+                fetchpriority={index == 0 ? "high" : "low"}
               />
             </Box>
           </Carousel.Slide>
@@ -88,7 +88,16 @@ export default function Gallery(props: { home: boolean }) {
     };
   });
 
-  if (!slides.gallery_1.length || !slides.gallery_2.length || !slides.gallery_3.length) return <LoaderBox />;
+  if (!slides.gallery_1.length || !slides.gallery_2.length || !slides.gallery_3.length)
+    return (
+      <Box display="flex" style={{ flexDirection: "column", alignItems: "center" }}>
+        <Title ta="center" order={1} mb="lg">
+          Gallery
+        </Title>
+
+        <LoaderBox />
+      </Box>
+    );
 
   return (
     <Box display="flex" style={{ flexDirection: "column", alignItems: "center" }}>

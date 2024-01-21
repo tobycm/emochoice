@@ -8,5 +8,6 @@ module.exports = {
   rules: {
     "react-refresh/only-export-components": ["warn", { allowConstantExport: true }],
     "@typescript-eslint/ban-ts-comment": "warn",
+    "no-constant-condition": "warn",
   },
 };
