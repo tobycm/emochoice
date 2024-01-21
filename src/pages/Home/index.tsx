@@ -4,7 +4,7 @@ import Autoplay from "embla-carousel-autoplay";
 import { useEffect, useRef, useState } from "react";
 import DefaultHelmet from "../../components/Helmets/DefaultHelmet";
 import HomeCard from "../../components/HomeCard";
-import { getGallery } from "../../lib/database";
+import { getGallery, searchCategory } from "../../lib/database";
 import { setDocumentTitle } from "../../lib/utils";
 import Gallery from "../Gallery";
 import classes from "./index.module.css";
@@ -14,6 +14,7 @@ export default function Home() {
   const [slides, setSlides] = useState<JSX.Element[]>([]);
   const [threeCards, setThreeCards] = useState<string[]>([]);
   const [embla, setEmbla] = useState<Embla | null>(null);
+  const [categoryIDList, setCategoryIDList] = useState<Record<string, string>[]>([]);
 
   useEffect(() => {
     const fetchAndSetGallery = async (type: string) => {
@@ -52,6 +53,21 @@ export default function Home() {
 
   useEffect(() => {
     setDocumentTitle();
+
+    const fetchIDs = async () => {
+      ["Clothing & Accessories Print", "Digital Printing", "Souvenirs & Gifts Printing"].forEach(async (name) => {
+        const id = (await searchCategory(decodeURIComponent(name))).id;
+        setCategoryIDList((prev) => [
+          ...prev,
+          {
+            name,
+            id,
+          },
+        ]);
+      });
+    };
+
+    fetchIDs();
   }, []);
 
   return (
@@ -78,8 +94,8 @@ export default function Home() {
           Shop by category
         </Title>
         <Box className={classes.cardsBox}>
-          {["Clothing & Accessories Print", "Digital Printing", "Souvenirs & Gifts Printing"].map((name, index) => (
-            <HomeCard name={name} image={threeCards[index]} key={index} />
+          {categoryIDList.map((category, index) => (
+            <HomeCard name={category.name} image={threeCards[index]} key={index} id={category.id} />
           ))}
         </Box>
         <Divider my="xl" size="xs" w={"100%"}></Divider>

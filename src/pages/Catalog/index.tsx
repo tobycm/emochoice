@@ -5,7 +5,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ProductCard from "../../components/Card";
 import SmallChangeHelmet from "../../components/Helmets/SmallChangeHelmet";
-import { getProducts } from "../../lib/database";
+import { getCategory, getColor, getProducts, searchCategory, searchColor } from "../../lib/database";
 import { Product } from "../../lib/database/models";
 import LoaderBox, { replaceAll, setDocumentTitle, toTitleCase } from "../../lib/utils";
 import classes from "./index.module.css";
@@ -31,7 +31,7 @@ export default function Catalog() {
   };
 
   const searchProducts = () => {
-    const search = decodeURIComponent(window.location.href.split("?search=")[1].toLowerCase());
+    const search = decodeURIComponent(window.location.href.split("search=")[1].toLowerCase());
     getProducts().then((products) => {
       setSortedProducts(
         products.filter((product) => `${product.name}${product.custom_id && ` - ${product.custom_id}`}`.toLowerCase().includes(search)),
@@ -43,17 +43,17 @@ export default function Catalog() {
   useEffect(() => {
     setDocumentTitle("Catalog");
 
-    if (!window.location.href.includes("?filters=") && !window.location.href.includes("?search="))
+    if (!window.location.href.includes("filters=") && !window.location.href.includes("?search="))
       getProducts().then((products) => {
         setSortedProducts(products);
         setIsLoaded(true);
       });
 
-    if (window.location.href.includes("?search=")) searchProducts();
+    if (window.location.href.includes("search=")) searchProducts();
   }, []);
 
   const filterProducts = (newFilters: Filter[], fromFilterList: boolean = true) => {
-    getProducts().then((products) => {
+    getProducts().then(async (products) => {
       for (const filter of newFilters) {
         switch (filter.type) {
           case "color":
@@ -70,31 +70,94 @@ export default function Catalog() {
       setSortedProducts(products);
       setIsFiltered(true);
       !isLoaded && setIsLoaded(true);
-      fromFilterList &&
-        navigate(newFilters.length > 0 ? `/catalog?filters=${newFilters.map((filter) => `${filter.type}:${filter.value}`).join(",")}` : "/catalog");
+      if (fromFilterList && newFilters.length > 0) {
+        const categoryFilters = newFilters
+          .filter((filter) => filter.type === "category")
+          .map(async (filter) => (await searchCategory(filter.value)).id);
+        const colorFilters = newFilters.filter((filter) => filter.type === "color").map(async (filter) => (await searchColor(filter.value)).id);
+        const brandFilters = newFilters.filter((filter) => filter.type === "brand");
+        Promise.all(categoryFilters)
+          .then((resolvedCategoryFilters) => {
+            Promise.all(colorFilters)
+              .then((resolvedColorFilters) => {
+                const filtersQueryString = [
+                  ...(resolvedCategoryFilters.length > 0 ? [`category:${resolvedCategoryFilters.join("+")}`] : []),
+                  ...(resolvedColorFilters.length > 0 ? [`color:${resolvedColorFilters.join("+")}`] : []),
+                  ...(brandFilters.length > 0 ? [`brand:${brandFilters.map((filter) => filter.value).join("+")}`] : []),
+                ].join(",");
+                navigate(`/catalog?filters=${filtersQueryString}`);
+              })
+              .catch(() => {});
+          })
+          .catch(() => {});
+      }
+      if (fromFilterList && newFilters.length === 0) navigate("/catalog");
     });
   };
 
   useEffect(() => {
-    if (window.location.href.includes("?filters=")) {
-      const filters = window.location.href
-        .split("?filters=")[1]
-        .split(",")
-        .map((filter) => {
-          const [type, value] = decodeURIComponent(filter).split(":");
-          return { type: type as FilterTypes, value: decodeURIComponent(value) } as Filter;
+    const handleHrefChange = async () => {
+      const urlSearchParams = new URL(window.location.href).searchParams;
+      const filtersParam = urlSearchParams.get("filters");
+      const searchParam = urlSearchParams.get("search");
+      if (filtersParam) {
+        const allFilters = filtersParam.split(",");
+        const categoryFilters = await Promise.all(
+          allFilters
+            .filter((filter) => filter.startsWith("category:"))
+            .map(async (filter) => {
+              const categoryIDs = filter.replace("category:", "").replace(" ", "+").split("+");
+              const categoryPromises = categoryIDs.map(async (id) => {
+                const category = await getCategory(id);
+                return category?.name;
+              });
+              const categories = await Promise.all(categoryPromises);
+              return categories;
+            }),
+        );
+        const colorFilters = await Promise.all(
+          allFilters
+            .filter((filter) => filter.startsWith("color:"))
+            .map(async (filter) => {
+              const colorIDs = filter.replace("color:", "").replace(" ", "+").split("+");
+              const colorPromises = colorIDs.map(async (id) => {
+                const color = await getColor(id);
+                return color?.name;
+              });
+              const colors = await Promise.all(colorPromises);
+              return colors;
+            }),
+        );
+        const brandFilters = allFilters.filter((filter) => filter.startsWith("brand:")).map((filter) => filter.replace("brand:", ""));
+        const filters: Filter[] = [];
+        categoryFilters.forEach((categories) => {
+          categories.forEach((category) => {
+            filters.push({ type: "category", value: category });
+          });
         });
-      setIsFiltered(false);
-      setFilters(filters);
-      filterProducts(filters, false);
-    } else if (window.location.href.includes("?search=")) {
-      setFilters([]);
-      searchProducts();
-    } else {
-      setIsFiltered(false);
-      setFilters([]);
-      filterProducts([], false);
-    }
+        colorFilters.forEach((colors) => {
+          colors.forEach((color) => {
+            filters.push({ type: "color", value: color });
+          });
+        });
+        brandFilters.forEach((brand) => {
+          filters.push({ type: "brand", value: brand });
+        });
+        setIsFiltered(false);
+        setFilters(filters);
+        filterProducts(filters, false);
+      } else if (searchParam) {
+        // note: assuming no filtering and searching at the same time
+        setFilters([]);
+        searchProducts();
+      } else {
+        setIsFiltered(false);
+        setFilters([]);
+        filterProducts([], false);
+      }
+    };
+
+    handleHrefChange();
   }, [window.location.href]);
 
   const updateFilters = (type: FilterTypes) => {

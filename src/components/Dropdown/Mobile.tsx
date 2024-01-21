@@ -1,6 +1,7 @@
 import { NavLink } from "@mantine/core";
 import { IconLayoutGrid, IconShirt, IconTags } from "@tabler/icons-react";
 import { Link, useNavigate } from "react-router-dom";
+import { searchCategory } from "../../lib/database";
 import { Tree, isNotEmptyObject } from "../../lib/utils";
 
 export default function MobileDropdown({ closeDrawer, tree }: { closeDrawer: () => void; tree: Tree }) {
@@ -16,8 +17,13 @@ export default function MobileDropdown({ closeDrawer, tree }: { closeDrawer: () 
           <NavLink
             leftSection={<IconTags size="1rem" stroke={1.5} />}
             label={"Explore all"}
-            onClick={() => {
-              navigate(`/catalog?filters=category:${key}`);
+            onClick={async () => {
+              const ID = await Promise.all(
+                [key].map(async (name) => {
+                  return (await searchCategory(decodeURIComponent(name))).id;
+                }),
+              );
+              navigate(`/catalog?filters=category:${ID}`);
               closeDrawer();
             }}
           />
@@ -28,8 +34,13 @@ export default function MobileDropdown({ closeDrawer, tree }: { closeDrawer: () 
                 {Object.keys(subTree).map((key3) => (
                   <NavLink
                     label={key3}
-                    onClick={() => {
-                      navigate(`/catalog?filters=category:${key},category:${key2},category:${key3}`);
+                    onClick={async () => {
+                      const IDs = await Promise.all(
+                        [key, key2, key3].map(async (name) => {
+                          return (await searchCategory(decodeURIComponent(name))).id;
+                        }),
+                      );
+                      navigate(`/catalog?filters=category:${IDs.join("+")}`);
                       closeDrawer();
                     }}
                   />
@@ -38,8 +49,13 @@ export default function MobileDropdown({ closeDrawer, tree }: { closeDrawer: () 
             ) : (
               <NavLink
                 label={key2}
-                onClick={() => {
-                  navigate(`/catalog?filters=category:${key},category:${key2}`);
+                onClick={async () => {
+                  const IDs = await Promise.all(
+                    [key, key2].map(async (name) => {
+                      return (await searchCategory(decodeURIComponent(name))).id;
+                    }),
+                  );
+                  navigate(`/catalog?filters=category:${IDs.join("+")}`);
                   closeDrawer();
                 }}
               />

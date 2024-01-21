@@ -3,12 +3,12 @@ import { useMediaQuery } from "@mantine/hooks";
 import { Link } from "react-router-dom";
 import classes from "./index.module.css";
 
-export default function HomeCard(props: { name: string; image: string }) {
+export default function HomeCard(props: { name: string; image: string; id: string }) {
   const isMobile = useMediaQuery("(max-width: 972px)");
 
   if (isMobile)
     return (
-      <Link to={`/catalog?filters=category:${props.name}`} className={classes.card}>
+      <Link to={`/catalog?filters=category:${props.id}`} className={classes.card}>
         <Card shadow="sm" radius="md" w="80vw" h="calc(1/2*80vw)" maw="600px" mah="300px" withBorder>
           <Card.Section>
             <Box display={"flex"}>
@@ -27,7 +27,7 @@ export default function HomeCard(props: { name: string; image: string }) {
     );
 
   return (
-    <Link to={`/catalog?filters=category:${props.name}`} className={classes.card}>
+    <Link to={`/catalog?filters=category:${props.id}`} className={classes.card}>
       <Card shadow="sm" radius="md" w={270} h={456} withBorder>
         <Card.Section h={"20%"} m="4%">
           <Title order={3} style={{ textAlign: "center" }} c="emochoice-blue">

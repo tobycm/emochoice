@@ -2,6 +2,7 @@ import { Box, Menu, Tabs, Text } from "@mantine/core";
 import { IconChevronRight } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { searchCategory } from "../../lib/database";
 import { Tree, isNotEmptyObject } from "../../lib/utils";
 import classes from "./index.module.css";
 
@@ -53,7 +54,12 @@ export default function DesktopDropdown({ tree }: { tree: Tree }) {
             <Box display={"flex"}>
               {Object.keys(tree).map((key) => (
                 <Box mr="xs">
-                  <Menu.Item onClick={() => navigate(`/catalog?filters=category:${key}`)}>
+                  <Menu.Item
+                    onClick={async () => {
+                      const ID = (await searchCategory(decodeURIComponent(key))).id;
+                      navigate(`/catalog?filters=category:${ID}`);
+                    }}
+                  >
                     <Text size="md" className={classes.menuTitle}>
                       {key}
                     </Text>
@@ -65,7 +71,14 @@ export default function DesktopDropdown({ tree }: { tree: Tree }) {
                         <Menu trigger="hover" position="right-start" arrowPosition="center" offset={20} openDelay={250}>
                           <Menu.Target>
                             <Box
-                              onClick={() => navigate(`/catalog?filters=category:${key},category:${key2}`)}
+                              onClick={async () => {
+                                const IDs = await Promise.all(
+                                  [key, key2].map(async (name) => {
+                                    return (await searchCategory(decodeURIComponent(name))).id;
+                                  }),
+                                );
+                                navigate(`/catalog?filters=category:${IDs.join("+")}`);
+                              }}
                               display="flex"
                               style={{ justifyContent: "space-between", alignItems: "center" }}
                               w="100%"
@@ -76,7 +89,17 @@ export default function DesktopDropdown({ tree }: { tree: Tree }) {
                           </Menu.Target>
                           <Menu.Dropdown>
                             {Object.keys(subTree).map((key3) => (
-                              <Menu.Item key={key3} onClick={() => navigate(`/catalog?filters=category:${key},category:${key2},category:${key3}`)}>
+                              <Menu.Item
+                                key={key3}
+                                onClick={async () => {
+                                  const IDs = await Promise.all(
+                                    [key, key2, key3].map(async (name) => {
+                                      return (await searchCategory(decodeURIComponent(name))).id;
+                                    }),
+                                  );
+                                  navigate(`/catalog?filters=category:${IDs.join("+")}`);
+                                }}
+                              >
                                 {key3}
                               </Menu.Item>
                             ))}
@@ -84,7 +107,17 @@ export default function DesktopDropdown({ tree }: { tree: Tree }) {
                         </Menu>
                       </Menu.Item>
                     ) : (
-                      <Menu.Item key={key2} onClick={() => navigate(`/catalog?filters=category:${key},category:${key2}`)}>
+                      <Menu.Item
+                        key={key2}
+                        onClick={async () => {
+                          const IDs = await Promise.all(
+                            [key, key2].map(async (name) => {
+                              return (await searchCategory(decodeURIComponent(name))).id;
+                            }),
+                          );
+                          navigate(`/catalog?filters=category:${IDs.join("+")}`);
+                        }}
+                      >
                         {key2}
                       </Menu.Item>
                     );
