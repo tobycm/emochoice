@@ -2,10 +2,10 @@ import { Box, Button, Checkbox, InputBase, Modal, NavLink, Pill, ScrollArea, Tex
 import { useDisclosure, useMediaQuery } from "@mantine/hooks";
 import { IconCategory, IconColorFilter, IconFilter, IconIcons, IconSearchOff } from "@tabler/icons-react";
 import React, { useEffect, useState } from "react";
-import { useLocation } from "react-router";
+import { useNavigate } from "react-router-dom";
 import ProductCard from "../../components/Card";
 import SmallChangeHelmet from "../../components/Helmets/SmallChangeHelmet";
-import { getProducts } from "../../lib/database";
+import { getCategory, getColor, getProducts, searchCategory, searchColor } from "../../lib/database";
 import { Product } from "../../lib/database/models";
 import LoaderBox, { replaceAll, setDocumentTitle, toTitleCase } from "../../lib/utils";
 import classes from "./index.module.css";
@@ -24,57 +24,45 @@ export default function Catalog() {
   const [modalOpened, setModalOpened] = React.useState<boolean>(false);
   const [isFiltered, setIsFiltered] = useState(true);
   const isMobile = useMediaQuery("(max-width: 36em)");
-
-  let user: {
-    categories?: string[];
-    searchQuery?: string;
-  } | null = null;
-
-  const location = useLocation();
-  if (location.state) {
-    user = location.state;
-  }
+  const navigate = useNavigate();
 
   const setSortedProducts = (products: Product[]) => {
-    setProducts(products.filter((p) => !p.tags.includes("out_of_stock")).concat(products.filter((p) => p.tags.includes("out_of_stock"))));
+    setProducts(
+      products
+        .filter((product) => !product.tags.includes("out_of_stock"))
+        .concat(products.filter((product) => product.tags.includes("out_of_stock"))),
+    );
+  };
+
+  const searchProducts = () => {
+    const url = new URL(window.location.href);
+    const search = url.searchParams.get("search")?.toLowerCase();
+    if (!search) return;
+
+    getProducts().then((products) =>
+      setSortedProducts(
+        products.filter((product) => `${product.name}${product.custom_id && ` - ${product.custom_id}`}`.toLowerCase().includes(search)),
+      ),
+    );
+    setIsLoaded(true);
   };
 
   useEffect(() => {
-    if (user?.searchQuery) {
+    setDocumentTitle("Catalog");
+
+    const url = new URL(window.location.href);
+
+    if (url.searchParams.get("search")) return searchProducts();
+
+    if (!url.searchParams.get("filters"))
       getProducts().then((products) => {
-        setSortedProducts(
-          products.filter((product) =>
-            `${product.name}${product.custom_id && ` - ${product.custom_id}`}`.toLowerCase().includes(user!.searchQuery!.toLowerCase()),
-          ),
-        );
-      });
-      setIsLoaded(true);
-    }
-    if (user?.categories) {
-      // fetch with first category
-      getProducts().then((products) => {
-        products = products.filter((product) => !!product.expand?.category);
-
-        // filter products with other categories
-        for (const category of user!.categories!) {
-          products = products.filter((product) => product.expand!.category!.find((productCategory) => productCategory.name === category));
-        }
-
-        setFilters(
-          user!.categories!.map((category) => ({
-            type: "category",
-            value: category,
-          })),
-        );
-
         setSortedProducts(products);
         setIsLoaded(true);
       });
-    }
-  }, [user]);
+  }, []);
 
-  const filterProducts = (newFilters: Filter[]) => {
-    getProducts().then((products) => {
+  function filterProducts(newFilters: Filter[], fromFilterList: boolean = true) {
+    getProducts().then(async (products) => {
       for (const filter of newFilters) {
         switch (filter.type) {
           case "color":
@@ -91,8 +79,97 @@ export default function Catalog() {
 
       setSortedProducts(products);
       setIsFiltered(true);
+      !isLoaded && setIsLoaded(true);
+
+      if (fromFilterList && newFilters.length > 0) {
+        const categoryFilters = newFilters
+          .filter((filter) => filter.type === "category")
+          .map(async (filter) => (await searchCategory(filter.value)).id);
+        const colorFilters = newFilters.filter((filter) => filter.type === "color").map(async (filter) => (await searchColor(filter.value)).id);
+        const brandFilters = newFilters.filter((filter) => filter.type === "brand");
+        Promise.all(categoryFilters)
+          .then((resolvedCategoryFilters) => {
+            Promise.all(colorFilters)
+              .then((resolvedColorFilters) => {
+                const filtersQueryString = [
+                  ...(resolvedCategoryFilters.length > 0 ? [`category:${resolvedCategoryFilters.join("+")}`] : []),
+                  ...(resolvedColorFilters.length > 0 ? [`color:${resolvedColorFilters.join("+")}`] : []),
+                  ...(brandFilters.length > 0 ? [`brand:${brandFilters.map((filter) => filter.value).join("+")}`] : []),
+                ].join(",");
+                navigate(`/catalog?filters=${filtersQueryString}`);
+              })
+              .catch(() => {});
+          })
+          .catch(() => {});
+      }
+      if (fromFilterList && newFilters.length === 0) navigate("/catalog");
     });
-  };
+  }
+
+  useEffect(() => {
+    const handleHrefChange = async () => {
+      const urlSearchParams = new URL(window.location.href).searchParams;
+      const filtersParam = urlSearchParams.get("filters");
+      const searchParam = urlSearchParams.get("search");
+      if (filtersParam) {
+        const allFilters = filtersParam.split(",");
+        const categoryFilters = await Promise.all(
+          allFilters
+            .filter((filter) => filter.startsWith("category:"))
+            .map(async (filter) => {
+              const categoryIDs = filter.replace("category:", "").replace(" ", "+").split("+");
+              const categoryPromises = categoryIDs.map(async (id) => {
+                const category = await getCategory(id);
+                return category?.name;
+              });
+              const categories = await Promise.all(categoryPromises);
+              return categories;
+            }),
+        );
+        const colorFilters = await Promise.all(
+          allFilters
+            .filter((filter) => filter.startsWith("color:"))
+            .map(async (filter) => {
+              const colorIDs = filter.replace("color:", "").replace(" ", "+").split("+");
+              const colorPromises = colorIDs.map(async (id) => {
+                const color = await getColor(id);
+                return color?.name;
+              });
+              const colors = await Promise.all(colorPromises);
+              return colors;
+            }),
+        );
+        const brandFilters = allFilters.filter((filter) => filter.startsWith("brand:")).map((filter) => filter.replace("brand:", ""));
+        const filters: Filter[] = [];
+        categoryFilters.forEach((categories) => {
+          categories.forEach((category) => {
+            filters.push({ type: "category", value: category });
+          });
+        });
+        colorFilters.forEach((colors) => {
+          colors.forEach((color) => {
+            filters.push({ type: "color", value: color });
+          });
+        });
+        brandFilters.forEach((brand) => {
+          filters.push({ type: "brand", value: brand });
+        });
+        setIsFiltered(false);
+        setFilters(filters);
+        filterProducts(filters, false);
+      } else if (searchParam) {
+        // note: assuming no filtering and searching at the same time
+        setFilters([]);
+        searchProducts();
+      } else {
+        setIsFiltered(false);
+        setFilters([]);
+        filterProducts([], false);
+      }
+    };
+
+    handleHrefChange();
+  }, [window.location.href]);
 
   const updateFilters = (type: FilterTypes) => {
     return (values: string[]) => {
@@ -108,16 +185,6 @@ export default function Catalog() {
   };
 
   const getFilterValues = (type: FilterTypes) => filters.filter((filter) => filter.type === type).map((value) => value.value);
-
-  useEffect(() => {
-    setDocumentTitle("Catalog");
-
-    if (!user)
-      getProducts().then((products) => {
-        setSortedProducts(products);
-        setIsLoaded(true);
-      });
-  }, [user]);
 
   const [openCategoryFilter, categoryFilter] = useDisclosure(true);
   const [openBrandFilter, brandFilter] = useDisclosure(true);
@@ -142,7 +209,9 @@ export default function Catalog() {
                   if (product.expand?.category)
                     for (const category of product.expand.category) if (!categories.includes(category.name)) categories.push(category.name);
 
-                return categories.map((category) => <Checkbox mb={5} mt={5} label={replaceAll(category, "/", " / ")} value={category} key={category} />);
+                return categories.map((category) => (
+                  <Checkbox mb={5} mt={5} label={replaceAll(category, "/", " / ")} value={category} key={category} />
+                ));
               })()}
             </ScrollArea.Autosize>
           </Checkbox.Group>
@@ -258,8 +327,6 @@ export default function Catalog() {
             <Text>
               <UnstyledButton
                 onClick={() => {
-                  location.state = null;
-                  user = null;
                   getProducts().then(setSortedProducts);
                   setFilters([]);
                 }}
