@@ -7,7 +7,7 @@ import ProductCard from "../../components/Card";
 import SmallChangeHelmet from "../../components/Helmets/SmallChangeHelmet";
 import { getCategory, getColor, getProducts, searchCategory, searchColor } from "../../lib/database";
 import { Product } from "../../lib/database/models";
-import LoaderBox, { replaceAll, setDocumentTitle, toTitleCase } from "../../lib/utils";
+import LoaderBox, { setDocumentTitle, toTitleCase } from "../../lib/utils";
 import classes from "./index.module.css";
 
 type FilterTypes = "color" | "category" | "brand";
@@ -210,7 +210,7 @@ export default function Catalog() {
                     for (const category of product.expand.category) if (!categories.includes(category.name)) categories.push(category.name);
 
                 return categories.map((category) => (
-                  <Checkbox mb={5} mt={5} label={replaceAll(category, "/", " / ")} value={category} key={category} />
+                  <Checkbox mb={5} mt={5} label={category.replaceAll("/", " / ")} value={category} key={category} />
                 ));
               })()}
             </ScrollArea.Autosize>

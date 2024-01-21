@@ -62,16 +62,8 @@ export default function LoaderBox() {
   );
 }
 
-function escapeRegExp(str: string) {
-  return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); // $& means the whole matched string
-}
-
-export function replaceAll(str: string, find: string, replace: string) {
-  return str.replace(new RegExp(escapeRegExp(find), "g"), replace);
-}
-
 function hexToRgb(hex: string) {
-  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(replaceAll(hex, "#", ""));
+  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex.replaceAll("#", ""));
   if (!result) return null;
   return {
     r: parseInt(result[1], 16) / 255,
