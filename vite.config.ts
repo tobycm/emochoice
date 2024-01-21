@@ -1,9 +1,14 @@
-import react from "@vitejs/plugin-react-swc";
+import preact from "@preact/preset-vite";
 import { defineConfig } from "vite";
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react()],
+  esbuild: {
+    jsxFactory: "h",
+    jsxFragment: "Fragment",
+    jsxInject: `import { h, Fragment } from 'preact'`,
+  },
+  plugins: [preact()],
   build: {
     rollupOptions: {
       output: {

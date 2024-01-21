@@ -36,11 +36,10 @@
     "react-router-dom": "^6.21.3"
   },
   "devDependencies": {
-    "@prefresh/vite": "^2.4.5",
+    "@preact/preset-vite": "^2.8.1",
     "@types/node": "^20.11.5",
     "@typescript-eslint/eslint-plugin": "^6.19.0",
     "@typescript-eslint/parser": "^6.19.0",
-    "@vitejs/plugin-react-swc": "^3.5.0",
     "eslint": "^8.56.0",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.5",
