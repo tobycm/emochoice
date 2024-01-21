@@ -224,7 +224,7 @@ export default function Product() {
             {product.custom_id && ` - ${product.custom_id}`}
           </Title>
           <Title c={"emochoice-blue"} order={4}>
-            {product.brand}
+            {product.expand.brand.name}
           </Title>
           {product.tags.includes("on_sale") && (
             <Badge size="xl" mt="md" c="red">
@@ -320,7 +320,6 @@ export default function Product() {
                   accept="image/png,image/jpeg,image/gif,image/webp,image/svg+xml"
                   variant="default"
                   c={"emochoice-yellow"}
-                  // @ts-ignore they didn't fix the @types
                   placeholder="Upload"
                   {...form.getInputProps("fileInput")}
                   value={customImage}
@@ -381,7 +380,7 @@ export default function Product() {
                     <Table.Td>
                       <strong>Brand</strong>
                     </Table.Td>
-                    <Table.Td>{product.brand}</Table.Td>
+                    <Table.Td>{product.expand.brand.name}</Table.Td>
                   </Table.Tr>
                   <Table.Tr>
                     <Table.Td>

@@ -6,7 +6,7 @@ type ID = string;
 
 export interface Product extends RecordModel {
   name: string;
-  brand: string;
+  brand: ID;
   custom_id: string;
   category: ID[];
   description: string;
@@ -18,12 +18,19 @@ export interface Product extends RecordModel {
   tags: string[];
   boundary: string;
   custom_data: Record<string, string>;
-  expand?: {
+  expand: {
+    brand: ProductBrand; // required
     category?: ProductCategory[];
     colors?: ProductColor[];
     types?: ProductType[];
   };
 }
+
+export interface Brand {
+  name: string;
+}
+
+export type ProductBrand = RecordModel & Brand;
 
 export interface DropdownMenuItem extends RecordModel {
   parent: ID;

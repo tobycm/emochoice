@@ -50,7 +50,7 @@ export default function ProductCard(props: { product: Product; inProductPage?: b
               <Box m={"4%"}>
                 <Box display="flex" style={{ justifyContent: "space-between" }}>
                   <Text c={"emochoice-blue"} style={{ fontSize: "13px" }} fw={600} lineClamp={1}>
-                    {product.brand}
+                    {product.expand.brand.name}
                   </Text>
                   <Box display="flex">
                     {product.tags.includes("on_sale") && (
@@ -110,7 +110,7 @@ export default function ProductCard(props: { product: Product; inProductPage?: b
           <Box m={"5%"}>
             <Box display="flex" style={{ justifyContent: "space-between" }}>
               <Text c={"emochoice-blue"} style={{ fontSize: "13px" }} fw={600} lineClamp={1}>
-                {product.brand}
+                {product.expand.brand.name}
               </Text>
               <Box display="flex">
                 {product.tags.includes("on_sale") && (
