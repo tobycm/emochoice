@@ -8,7 +8,7 @@ import { formatPhoneNumber } from "../../lib/utils";
 import classes from "./index.module.css";
 
 export default function Contact() {
-  const [contactMethod, setContactMethod] = useState("Email");
+  const [contactMethod, setContactMethod] = useState("Email & Phone number");
   const form = useForm({
     initialValues: {
       name: "",

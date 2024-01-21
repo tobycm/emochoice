@@ -13,7 +13,7 @@ import classes from "./index.module.css";
 export default function Checkout() {
   const navigate = useNavigate();
   const { list, updateList } = useList();
-  const [contactMethod, setContactMethod] = useState("Email");
+  const [contactMethod, setContactMethod] = useState("Email & Phone number");
   const isMobile = useMediaQuery(`(max-width: 36em)`);
   const form = useForm({
     initialValues: {
