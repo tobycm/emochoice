@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 
 import { Avatar, Box, Image, Overlay, ScrollArea } from "@mantine/core";
 import { IconX } from "@tabler/icons-react";
@@ -25,7 +25,7 @@ export default function ImageZoom(props: {
     };
   }, []);
 
-  const handleContentClick = (event: React.MouseEvent) => {
+  const handleContentClick = (event: MouseEvent) => {
     event.stopPropagation();
   };
 

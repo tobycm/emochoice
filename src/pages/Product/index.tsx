@@ -3,7 +3,7 @@ import { useForm } from "@mantine/form";
 import { useMediaQuery } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
 import { IconInfoCircle, IconNumber, IconShoppingCartPlus } from "@tabler/icons-react";
-import React, { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "preact/hooks";
 import { Helmet } from "react-helmet-async";
 import { useLoaderData, useLocation, useNavigate } from "react-router-dom";
 import ProductCard from "../../components/Card";
@@ -12,7 +12,7 @@ import SingleColorButton from "../../components/ColorButton/Single";
 import ImageZoom from "../../components/ImageZoom";
 import CustomImageModal from "../../components/Modal/CustomImage";
 import pocketbase, { getProducts } from "../../lib/database";
-import { Color, Product, ProductColor, Type } from "../../lib/database/models";
+import { Color, Product as DProduct, ProductColor, Type } from "../../lib/database/models";
 import { List, useList } from "../../lib/list";
 import { HTMLtoText, filterProducts, pasteImage, toTitleCase } from "../../lib/utils";
 import classes from "./index.module.css";
@@ -52,16 +52,16 @@ function preview(backgroundImage: HTMLImageElement, userImage: HTMLImageElement,
 }
 
 export default function Product() {
-  const { product } = useLoaderData() as { product: Product };
-  const [customImage, setCustomImage] = React.useState<File | null>(null);
-  const [image, setImage] = React.useState<File | null>(null);
-  const [modalState, setModalState] = React.useState({ open: false, fileUploaded: false });
-  const [productImage, setProductImage] = React.useState<string>(
+  const { product } = useLoaderData() as { product: DProduct };
+  const [customImage, setCustomImage] = useState<File | null>(null);
+  const [image, setImage] = useState<File | null>(null);
+  const [modalState, setModalState] = useState({ open: false, fileUploaded: false });
+  const [productImage, setProductImage] = useState<string>(
     product.images.length > 0 ? pocketbase.getFileUrl(product, product.images[0]) : "/images/no_image.png",
   );
-  const [images, setImages] = React.useState<string[]>([]);
-  const [relatedProducts, setRelatedProducts] = React.useState<Product[]>([]);
-  const [bigImage, openBigImage] = React.useState(false);
+  const [images, setImages] = useState<string[]>([]);
+  const [relatedProducts, setRelatedProducts] = useState<DProduct[]>([]);
+  const [bigImage, openBigImage] = useState(false);
   const { list, updateList } = useList();
   const navigate = useNavigate();
 
@@ -288,7 +288,7 @@ export default function Product() {
                 <Text mr="md">Type</Text>
                 <NativeSelect
                   data={product.expand.types.map((type) => type.name)}
-                  onChange={(e) => {
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                     const type = product.expand?.types?.find((type) => type.name === e.currentTarget.value);
                     if (!type) return;
                     form.setFieldValue("type", type);

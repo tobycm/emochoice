@@ -55,7 +55,7 @@ export default function Gallery(props: { home: boolean }) {
                 w={isMobile ? "80vw" : "250px"}
                 ml="auto"
                 mr="auto"
-                style={{ aspectRatio: 9 / 11, cursor: "pointer" }}
+                style={{ aspectRatio: "calc(9/11)", cursor: "pointer" }}
                 src={link}
                 // @ts-ignore update later
                 fetchpriority={index == 0 ? "high" : "low"}
@@ -64,9 +64,7 @@ export default function Gallery(props: { home: boolean }) {
           </Carousel.Slide>
         ));
         setSlides((prevSlides) => ({ ...prevSlides, [type]: slides }));
-      } catch {
-        // bruh
-      }
+      } catch {}
     };
 
     if (window.location.href.includes("/gallery")) setDocumentTitle("Gallery");
@@ -94,7 +92,6 @@ export default function Gallery(props: { home: boolean }) {
         <Title ta="center" order={1} mb="lg">
           Gallery
         </Title>
-
         <LoaderBox />
       </Box>
     );

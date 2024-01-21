@@ -39,10 +39,12 @@ export default function Header() {
   }, []);
 
   function search(wide: boolean) {
-    const searchQuery = document.getElementById(wide ? "searchbarWide" : "searchbarMobile")?.getAttribute("value");
+    const element = document.getElementById(wide ? "searchbarWide" : "searchbarMobile");
+    const searchQuery = (element as HTMLInputElement)?.value;
     if (!searchQuery) return;
     navigate(`/catalog?search=${searchQuery}`);
     if (isMobile) toggleSearchbar();
+    element?.blur();
   }
 
   const [searchResults, setSearchResults] = useState<string[]>([]);
@@ -75,8 +77,8 @@ export default function Header() {
               placeholder="What are you looking for?"
               id={"searchbarMobile"}
               data={productsNames}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") search(false);
+              onKeyDown={(e: KeyboardEvent) => {
+                if (e.key == "Enter") search(false);
               }}
               limit={10}
             />
@@ -131,8 +133,8 @@ export default function Header() {
               id={"searchbarWide"}
               visibleFrom={"xs"}
               data={productsNames}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") search(true);
+              onKeyDown={(e: KeyboardEvent) => {
+                if (e.key == "Enter") search(true);
               }}
               limit={10}
             />
