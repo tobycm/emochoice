@@ -19,7 +19,7 @@ export default function Header() {
   const navigate = useNavigate();
   const isMobile = useMediaQuery("(max-width: 36em)");
 
-  const [dropdownTree, setDropdownTree] = useState<Tree>({});
+  const [dropdownTree, setDropdownTree] = useState(new Tree());
 
   useEffect(() => {
     getDropdownMenuList().then((items) => {

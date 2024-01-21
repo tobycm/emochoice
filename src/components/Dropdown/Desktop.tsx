@@ -2,13 +2,22 @@ import { Box, Menu, Tabs, Text } from "@mantine/core";
 import { IconChevronRight } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { searchCategory } from "../../lib/database";
-import { Tree, isNotEmptyObject } from "../../lib/utils";
+import { ProductCategory } from "../../lib/database/models";
+import { Tree } from "../../lib/utils";
 import classes from "./index.module.css";
 
 export default function DesktopDropdown({ tree }: { tree: Tree }) {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<string | null>(null);
+
+  /**
+   * @param categories IDs of categories to go to
+   */
+  function goToCatalog(categories?: ProductCategory[]) {
+    return () => {
+      navigate(`/catalog${categories?.length ? `?filters=category:${categories.map((cate) => cate.id).join("+")}` : ""}`);
+    };
+  }
 
   useEffect(() => {
     const handlePathnameChange = () => {
@@ -36,11 +45,7 @@ export default function DesktopDropdown({ tree }: { tree: Tree }) {
         onChange={(tab) => setActiveTab(tab)}
         variant="outline"
         visibleFrom="xs"
-        classNames={{
-          root: classes.tabs,
-          list: classes.tabsList,
-          tab: classes.tab,
-        }}
+        classNames={{ root: classes.tabs, list: classes.tabsList, tab: classes.tab }}
       >
         <Tabs.List>
           <Menu.Target>
@@ -52,76 +57,43 @@ export default function DesktopDropdown({ tree }: { tree: Tree }) {
           </Menu.Target>
           <Menu.Dropdown>
             <Box display={"flex"}>
-              {Object.keys(tree).map((key) => (
+              {Array.from(tree.entries()).map(([cate, subTree]) => (
                 <Box mr="xs">
-                  <Menu.Item
-                    onClick={async () => {
-                      const ID = (await searchCategory(decodeURIComponent(key))).id;
-                      navigate(`/catalog?filters=category:${ID}`);
-                    }}
-                  >
+                  <Menu.Item onClick={goToCatalog([cate])}>
                     <Text size="md" className={classes.menuTitle}>
-                      {key}
+                      {cate.name}
                     </Text>
                   </Menu.Item>
-                  {Object.keys(tree[key]).map((key2) => {
-                    const subTree = (tree[key] as Record<string, string>)[key2];
-                    return isNotEmptyObject(subTree) ? (
-                      <Menu.Item key={key2}>
+                  {Array.from(subTree.entries()).map(([cate2, subTree]) =>
+                    !subTree.size ? (
+                      <Menu.Item key={cate2.id} onClick={goToCatalog([cate, cate2])}>
+                        {cate2.name}
+                      </Menu.Item>
+                    ) : (
+                      <Menu.Item key={cate2.id}>
                         <Menu trigger="hover" position="right-start" arrowPosition="center" offset={20} openDelay={250}>
                           <Menu.Target>
                             <Box
-                              onClick={async () => {
-                                const IDs = await Promise.all(
-                                  [key, key2].map(async (name) => {
-                                    return (await searchCategory(decodeURIComponent(name))).id;
-                                  }),
-                                );
-                                navigate(`/catalog?filters=category:${IDs.join("+")}`);
-                              }}
+                              onClick={goToCatalog([cate, cate2])}
                               display="flex"
                               style={{ justifyContent: "space-between", alignItems: "center" }}
                               w="100%"
                             >
-                              <Text size="sm">{key2}</Text>
+                              <Text size="sm">{cate2.name}</Text>
                               <IconChevronRight style={{ width: "20px" }} />
                             </Box>
                           </Menu.Target>
                           <Menu.Dropdown>
-                            {Object.keys(subTree).map((key3) => (
-                              <Menu.Item
-                                key={key3}
-                                onClick={async () => {
-                                  const IDs = await Promise.all(
-                                    [key, key2, key3].map(async (name) => {
-                                      return (await searchCategory(decodeURIComponent(name))).id;
-                                    }),
-                                  );
-                                  navigate(`/catalog?filters=category:${IDs.join("+")}`);
-                                }}
-                              >
-                                {key3}
+                            {Array.from(subTree.entries()).map(([cate3]) => (
+                              <Menu.Item key={cate3.id} onClick={goToCatalog([cate, cate2, cate3])}>
+                                {cate3.name}
                               </Menu.Item>
                             ))}
                           </Menu.Dropdown>
                         </Menu>
                       </Menu.Item>
-                    ) : (
-                      <Menu.Item
-                        key={key2}
-                        onClick={async () => {
-                          const IDs = await Promise.all(
-                            [key, key2].map(async (name) => {
-                              return (await searchCategory(decodeURIComponent(name))).id;
-                            }),
-                          );
-                          navigate(`/catalog?filters=category:${IDs.join("+")}`);
-                        }}
-                      >
-                        {key2}
-                      </Menu.Item>
-                    );
-                  })}
+                    ),
+                  )}
                 </Box>
               ))}
             </Box>

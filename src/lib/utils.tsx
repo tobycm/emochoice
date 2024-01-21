@@ -1,6 +1,6 @@
 /* eslint-disable react-refresh/only-export-components */
 import { Box, Loader } from "@mantine/core";
-import { Color, DropdownMenuItem, Product } from "./database/models";
+import { Color, DropdownMenuItem, Product, ProductCategory } from "./database/models";
 
 export function toTitleCase(str: string = "") {
   return str.replace(/\w\S*/g, function (txt) {
@@ -156,24 +156,26 @@ export function formatPhoneNumber(phoneNumber: string): string {
 // https://i.imgur.com/fEXYCgz.jpg
 // wtf
 
-export interface Tree {
-  [key: string]: Record<string, never> | Tree;
-}
+// export interface Tree {
+//   [key: ProductCategory]: Record<string, never> | Tree;
+// }
+
+export class Tree extends Map<ProductCategory, Tree> {}
 
 export function makeDropdownTree(currentItem: DropdownMenuItem, root: DropdownMenuItem[]): [Tree, string[]] {
-  const tree: Tree = {};
+  const tree = new Tree();
 
   const existingItems: string[] = [];
 
   for (const item of currentItem.expand?.children ?? []) {
-    tree[item.name] = {};
+    tree.set(item, new Tree());
 
     const dad = root.find((menuItem) => menuItem.expand?.parent?.id === item.id);
 
     if (dad?.expand?.children) {
       const [childTree, eItems] = makeDropdownTree(dad, root);
 
-      tree[item.name] = childTree;
+      tree.set(item, childTree);
 
       existingItems.push(...eItems);
     }
@@ -184,6 +186,6 @@ export function makeDropdownTree(currentItem: DropdownMenuItem, root: DropdownMe
   return [tree, existingItems];
 }
 
-export function isNotEmptyObject(obj: unknown) {
+export function isNotEmpty(obj: unknown) {
   return obj !== null && typeof obj === "object" && Object.keys(obj).length > 0;
 }
