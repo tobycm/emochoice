@@ -229,7 +229,7 @@ export default function Catalog() {
                 .map((product) => product.expand.brand)
                 .filter((brand, _, self) => !self.includes(brand))
                 .map((brand) => (
-                  <Checkbox mb={5} mt={5} label={brand.name} value={brand.id} key={brand.id} />
+                  <Checkbox mb={5} mt={5} label={brand.name} value={brand.name} key={brand.id} />
                 ))}
             </ScrollArea.Autosize>
           </Checkbox.Group>
