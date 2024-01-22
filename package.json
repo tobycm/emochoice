@@ -22,6 +22,7 @@
     "@mantine/nprogress": "^7.4.2",
     "@mantine/spotlight": "^7.4.2",
     "@mantine/tiptap": "^7.4.2",
+    "@tabler/icons-react": "^2.46.0",
     "embla-carousel-autoplay": "^8.0.0-rc19",
     "pocketbase": "0.20.1",
     "preact": "^10.19.3",
