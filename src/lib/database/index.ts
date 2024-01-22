@@ -1,5 +1,5 @@
 import PocketBase, { FileOptions, RecordModel } from "pocketbase";
-import { DropdownMenuItem, Product, ProductCategory } from "./models";
+import { DropdownMenuItem, Product } from "./models";
 
 import Constants from "../constants";
 
@@ -10,22 +10,6 @@ export default pocketbase;
 export async function getGallery(name: string, options?: FileOptions) {
   const result = await pocketbase.collection("gallery").getFirstListItem<{ pictures: string[] } & RecordModel>(`name = "${name}"`);
   return result.pictures.map((picture) => pocketbase.getFileUrl(result, picture, options));
-}
-
-export async function searchCategory(query: string) {
-  return await pocketbase.collection("categories").getFirstListItem<ProductCategory>(`name ~ "${query}"`);
-}
-
-export async function getCategory(id: string) {
-  return await pocketbase.collection("categories").getOne<ProductCategory>(id);
-}
-
-export async function getColor(id: string) {
-  return await pocketbase.collection("colors").getOne(id);
-}
-
-export async function searchColor(query: string) {
-  return await pocketbase.collection("colors").getFirstListItem<ProductCategory>(`name ~ "${query}"`);
 }
 
 let products: Product[] | undefined;

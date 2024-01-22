@@ -5,8 +5,7 @@ import Autoplay from "embla-carousel-autoplay";
 import { useEffect, useRef, useState } from "react";
 import DefaultHelmet from "../../components/Helmets/DefaultHelmet";
 import HomeCard from "../../components/HomeCard";
-import { getGallery, searchCategory } from "../../lib/database";
-import { setDocumentTitle } from "../../lib/utils";
+import { getGallery } from "../../lib/database";
 import Gallery from "../Gallery";
 import classes from "./index.module.css";
 
@@ -16,7 +15,6 @@ export default function Home() {
   const [slides, setSlides] = useState<ReturnType<typeof Carousel.Slide>[]>([]);
   const [threeCards, setThreeCards] = useState<string[]>([]);
   const [embla, setEmbla] = useState<Embla | null>(null);
-  const [categoryIDList, setCategoryIDList] = useState<Record<string, string>[]>([]);
 
   useEffect(() => {
     getGallery("home_carousel").then(async (links) => {
@@ -29,11 +27,7 @@ export default function Home() {
         setSlides((prev) => [
           ...prev,
           <Carousel.Slide key={link}>
-            <Image
-              src={link}
-              // @ts-ignore update later
-              fetchpriority={index == 0 ? "high" : "low"}
-            />
+            <Image src={link} fetchpriority={index == 0 ? "high" : "low"} />
           </Carousel.Slide>,
         ]);
       }
@@ -50,26 +44,6 @@ export default function Home() {
 
     getGallery("3_cards", { thumb: "0x350" }).then(setThreeCards);
   }, [embla]);
-
-  useEffect(() => {
-    setDocumentTitle();
-
-    const fetchIDs = async () => {
-      ["Clothing & Accessories Print", "Digital Printing", "Souvenirs & Gifts Printing"].forEach(async (name, index) => {
-        const id = (await searchCategory(decodeURIComponent(name))).id;
-        setCategoryIDList((prev) => [
-          ...prev,
-          {
-            name,
-            index: index.toString(),
-            id,
-          },
-        ]);
-      });
-    };
-
-    fetchIDs();
-  }, []);
 
   return (
     <>
@@ -100,11 +74,9 @@ export default function Home() {
           Shop by category
         </Title>
         <Box className={classes.cardsBox}>
-          {categoryIDList
-            .sort((a, b) => parseInt(a.index) - parseInt(b.index))
-            .map((category) => (
-              <HomeCard name={category.name} image={threeCards[parseInt(category.index)]} key={category.index} id={category.id} />
-            ))}
+          <HomeCard name={"Clothing & Accessories Print"} image={threeCards[0]} key={"Clothing & Accessories Print"} id={"hksx1e8gqajlaaq"} />
+          <HomeCard name={"Digital Printing"} image={threeCards[1]} key={"Digital Printing"} id={"l13znpfe1k6yuj6"} />
+          <HomeCard name={"Souvenirs & Gifts Printing"} image={threeCards[2]} key={"Souvenirs & Gifts Printing"} id={"kt45aqsnscvtqt5"} />
         </Box>
         <Divider my="xl" size="xs" w={"100%"}></Divider>
       </Container>

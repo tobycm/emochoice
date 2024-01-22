@@ -15,7 +15,7 @@ import CustomImageModal from "../../components/Modal/CustomImage";
 import pocketbase, { getProducts } from "../../lib/database";
 import { Color, Product as DProduct, ProductColor, Type } from "../../lib/database/models";
 import { List, useList } from "../../lib/list";
-import { HTMLtoText, filterProducts, pasteImage, toTitleCase } from "../../lib/utils";
+import { HTMLtoText, filterProductsByCategories, pasteImage, toTitleCase } from "../../lib/utils";
 import classes from "./index.module.css";
 
 export interface OrderData {
@@ -116,7 +116,7 @@ export default function Product() {
 
   useEffect(() => {
     getProducts().then((products) => {
-      setRelatedProducts(filterProducts(products, product.category, 1));
+      setRelatedProducts(filterProductsByCategories(products, product.category, 1));
     });
   }, [product.category]);
 

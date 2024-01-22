@@ -79,7 +79,7 @@ export function darkOrLight(hex: string): "light" | "dark" {
   return rgb.r * 0.299 + rgb.g * 0.587 + rgb.b * 0.114 > 0.5 ? "light" : "dark"; // copilot
 }
 
-export function filterProducts(products: Product[], categoriesId: string[], offsetLast: number = 0): Product[] {
+export function filterProductsByCategories(products: Product[], categoriesId: string[], offsetLast: number = 0): Product[] {
   const iterations = [[...products]];
 
   for (const categoryId of categoriesId) {
