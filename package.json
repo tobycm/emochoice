@@ -23,7 +23,6 @@
     "@mantine/spotlight": "^7.4.2",
     "@mantine/tiptap": "^7.4.2",
     "embla-carousel-autoplay": "^8.0.0-rc19",
-    "icons-react": "^3.7.1",
     "pocketbase": "0.20.1",
     "preact": "^10.19.3",
     "react-helmet-async": "^2.0.4",
