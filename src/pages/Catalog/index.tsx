@@ -72,7 +72,7 @@ export default function Catalog() {
             products = products.filter((product) => !!product.expand?.category?.find((productCategory) => productCategory.name === filter.value));
             break;
           case "brand":
-            products = products.filter((product) => product.brand === filter.value);
+            products = products.filter((product) => product.expand.brand.name === filter.value);
             break;
         }
       }
@@ -225,13 +225,12 @@ export default function Catalog() {
         >
           <Checkbox.Group value={getFilterValues("brand")} onChange={updateFilters("brand")}>
             <ScrollArea.Autosize mah={!isMobile ? 250 : "auto"}>
-              {(() => {
-                const brands: string[] = [];
-
-                for (const product of products) if (!brands.includes(product.brand)) brands.push(product.brand);
-
-                return brands.map((brand) => <Checkbox mb={5} mt={5} label={brand} value={brand} key={brand} />);
-              })()}
+              {products
+                .map((product) => product.expand.brand)
+                .filter((brand, _, self) => !self.includes(brand))
+                .map((brand) => (
+                  <Checkbox mb={5} mt={5} label={brand.name} value={brand.name} key={brand.id} />
+                ))}
             </ScrollArea.Autosize>
           </Checkbox.Group>
         </NavLink>

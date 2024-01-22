@@ -32,7 +32,7 @@ let products: Product[] | undefined;
 
 export async function getProducts() {
   if (!products) {
-    products = await pocketbase.collection("products").getFullList<Product>(1000, { expand: "category,colors,types", sort: "-created" });
+    products = await pocketbase.collection("products").getFullList<Product>(1000, { expand: "category,colors,types,brand", sort: "-created" });
     pocketbase.collection("products").subscribe<Product>(
       "*",
       (event) => {
@@ -48,19 +48,11 @@ export async function getProducts() {
             break;
         }
       },
-      { expand: "category,colors,types" },
+      { expand: "category,colors,types,brand" },
     );
   }
 
   return products;
-}
-
-const metadataIds = {
-  availableBrands: "qt8d6zsesjpw66n",
-} as const;
-
-export async function getMetadata(key: keyof typeof metadataIds): Promise<unknown | null> {
-  return (await pocketbase.collection("metadata").getOne<{ name: string; value: unknown | null }>(metadataIds[key])).value;
 }
 
 export async function getDocument(id: string) {
