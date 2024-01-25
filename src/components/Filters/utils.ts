@@ -40,15 +40,8 @@ export function filterProducts(products: Product[], filters: Filter[]) {
   if (!filters.length) return products;
 
   return products.filter((product) =>
-    filters.every((filter) => {
-      switch (filter.type) {
-        case "brand":
-          return product.brand === filter.value.id;
-        case "category":
-          return product.category.includes(filter.value.id);
-        case "color":
-          return product.colors.includes(filter.value.id);
-      }
-    }),
+    filters.every(
+      (filter) => product.brand === filter.value.id || product.category?.includes(filter.value.id) || product.colors?.includes(filter.value.id),
+    ),
   );
 }

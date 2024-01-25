@@ -24,7 +24,6 @@
     "@mantine/tiptap": "^7.4.2",
     "@tabler/icons-react": "^2.46.0",
     "embla-carousel-autoplay": "^8.0.0-rc19",
-    "@tabler/icons-react": "^2.46.0",
     "pocketbase": "0.20.1",
     "preact": "^10.19.3",
     "react-helmet-async": "^2.0.4",
