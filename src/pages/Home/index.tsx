@@ -5,7 +5,7 @@ import Autoplay from "embla-carousel-autoplay";
 import { useEffect, useRef, useState } from "react";
 import DefaultHelmet from "../../components/Helmets/DefaultHelmet";
 import HomeCard from "../../components/HomeCard";
-import { getGallery, searchCategory } from "../../lib/database";
+import pocketbase, { getGallery, searchCategory } from "../../lib/database";
 import { setDocumentTitle } from "../../lib/utils";
 import Gallery from "../Gallery";
 import classes from "./index.module.css";
@@ -19,21 +19,17 @@ export default function Home() {
   const [categoryIDList, setCategoryIDList] = useState<Record<string, string>[]>([]);
 
   useEffect(() => {
-    getGallery("home_carousel").then(async (links) => {
-      for (const link of links) {
-        const index = links.indexOf(link);
+    getGallery("home_carousel").then(async (gallary) => {
+      for (const link of gallary.pictures) {
+        const index = gallary.pictures.indexOf(link);
 
-        // @ts-ignore update later
-        if (index == 0) await fetch(link, { priority: "high" });
+        // @ts-ignore when priority in type?
+        if (index == 0) await fetch(pocketbase.getFileUrl(gallary, link), { priority: "high" });
 
         setSlides((prev) => [
           ...prev,
           <Carousel.Slide key={link}>
-            <Image
-              src={link}
-              // @ts-ignore update later
-              fetchpriority={index == 0 ? "high" : "low"}
-            />
+            <Image src={pocketbase.getFileUrl(gallary, link)} fetchpriority={index == 0 ? "high" : "low"} />
           </Carousel.Slide>,
         ]);
       }
@@ -48,14 +44,14 @@ export default function Home() {
       }
     });
 
-    getGallery("3_cards", { thumb: "0x350" }).then(setThreeCards);
+    getGallery("3_cards").then((gallary) => setThreeCards(gallary.pictures.map((link) => pocketbase.getFileUrl(gallary, link, { thumb: "0x350" }))));
   }, [embla]);
 
   useEffect(() => {
     setDocumentTitle();
 
     const fetchIDs = async () => {
-      ["Clothing & Accessories Print", "Digital Printing", "Souvenirs & Gifts Printing"].forEach(async (name, index) => {
+      ["Clothing & Accessories Printing", "Digital Printing", "Souvenirs & Gifts Printing"].forEach(async (name, index) => {
         const id = (await searchCategory(decodeURIComponent(name))).id;
         setCategoryIDList((prev) => [
           ...prev,
