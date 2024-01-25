@@ -1,4 +1,4 @@
-import PocketBase, { FileOptions, RecordModel } from "pocketbase";
+import PocketBase, { RecordModel } from "pocketbase";
 import { DropdownMenuItem, Product } from "./models";
 
 import Constants from "../constants";
@@ -7,9 +7,8 @@ const pocketbase = new PocketBase(Constants.PocketBaseURL);
 
 export default pocketbase;
 
-export async function getGallery(name: string, options?: FileOptions) {
-  const result = await pocketbase.collection("gallery").getFirstListItem<{ pictures: string[] } & RecordModel>(`name = "${name}"`);
-  return result.pictures.map((picture) => pocketbase.getFileUrl(result, picture, options));
+export async function getGallery(name: string) {
+  return await pocketbase.collection("gallery").getFirstListItem<{ pictures: string[] } & RecordModel>(`name = "${name}"`);
 }
 
 let products: Product[] | undefined;

@@ -4,7 +4,7 @@ import { useMediaQuery } from "@mantine/hooks";
 import { useEffect, useState } from "preact/hooks";
 import SmallChangeHelmet from "../../components/Helmets/SmallChangeHelmet";
 import ImageZoom from "../../components/ImageZoom";
-import { getGallery } from "../../lib/database";
+import pocketbase, { getGallery } from "../../lib/database";
 import LoaderBox, { setDocumentTitle } from "../../lib/utils";
 import classes from "./index.module.css";
 
@@ -43,20 +43,21 @@ export default function Gallery(props: { home: boolean }) {
   useEffect(() => {
     const fetchAndSetGallery = async (type: string) => {
       try {
-        const slides = (await getGallery(type, { thumb: "600x0" })).map((link, index) => (
+        const gallary = await getGallery(type);
+        const slides = gallary.pictures.map((link, index) => (
           <Carousel.Slide w="60%" key={link} mb="xl">
             <Box w="100%" mr={!isMobile ? 5 : 0} ml={!isMobile ? 5 : 0}>
               <Image
                 onClick={() => {
                   if (isMobile) return;
-                  setZoomImage(link);
+                  setZoomImage(pocketbase.getFileUrl(gallary, link));
                   openBigImage(true);
                 }}
                 w={isMobile ? "80vw" : "250px"}
                 ml="auto"
                 mr="auto"
                 style={{ aspectRatio: "calc(9/11)", cursor: "pointer" }}
-                src={link}
+                src={pocketbase.getFileUrl(gallary, link, { thumb: "600x0" })}
                 fetchpriority={index == 0 ? "high" : "low"}
               />
             </Box>
