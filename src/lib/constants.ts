@@ -1,5 +1,5 @@
 const Constants = Object.freeze({
-    PocketBaseURL: "https://pocketbase.emochoice.ca",
-})
+  PocketBaseURL: "http://localhost:41879",
+});
 
 export default Constants;
