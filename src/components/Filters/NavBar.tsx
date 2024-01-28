@@ -1,36 +1,31 @@
 import { Box, Checkbox, NavLink, ScrollArea } from "@mantine/core";
 import { useDisclosure, useMediaQuery } from "@mantine/hooks";
 import { IconCategory, IconColorFilter, IconIcons } from "@tabler/icons-react";
-import { useEffect, useState } from "preact/hooks";
+import { useEffect, useRef } from "preact/hooks";
 import { getProducts } from "../../lib/database";
-import { ProductBrand, ProductCategory, ProductColor } from "../../lib/database/models";
+import { Product, ProductCategory } from "../../lib/database/models";
 import { toTitleCase } from "../../lib/utils";
 import { Filter } from "./utils";
 
 export default function FilterNavBar({ setFilters, filters }: { setFilters: (filters: Filter[]) => void; filters: Filter[] }) {
-  const [brands, setBrands] = useState<ProductBrand[]>([]);
-  const [categories, setCategories] = useState<ProductCategory[]>([]);
-  const [colors, setColors] = useState<ProductColor[]>([]);
+  const isMobile = useMediaQuery("(max-width: 36em)");
+
+  const products = useRef<Product[]>([]);
 
   useEffect(() => {
-    getProducts().then((products) => {
-      const brands: ProductBrand[] = [];
-      const categories: ProductCategory[] = [];
-      const colors: ProductColor[] = [];
-
-      for (const product of products) {
-        if (!brands.find((brand) => brand.id === product.expand.brand.id)) brands.push(product.expand.brand);
-        for (const category of product.expand.category ?? []) if (!categories.find((cat) => cat.id === category.id)) categories.push(category);
-        for (const color of product.expand.colors ?? []) if (!colors.find((col) => col.id === color.id)) colors.push(color);
-      }
-
-      setBrands(brands);
-      setCategories(categories);
-      setColors(colors);
-    });
+    getProducts().then((p) => (products.current = p));
   }, []);
 
-  const isMobile = useMediaQuery("(max-width: 36em)");
+  const categories: ProductCategory[] = [];
+  for (const product of products.current)
+    for (const category of product.expand.category ?? []) if (!categories.find((cat) => cat.id === category.id)) categories.push(category);
+
+  const brands: ProductCategory[] = [];
+  for (const product of products.current) if (!brands.find((brand) => brand.id === product.brand)) brands.push(product.expand.brand);
+
+  const colors: ProductCategory[] = [];
+  for (const product of products.current)
+    for (const color of product.expand.colors ?? []) if (!colors.find((col) => col.id === color.id)) colors.push(color);
 
   const [openCategoryFilter, categoryFilter] = useDisclosure(true);
   const [openBrandFilter, brandFilter] = useDisclosure(true);
@@ -40,28 +35,25 @@ export default function FilterNavBar({ setFilters, filters }: { setFilters: (fil
     return filters.filter((filter) => filter.type === type).map((value) => value.value.name);
   }
 
-  function updateFilters(type: Filter["type"]) {
-    return (values: string[]) => {
+  function updateFilters(type: Filter["type"], values: Filter["value"][]) {
+    return (newValues: string[]) => {
+      console.log(type, newValues);
+
       const newFilters = filters.filter((filter) => filter.type !== type);
 
-      for (const selected of values) {
-        let value: Filter["value"];
+      console.log({ newFilters });
 
-        switch (type) {
-          case "color":
-            value = colors.find((color) => color.name === selected)!;
-            break;
-          case "category":
-            value = categories.find((category) => category.name === selected)!;
-            break;
-          case "brand":
-            value = brands.find((brand) => brand.name === selected)!;
-            break;
-        }
+      for (const selected of newValues) {
+        const value = values.find((value) => value.name === selected)!;
 
         if (newFilters.find((filter) => filter.value.id === value.id)) continue;
+
+        console.log({ type, value });
+
         newFilters.push({ type, value });
       }
+
+      console.log("before set new filters", { newFilters });
 
       setFilters(newFilters);
     };
@@ -76,7 +68,7 @@ export default function FilterNavBar({ setFilters, filters }: { setFilters: (fil
         opened={openCategoryFilter}
         onClick={categoryFilter.toggle}
       >
-        <Checkbox.Group value={getFilterValues("category")} onChange={updateFilters("category")}>
+        <Checkbox.Group value={getFilterValues("category")} onChange={updateFilters("category", categories)}>
           <ScrollArea.Autosize mah={!isMobile ? 250 : "auto"}>
             {categories.map((category) => (
               <Checkbox mb={5} mt={5} label={category.name.replaceAll("/", " / ")} value={category.name} key={category.id} />
@@ -91,7 +83,7 @@ export default function FilterNavBar({ setFilters, filters }: { setFilters: (fil
         opened={openBrandFilter}
         onClick={brandFilter.toggle}
       >
-        <Checkbox.Group value={getFilterValues("brand")} onChange={updateFilters("brand")}>
+        <Checkbox.Group value={getFilterValues("brand")} onChange={updateFilters("brand", brands)}>
           <ScrollArea.Autosize mah={!isMobile ? 250 : "auto"}>
             {brands.map((brand) => (
               <Checkbox mb={5} mt={5} label={brand.name} value={brand.name} key={brand.id} />
@@ -106,7 +98,7 @@ export default function FilterNavBar({ setFilters, filters }: { setFilters: (fil
         opened={openColorFilter}
         onClick={colorFilter.toggle}
       >
-        <Checkbox.Group value={getFilterValues("color")} onChange={updateFilters("color")}>
+        <Checkbox.Group value={getFilterValues("color")} onChange={updateFilters("color", colors)}>
           <ScrollArea.Autosize mah={!isMobile ? 250 : "auto"}>
             {colors.map((color) => (
               <Checkbox mb={5} mt={5} label={toTitleCase(color.name)} value={color.name} key={color.id} />

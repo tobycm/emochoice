@@ -18,47 +18,46 @@ export default function Catalog() {
   const isMobile = useMediaQuery("(max-width: 36em)");
   const navigate = useNavigate();
 
-  const [products, setProducts] = useState<Product[]>([]);
-
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [filters, setFilters] = useState<Filter[]>([]);
+
+  const [products, setProducts] = useState<Product[]>([]);
 
   useEffect(() => {
     setDocumentTitle("Catalog");
 
     const url = new URL(window.location.href);
+
     const searchQuery = url.searchParams.get("search")?.toLowerCase();
     if (searchQuery) setSearchQuery(searchQuery);
 
-    const filtersQuery = url.searchParams.get("filters");
-
-    if (filtersQuery) {
-      getProducts().then((products) => {
-        products = outOfStockToEnd(products);
-
-        const filters = getFilters(products, filtersQuery.split("+"));
-        setFilters(filters);
-      });
-    }
+    const filtersId = url.searchParams.get("filters")?.split("+");
+    if (filtersId) getFilters(filtersId).then(setFilters);
   }, []);
 
   useEffect(() => {
-    getProducts().then((products) => {
-      products = outOfStockToEnd(products);
-
+    filterProducts(filters).then((products) => {
       if (searchQuery) products = products.filter((product) => product.name.toLowerCase().includes(searchQuery));
 
-      products = filterProducts(products, filters);
+      products = outOfStockToEnd(products);
+      !isLoaded && setIsLoaded(true);
+
       setProducts(products);
-      setIsLoaded(true);
-
-      if (!filters.length) return navigate("/catalog");
-
-      const url = new URL(window.location.href);
-      url.searchParams.set("filters", filters.map((filter) => filter.value.id).join("+"));
-      navigate(url.pathname + url.search);
     });
   }, [searchQuery, filters]);
+
+  useEffect(() => {
+    if (!filters.length) navigate("/catalog");
+    else {
+      const url = new URL(window.location.href);
+      const newFilters = filters.map((filter) => filter.value.id).join("+");
+      if (url.searchParams.get("filters") !== newFilters) {
+        url.searchParams.set("filters", newFilters);
+
+        navigate(url.pathname + url.search);
+      }
+    }
+  }, [filters]);
 
   const [filterModalOpened, filterModalControls] = useDisclosure(false);
 

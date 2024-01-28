@@ -5,7 +5,7 @@ import Autoplay from "embla-carousel-autoplay";
 import { useEffect, useRef, useState } from "react";
 import DefaultHelmet from "../../components/Helmets/DefaultHelmet";
 import HomeCard from "../../components/HomeCard";
-import pocketbase, { getGallery } from "../../lib/database";
+import pocketbase, { getGallery, getProducts } from "../../lib/database";
 import { setDocumentTitle } from "../../lib/utils";
 import Gallery from "../Gallery";
 import classes from "./index.module.css";
@@ -32,6 +32,9 @@ export default function Home() {
           </Carousel.Slide>,
         ]);
       }
+
+      // preload products
+      getProducts();
 
       while (true) {
         try {
