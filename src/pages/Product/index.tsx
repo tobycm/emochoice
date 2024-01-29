@@ -2,7 +2,7 @@ import { Badge, Box, Button, FileInput, Image, NativeSelect, NumberInput, Scroll
 import { useForm } from "@mantine/form";
 import { useMediaQuery } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
-import { IconInfoCircle, IconNumber, IconShoppingCartPlus } from "@tabler/icons-react";
+import { IconInfoCircle, IconNumber } from "@tabler/icons-react";
 import { ChangeEvent } from "preact/compat";
 import { useEffect, useMemo, useState } from "preact/hooks";
 import { Helmet } from "react-helmet-async";
@@ -12,10 +12,11 @@ import MultiColorButton from "../../components/ColorButton/Multi";
 import SingleColorButton from "../../components/ColorButton/Single";
 import ImageZoom from "../../components/ImageZoom";
 import CustomImageModal from "../../components/Modal/CustomImage";
+import { useATLState } from "../../lib/atl_popover";
 import pocketbase, { getProducts } from "../../lib/database";
 import { Color, Product as DProduct, ProductColor, ProductImage, Type } from "../../lib/database/models";
 import { List, useList } from "../../lib/list";
-import { HTMLtoText, filterProducts, pasteImage, toTitleCase } from "../../lib/utils";
+import { HTMLtoText, filterProducts, pasteImage, scrollToTop, toTitleCase } from "../../lib/utils";
 import classes from "./index.module.css";
 
 export interface OrderData {
@@ -53,6 +54,7 @@ function preview(backgroundImage: HTMLImageElement, userImage: HTMLImageElement,
 }
 
 export default function Product() {
+  const { setATLPopover } = useATLState();
   const { product } = useLoaderData() as { product: DProduct };
   const [customImage, setCustomImage] = useState<File | null>(null);
   const [image, setImage] = useState<File | null>(null);
@@ -158,6 +160,11 @@ export default function Product() {
     setImages(imageWithColor);
   };
 
+  function startATLPopover() {
+    setATLPopover(false);
+    setATLPopover(true);
+  }
+
   return (
     <Box w="80%" ml="auto" mr="auto">
       {bigImage && !isMobile && (
@@ -250,14 +257,8 @@ export default function Product() {
                 fileInput,
               });
               updateList(newList);
-              notifications.show({
-                title: "Success",
-                message: "Item added to list!",
-                color: "emochoice-green",
-                icon: <IconShoppingCartPlus stroke={2}></IconShoppingCartPlus>,
-                autoClose: 3000,
-                withCloseButton: true,
-              });
+              startATLPopover();
+              scrollToTop();
             })}
           >
             {product.colors.length > 0 && (
