@@ -45,8 +45,8 @@ dependencies:
     specifier: ^2.46.0
     version: 2.46.0(react@18.2.0)
   embla-carousel-autoplay:
-    specifier: ^8.0.0-rc19
-    version: 8.0.0-rc19(embla-carousel@8.0.0-rc19)
+    specifier: 7.1.0
+    version: 7.1.0(embla-carousel@7.1.0)
   pocketbase:
     specifier: 0.20.1
     version: 0.20.1
@@ -1665,12 +1665,12 @@ packages:
     resolution: {integrity: sha512-z/6oZ/Muqk4BaE7P69bXhUhpJbUM9ZJeka43ZwxsDshKtePns4mhBlh8bU5+yrnOnz3fhG82XLzGUXazOmsWnA==}
     dev: true
 
-  /embla-carousel-autoplay@8.0.0-rc19(embla-carousel@8.0.0-rc19):
-    resolution: {integrity: sha512-c1pxsGHuWbYD3outH5y4L+kzg15smyHKFIDmXLaXlI6rCiizzf6hWMW0ZgxJLV4y4nUwDrYhM6TtzxvvOcsfUw==}
+  /embla-carousel-autoplay@7.1.0(embla-carousel@7.1.0):
+    resolution: {integrity: sha512-nYfgSGn3ek44OzwO0t/Ptuxq4PNPD5l7Y9X7JjLYI/DN1uGjqxz9L73YYqR6YCRDnTYJ88s9fep48dzBnSG4vQ==}
     peerDependencies:
-      embla-carousel: 8.0.0-rc19
+      embla-carousel: 7.1.0
     dependencies:
-      embla-carousel: 8.0.0-rc19
+      embla-carousel: 7.1.0
     dev: false
 
   /embla-carousel-react@7.1.0(react@18.2.0):
@@ -1684,10 +1684,6 @@ packages:
 
   /embla-carousel@7.1.0:
     resolution: {integrity: sha512-Bh8Pa8NWzgugLkf8sAGexQlBCNDFaej5BXiKgQdRJ1mUC9NWBrw9Z23YVPVGkguWoz5LMjZXXFVGCobl3UPt/Q==}
-    dev: false
-
-  /embla-carousel@8.0.0-rc19:
-    resolution: {integrity: sha512-PAChVyYoVZo8subkBN8LjZ7+0vk4CmVvMnxH0Y2ux76VUEUBl1wk5xDo8+MUhH5MXU6ZrgkBpMe++bKob1Z+2g==}
     dev: false
 
   /entities@4.5.0:

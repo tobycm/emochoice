@@ -2,6 +2,7 @@ import { Carousel, Embla } from "@mantine/carousel";
 import { Box, Image, Title } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import { useEffect, useState } from "preact/hooks";
+import { JSX } from "preact/jsx-runtime";
 import SmallChangeHelmet from "../../components/Helmets/SmallChangeHelmet";
 import ImageZoom from "../../components/ImageZoom";
 import pocketbase, { getGallery } from "../../lib/database";
@@ -112,7 +113,7 @@ export default function Gallery(props: { home: boolean }) {
       {["gallery_1", "gallery_2", "gallery_3"].map((type) => (
         <Box mb={1} display={"flex"} style={{ flexDirection: "column", alignItems: "center" }} key={type} mih={100}>
           <Title ta="center" order={2} c="emochoice-blue" mb="md">
-            {type === "gallery_1" ? "Clothing & Accessories" : type === "gallery_2" ? "Digital Printing" : "Souvenirs & Gifts Printing"}
+            {type === "gallery_1" ? "Clothing & Accessories Printing" : type === "gallery_2" ? "Digital Printing" : "Souvenirs & Gifts Printing"}
           </Title>
           <Carousel
             w="80vw"

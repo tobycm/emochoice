@@ -1,58 +1,28 @@
-import { Carousel, Embla } from "@mantine/carousel";
+import { Carousel } from "@mantine/carousel";
 import { Box, Container, Divider, Image, Skeleton, Title } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import Autoplay from "embla-carousel-autoplay";
 import { useEffect, useRef, useState } from "react";
 import DefaultHelmet from "../../components/Helmets/DefaultHelmet";
 import HomeCard from "../../components/HomeCard";
-import pocketbase, { getGallery, searchCategory } from "../../lib/database";
+import pocketbase, { getGallery, searchQuery } from "../../lib/database";
 import { setDocumentTitle } from "../../lib/utils";
 import Gallery from "../Gallery";
 import classes from "./index.module.css";
 
 export default function Home() {
-  const autoplay = useRef(Autoplay({ delay: 5000 }));
+  const autoplay = useRef(Autoplay({ delay: 10000 }));
   const isMobile = useMediaQuery(`(max-width: 48em)`);
   const [slides, setSlides] = useState<ReturnType<typeof Carousel.Slide>[]>([]);
   const [threeCards, setThreeCards] = useState<string[]>([]);
-  const [embla, setEmbla] = useState<Embla | null>(null);
   const [categoryIDList, setCategoryIDList] = useState<Record<string, string>[]>([]);
-
-  useEffect(() => {
-    getGallery("home_carousel").then(async (gallary) => {
-      for (const link of gallary.pictures) {
-        const index = gallary.pictures.indexOf(link);
-
-        // @ts-ignore when priority in type?
-        if (index == 0) await fetch(pocketbase.getFileUrl(gallary, link), { priority: "high" });
-
-        setSlides((prev) => [
-          ...prev,
-          <Carousel.Slide key={link}>
-            <Image src={pocketbase.getFileUrl(gallary, link)} fetchpriority={index == 0 ? "high" : "low"} />
-          </Carousel.Slide>,
-        ]);
-      }
-
-      while (true) {
-        try {
-          if (embla) embla.reInit();
-          break;
-        } catch {
-          await new Promise((resolve) => setTimeout(resolve, 1000));
-        }
-      }
-    });
-
-    getGallery("3_cards").then((gallary) => setThreeCards(gallary.pictures.map((link) => pocketbase.getFileUrl(gallary, link, { thumb: "0x350" }))));
-  }, [embla]);
 
   useEffect(() => {
     setDocumentTitle();
 
     const fetchIDs = async () => {
       ["Clothing & Accessories Printing", "Digital Printing", "Souvenirs & Gifts Printing"].forEach(async (name, index) => {
-        const id = (await searchCategory(decodeURIComponent(name))).id;
+        const id = (await searchQuery("categories", decodeURIComponent(name))).id;
         setCategoryIDList((prev) => [
           ...prev,
           {
@@ -65,6 +35,28 @@ export default function Home() {
     };
 
     fetchIDs();
+
+    const fetchAndSetGallery = async () => {
+      try {
+        const gallery = await getGallery("home_carousel");
+        const newSlides: ReturnType<typeof Carousel.Slide>[] = [];
+        for (const link of gallery.pictures) {
+          const index = gallery.pictures.indexOf(link);
+          // @ts-ignore when priority in type?
+          if (index == 0) await fetch(pocketbase.getFileUrl(gallery, link), { priority: "high" });
+          newSlides.push(
+            <Carousel.Slide key={link}>
+              <Image src={pocketbase.getFileUrl(gallery, link)} fetchpriority={index == 0 ? "high" : "low"} />
+            </Carousel.Slide>,
+          );
+        }
+        await setSlides(newSlides);
+      } catch (error) {}
+    };
+
+    fetchAndSetGallery();
+
+    getGallery("3_cards").then((gallery) => setThreeCards(gallery.pictures.map((link) => pocketbase.getFileUrl(gallery, link, { thumb: "0x350" }))));
   }, []);
 
   return (
@@ -77,11 +69,9 @@ export default function Home() {
           style={{ transform: "translate(0, -5vh)" }}
         >
           <Carousel
-            classNames={classes}
             w={"100%"}
             loop
             withIndicators
-            getEmblaApi={setEmbla}
             plugins={[autoplay.current]}
             onMouseEnter={autoplay.current.stop}
             onMouseLeave={autoplay.current.reset}

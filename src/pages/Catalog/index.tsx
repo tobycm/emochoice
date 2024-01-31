@@ -5,7 +5,7 @@ import { useEffect, useState } from "preact/hooks";
 import { useNavigate } from "react-router-dom";
 import ProductCard from "../../components/Card";
 import SmallChangeHelmet from "../../components/Helmets/SmallChangeHelmet";
-import { getCategory, getColor, getProducts, searchCategory, searchColor } from "../../lib/database";
+import { getFilter, getProducts, searchQuery } from "../../lib/database";
 import { Product } from "../../lib/database/models";
 import LoaderBox, { setDocumentTitle, toTitleCase } from "../../lib/utils";
 import classes from "./index.module.css";
@@ -84,23 +84,24 @@ export default function Catalog() {
       if (fromFilterList && newFilters.length > 0) {
         const categoryFilters = newFilters
           .filter((filter) => filter.type === "category")
-          .map(async (filter) => (await searchCategory(filter.value)).id);
-        const colorFilters = newFilters.filter((filter) => filter.type === "color").map(async (filter) => (await searchColor(filter.value)).id);
-        const brandFilters = newFilters.filter((filter) => filter.type === "brand");
-        Promise.all(categoryFilters)
-          .then((resolvedCategoryFilters) => {
-            Promise.all(colorFilters)
-              .then((resolvedColorFilters) => {
-                const filtersQueryString = [
-                  ...(resolvedCategoryFilters.length > 0 ? [`category:${resolvedCategoryFilters.join("+")}`] : []),
-                  ...(resolvedColorFilters.length > 0 ? [`color:${resolvedColorFilters.join("+")}`] : []),
-                  ...(brandFilters.length > 0 ? [`brand:${brandFilters.map((filter) => filter.value).join("+")}`] : []),
-                ].join(",");
-                navigate(`/catalog?filters=${filtersQueryString}`);
-              })
-              .catch(() => {});
-          })
-          .catch(() => {});
+          .map(async (filter) => (await searchQuery("categories", filter.value)).id);
+        const colorFilters = newFilters
+          .filter((filter) => filter.type === "color")
+          .map(async (filter) => (await searchQuery("colors", filter.value)).id);
+        const brandFilters = newFilters
+          .filter((filter) => filter.type === "brand")
+          .map(async (filter) => (await searchQuery("brands", filter.value)).id);
+        try {
+          const resolvedCategoryFilters = await Promise.all(categoryFilters);
+          const resolvedColorFilters = await Promise.all(colorFilters);
+          const resolvedBrandFilters = await Promise.all(brandFilters);
+          const filtersQueryString = [
+            ...(resolvedCategoryFilters.length > 0 ? [`category:${resolvedCategoryFilters.join("+")}`] : []),
+            ...(resolvedColorFilters.length > 0 ? [`color:${resolvedColorFilters.join("+")}`] : []),
+            ...(resolvedBrandFilters.length > 0 ? [`brand:${resolvedBrandFilters.join("+")}`] : []),
+          ].join(",");
+          navigate(`/catalog?filters=${filtersQueryString}`);
+        } catch (error) {}
       }
       if (fromFilterList && newFilters.length === 0) navigate("/catalog");
     });
@@ -119,7 +120,7 @@ export default function Catalog() {
             .map(async (filter) => {
               const categoryIDs = filter.replace("category:", "").replaceAll(" ", "+").split("+");
               const categoryPromises = categoryIDs.map(async (id) => {
-                const category = await getCategory(id);
+                const category = await getFilter("categories", id);
                 return category?.name;
               });
               const categories = await Promise.all(categoryPromises);
@@ -132,14 +133,26 @@ export default function Catalog() {
             .map(async (filter) => {
               const colorIDs = filter.replace("color:", "").replace(" ", "+").split("+");
               const colorPromises = colorIDs.map(async (id) => {
-                const color = await getColor(id);
+                const color = await getFilter("colors", id);
                 return color?.name;
               });
               const colors = await Promise.all(colorPromises);
               return colors;
             }),
         );
-        const brandFilters = allFilters.filter((filter) => filter.startsWith("brand:")).map((filter) => filter.replace("brand:", ""));
+        const brandFilters = await Promise.all(
+          allFilters
+            .filter((filter) => filter.startsWith("brand:"))
+            .map(async (filter) => {
+              const brandIDs = filter.replace("brand:", "").replace(" ", "+").split("+");
+              const brandPromises = brandIDs.map(async (id) => {
+                const brand = await getFilter("brands", id);
+                return brand?.name;
+              });
+              const brands = await Promise.all(brandPromises);
+              return brands;
+            }),
+        );
         const filters: Filter[] = [];
         categoryFilters.forEach((categories) => {
           categories.forEach((category) => {
@@ -151,8 +164,10 @@ export default function Catalog() {
             filters.push({ type: "color", value: color });
           });
         });
-        brandFilters.forEach((brand) => {
-          filters.push({ type: "brand", value: brand });
+        brandFilters.forEach((brands) => {
+          brands.forEach((brand) => {
+            filters.push({ type: "brand", value: brand });
+          });
         });
         setIsFiltered(false);
         setFilters(filters);
@@ -185,6 +200,12 @@ export default function Catalog() {
   };
 
   const getFilterValues = (type: FilterTypes) => filters.filter((filter) => filter.type === type).map((value) => value.value);
+
+  useEffect(() => {
+    console.log(getFilterValues("category"));
+    console.log(getFilterValues("color"));
+    console.log(getFilterValues("brand"));
+  }, [filters]);
 
   const [openCategoryFilter, categoryFilter] = useDisclosure(true);
   const [openBrandFilter, brandFilter] = useDisclosure(true);
@@ -225,12 +246,14 @@ export default function Catalog() {
         >
           <Checkbox.Group value={getFilterValues("brand")} onChange={updateFilters("brand")}>
             <ScrollArea.Autosize mah={!isMobile ? 250 : "auto"}>
-              {products
-                .map((product) => product.expand.brand)
-                .filter((brand, _, self) => !self.includes(brand))
-                .map((brand) => (
-                  <Checkbox mb={5} mt={5} label={brand.name} value={brand.name} key={brand.id} />
-                ))}
+              {(() => {
+                const brands: string[] = [];
+
+                for (const product of products)
+                  if (product.expand?.brand && !brands.includes(product.expand?.brand.name)) brands.push(product.expand?.brand.name);
+
+                return brands.map((brand) => <Checkbox mb={5} mt={5} label={brand} value={brand} key={brand} />);
+              })()}
             </ScrollArea.Autosize>
           </Checkbox.Group>
         </NavLink>
