@@ -29,7 +29,7 @@ import MobileDropdown from "../Dropdown/Mobile";
 import classes from "./index.module.css";
 
 export default function Header() {
-  const { isATLPopover, setATLPopover } = useATLState();
+  const ATL = useATLState();
   const [drawerOpened, { toggle: toggleDrawer }] = useDisclosure(false);
   const [searchbarOpened, { toggle: toggleSearchbar }] = useDisclosure(false);
   const [showIndicator, setShowIndicator] = useState(false);
@@ -182,7 +182,7 @@ export default function Header() {
               <IconSearch style={{ width: "60%", height: "60%" }} stroke={3} />
             </ActionIcon>
             <Link to="/list">
-              <Popover opened={isATLPopover} withArrow arrowSize={15} radius={15}>
+              <Popover opened={ATL.current} withArrow arrowSize={15} radius={15}>
                 <Popover.Target>
                   {showIndicator ? (
                     <Indicator inline label={list.length} color="red" size={16}>
@@ -207,7 +207,7 @@ export default function Header() {
                           Added to List!
                         </Title>
                       </Box>
-                      <IconX onClick={() => setATLPopover(false)} style={{ marginLeft: "auto", cursor: "pointer" }} />
+                      <IconX onClick={() => ATL.set(false)} style={{ marginLeft: "auto", cursor: "pointer" }} />
                     </Group>
                     <Group display="flex" style={{ justifyContent: "space-between" }} w="max-content" mt="md">
                       <Image src={productImage} w={100} />
