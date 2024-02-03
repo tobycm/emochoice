@@ -5,11 +5,12 @@ import { useDisclosure, useMediaQuery } from "@mantine/hooks";
 import { IconFilter, IconSearchOff } from "@tabler/icons-react";
 import { useEffect, useState } from "preact/hooks";
 import { useNavigate } from "react-router-dom";
+import FilterNavBar from "../../components/Filters/NavBar";
 import { Filter, filterProducts, getFilters, outOfStockToEnd } from "../../components/Filters/utils";
 import ProductCard from "../../components/ProductCard";
 import { getProducts } from "../../lib/database";
 import { Product } from "../../lib/database/models";
-import { setDocumentTitle } from "../../lib/utils";
+import LoaderBox, { setDocumentTitle } from "../../lib/utils";
 import classes from "./index.module.css";
 
 export default function Catalog() {

@@ -1,4 +1,4 @@
-import { Carousel } from "@mantine/carousel";
+import { Carousel, Embla } from "@mantine/carousel";
 import { Box, Container, Divider, Image, Skeleton, Title } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import Autoplay from "embla-carousel-autoplay";
@@ -51,22 +51,6 @@ export default function Home() {
 
   useEffect(() => {
     setDocumentTitle();
-
-    const fetchIDs = async () => {
-      ["Clothing & Accessories Printing", "Digital Printing", "Souvenirs & Gifts Printing"].forEach(async (name, index) => {
-        const id = (await searchQuery("categories", decodeURIComponent(name))).id;
-        setCategoryIDList((prev) => [
-          ...prev,
-          {
-            name,
-            index: index.toString(),
-            id,
-          },
-        ]);
-      });
-    };
-
-    fetchIDs();
 
     const fetchAndSetGallery = async () => {
       try {
