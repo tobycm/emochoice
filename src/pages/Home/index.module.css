@@ -1,10 +1,9 @@
 .cardsBox {
   display: flex;
   justify-content: space-between;
-  width: 100%;
   flex-direction: row;
 
-  @media screen and (max-width: 972px) {
+  @media screen and (max-width: 1000px) {
     flex-direction: column;
     align-items: center;
   }

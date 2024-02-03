@@ -2,12 +2,12 @@ import { Avatar, Box, Image, Overlay, ScrollArea } from "@mantine/core";
 import { IconX } from "@tabler/icons-react";
 import { useEffect, useState } from "preact/hooks";
 import pocketbase from "../../lib/database";
-import { Product } from "../../lib/database/models";
+import { Product, ProductImage } from "../../lib/database/models";
 
 export default function ImageZoom(props: {
   productImage: string;
   openBigImage: (open: boolean) => void;
-  images: string[];
+  images: ProductImage[];
   setProductImage: (image: string) => void;
   product: Product;
   scrollHeight: number;
@@ -129,8 +129,8 @@ export default function ImageZoom(props: {
               {props.images.map((image) => (
                 <Image
                   key={image} // Add a unique key for each image in the array
-                  src={pocketbase.getFileUrl(props.product, image)}
-                  onClick={() => props.setProductImage(pocketbase.getFileUrl(props.product, image))}
+                  src={pocketbase.getFileUrl(image, image.image)}
+                  onClick={() => props.setProductImage(pocketbase.getFileUrl(image, image.image))}
                   style={{
                     height: "80px",
                     width: "auto",

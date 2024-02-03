@@ -1,5 +1,5 @@
 import PocketBase, { RecordModel } from "pocketbase";
-import { DropdownMenuItem, Product } from "./models";
+import { DropdownMenuItem, Product, ProductCategory } from "./models";
 
 import Constants from "../constants";
 
@@ -11,11 +11,19 @@ export async function getGallery(name: string) {
   return await pocketbase.collection("gallery").getFirstListItem<{ pictures: string[] } & RecordModel>(`name = "${name}"`);
 }
 
+export async function getFilter(collection: string, id: string) {
+  return await pocketbase.collection(collection).getOne(id);
+}
+
+export async function searchQuery(collection: string, query: string) {
+  return await pocketbase.collection(collection).getFirstListItem<ProductCategory>(`name = "${query}"`);
+}
+
 let products: Product[] | undefined;
 
 export async function getProducts() {
   if (!products) {
-    products = await pocketbase.collection("products").getFullList<Product>(1000, { expand: "category,colors,types,brand", sort: "-created" });
+    products = await pocketbase.collection("products").getFullList<Product>(1000, { expand: "category,colors,types,brand,images", sort: "-created" });
     pocketbase.collection("products").subscribe<Product>(
       "*",
       (event) => {
@@ -31,7 +39,7 @@ export async function getProducts() {
             break;
         }
       },
-      { expand: "category,colors,types,brand" },
+      { expand: "category,colors,types,brand,images" },
     );
   }
 

@@ -1,4 +1,4 @@
-import { Carousel, Embla } from "@mantine/carousel";
+import { Carousel } from "@mantine/carousel";
 import { Box, Container, Divider, Image, Skeleton, Title } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import Autoplay from "embla-carousel-autoplay";
@@ -11,7 +11,7 @@ import Gallery from "../Gallery";
 import classes from "./index.module.css";
 
 export default function Home() {
-  const autoplay = useRef(Autoplay({ delay: 5000 }));
+  const autoplay = useRef(Autoplay({ delay: 10000 }));
   const isMobile = useMediaQuery(`(max-width: 48em)`);
   const [slides, setSlides] = useState<ReturnType<typeof Carousel.Slide>[]>([]);
   const [threeCards, setThreeCards] = useState<string[]>([]);
@@ -51,6 +51,46 @@ export default function Home() {
 
   useEffect(() => {
     setDocumentTitle();
+
+    const fetchIDs = async () => {
+      ["Clothing & Accessories Printing", "Digital Printing", "Souvenirs & Gifts Printing"].forEach(async (name, index) => {
+        const id = (await searchQuery("categories", decodeURIComponent(name))).id;
+        setCategoryIDList((prev) => [
+          ...prev,
+          {
+            name,
+            index: index.toString(),
+            id,
+          },
+        ]);
+      });
+    };
+
+    fetchIDs();
+
+    const fetchAndSetGallery = async () => {
+      try {
+        const gallery = await getGallery("home_carousel");
+        const newSlides: ReturnType<typeof Carousel.Slide>[] = [];
+        for (const link of gallery.pictures) {
+          const index = gallery.pictures.indexOf(link);
+          // @ts-ignore when priority in type?
+          if (index == 0) await fetch(pocketbase.getFileUrl(gallery, link), { priority: "high" });
+          newSlides.push(
+            <Carousel.Slide key={link}>
+              <Image src={pocketbase.getFileUrl(gallery, link)} fetchpriority={index == 0 ? "high" : "low"} />
+            </Carousel.Slide>,
+          );
+        }
+        await setSlides(newSlides);
+      } catch (error) {
+        // do nothing
+      }
+    };
+
+    fetchAndSetGallery();
+
+    getGallery("3_cards").then((gallery) => setThreeCards(gallery.pictures.map((link) => pocketbase.getFileUrl(gallery, link, { thumb: "0x350" }))));
   }, []);
 
   return (
@@ -63,11 +103,9 @@ export default function Home() {
           style={{ transform: "translate(0, -5vh)" }}
         >
           <Carousel
-            classNames={classes}
             w={"100%"}
             loop
             withIndicators
-            getEmblaApi={setEmbla}
             plugins={[autoplay.current]}
             onMouseEnter={autoplay.current.stop}
             onMouseLeave={autoplay.current.reset}

@@ -12,7 +12,7 @@ export interface Product extends RecordModel {
   description: string;
   colors: ID[];
   types: ID[];
-  images: Filename[];
+  images: ID[];
   customizable: boolean;
   hidden: boolean;
   tags: string[];
@@ -23,6 +23,7 @@ export interface Product extends RecordModel {
     category?: ProductCategory[];
     colors?: ProductColor[];
     types?: ProductType[];
+    images?: ProductImage[];
   };
 }
 
@@ -58,3 +59,11 @@ export interface Color {
 }
 
 export interface ProductColor extends RecordModel, Color {}
+
+export interface Image {
+  image: Filename;
+  color: ID;
+  type: ID;
+}
+
+export type ProductImage = RecordModel & Image;

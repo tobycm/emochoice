@@ -18,8 +18,7 @@ export default function Checkout() {
   const isMobile = useMediaQuery(`(max-width: 36em)`);
   const form = useForm({
     initialValues: {
-      firstName: "",
-      lastName: "",
+      name: "",
       email: "",
       phone_number: "",
       address: "",
@@ -29,15 +28,9 @@ export default function Checkout() {
       country: "Canada",
     },
     validate: {
-      firstName: isNotEmpty("Enter your first name"),
-      lastName: isNotEmpty("Enter your last name"),
+      name: isNotEmpty("Enter your name"),
       email: contactMethod.includes("Email") ? isEmail("Enter a valid email") : undefined,
       phone_number: contactMethod.includes("Phone number") ? isNotEmpty("Enter a valid phone number") : undefined,
-      address: isNotEmpty("Enter your address"),
-      city: isNotEmpty("Enter your city"),
-      state: isNotEmpty("Enter your state"),
-      postalCode: isNotEmpty("Enter your postal code"),
-      country: isNotEmpty("Enter your country"),
     },
   });
 
@@ -60,7 +53,7 @@ export default function Checkout() {
           className={classes.listAndCard}
           onSubmit={form.onSubmit(async () => {
             const submitData = {
-              name: `${form.values.firstName} ${form.values.lastName}`,
+              name: form.values.name,
               contact: `${form.values.email}${form.values.email && form.values.phone_number && ", "}${form.values.phone_number}`,
               address: `${form.values.address}, ${form.values.city}, ${form.values.state} ${form.values.postalCode}, ${form.values.country}`,
               items: await Promise.all(
@@ -122,12 +115,7 @@ export default function Checkout() {
                       1. Shipping Address
                     </Title>
                     <Box display="flex" style={{ justifyContent: "space-between" }} mb={"md"}>
-                      <Box w="49%">
-                        <TextInput withAsterisk label="First name" placeholder="John" {...form.getInputProps("firstName")} id="firstName" />
-                      </Box>
-                      <Box w="49%">
-                        <TextInput withAsterisk label="Last name" placeholder="Smith" {...form.getInputProps("lastName")} id="lastName" />
-                      </Box>
+                      <TextInput withAsterisk label="Name" placeholder="John Doe" w={"100%"} {...form.getInputProps("name")} />
                     </Box>
                     <NativeSelect
                       required
@@ -166,31 +154,17 @@ export default function Checkout() {
                         }}
                       />
                     )}
-                    <NativeSelect
-                      mb={"md"}
-                      {...form.getInputProps("country")}
-                      id="country"
-                      withAsterisk
-                      label="Country"
-                      data={["Canada", "United States"]}
-                    />
-                    <TextInput
-                      mb={"md"}
-                      withAsterisk
-                      label="Address Line"
-                      id="address"
-                      placeholder="Unit 101-737 Main St"
-                      {...form.getInputProps("address")}
-                    />
+                    <NativeSelect mb={"md"} {...form.getInputProps("country")} id="country" label="Country" data={["Canada", "United States"]} />
+                    <TextInput mb={"md"} label="Address Line" id="address" placeholder="Unit 101-737 Main St" {...form.getInputProps("address")} />
                     <Box display="flex" style={{ justifyContent: "space-between" }} mb={"md"}>
                       <Box w="49%">
-                        <TextInput withAsterisk label="City" placeholder="Penticton" {...form.getInputProps("city")} id="city" />
+                        <TextInput label="City" placeholder="Penticton" {...form.getInputProps("city")} id="city" />
                       </Box>
                       <Box w="20%">
-                        <TextInput withAsterisk label="State" placeholder="BC" maxLength={2} {...form.getInputProps("state")} id="state" />
+                        <TextInput label="State" placeholder="BC" maxLength={2} {...form.getInputProps("state")} id="state" />
                       </Box>
                       <Box w="27%">
-                        <TextInput withAsterisk label="Postal Code" placeholder="V2A 5E1" {...form.getInputProps("postalCode")} id="postalCode" />
+                        <TextInput label="Postal Code" placeholder="V2A 5E1" {...form.getInputProps("postalCode")} id="postalCode" />
                       </Box>
                     </Box>
                   </Table.Td>

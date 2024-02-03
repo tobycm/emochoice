@@ -177,3 +177,7 @@ export function makeDropdownTree(currentItem: DropdownMenuItem, root: DropdownMe
 export function isNotEmpty(obj: unknown) {
   return obj !== null && typeof obj === "object" && Object.keys(obj).length > 0;
 }
+
+export const scrollToTop = () => {
+  window.scrollTo({ top: 0, behavior: "smooth" });
+};

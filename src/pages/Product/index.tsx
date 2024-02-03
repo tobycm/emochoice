@@ -2,20 +2,21 @@ import { Badge, Box, Button, FileInput, Image, NativeSelect, NumberInput, Scroll
 import { useForm } from "@mantine/form";
 import { useMediaQuery } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
-import { IconInfoCircle, IconNumber, IconShoppingCartPlus } from "@tabler/icons-react";
+import { IconInfoCircle, IconNumber } from "@tabler/icons-react";
 import { ChangeEvent } from "preact/compat";
 import { useEffect, useMemo, useState } from "preact/hooks";
 import { Helmet } from "react-helmet-async";
 import { useLoaderData, useLocation, useNavigate } from "react-router-dom";
-import ProductCard from "../../components/Card";
 import MultiColorButton from "../../components/ColorButton/Multi";
 import SingleColorButton from "../../components/ColorButton/Single";
 import ImageZoom from "../../components/ImageZoom";
 import CustomImageModal from "../../components/Modal/CustomImage";
+import ProductCard from "../../components/ProductCard";
+import { useATLState } from "../../lib/atl_popover";
 import pocketbase, { getProducts } from "../../lib/database";
-import { Color, Product as DProduct, ProductColor, Type } from "../../lib/database/models";
+import { Color, Product as DProduct, ProductColor, ProductImage, Type } from "../../lib/database/models";
 import { List, useList } from "../../lib/list";
-import { HTMLtoText, filterProductsByCategories, pasteImage, toTitleCase } from "../../lib/utils";
+import { HTMLtoText, filterProductsByCategories, pasteImage, scrollToTop, toTitleCase } from "../../lib/utils";
 import classes from "./index.module.css";
 
 export interface OrderData {
@@ -53,14 +54,15 @@ function preview(backgroundImage: HTMLImageElement, userImage: HTMLImageElement,
 }
 
 export default function Product() {
+  const { set: popATLOver } = useATLState();
   const { product } = useLoaderData() as { product: DProduct };
   const [customImage, setCustomImage] = useState<File | null>(null);
   const [image, setImage] = useState<File | null>(null);
   const [modalState, setModalState] = useState({ open: false, fileUploaded: false });
   const [productImage, setProductImage] = useState<string>(
-    product.images.length > 0 ? pocketbase.getFileUrl(product, product.images[0]) : "/images/no_image.png",
+    product.images.length > 0 ? pocketbase.getFileUrl(product.expand.images![0], product.expand.images![0].image) : "/images/no_image.png",
   );
-  const [images, setImages] = useState<string[]>([]);
+  const [images, setImages] = useState<ProductImage[]>([]);
   const [relatedProducts, setRelatedProducts] = useState<DProduct[]>([]);
   const [bigImage, openBigImage] = useState(false);
   const { list, updateList } = useList();
@@ -89,11 +91,13 @@ export default function Product() {
   const isMobile = useMediaQuery(`(max-width: 48em)`);
 
   useEffect(() => {
-    setImages(product.images);
-  }, [product.images]);
+    setImages(product.expand.images ?? []);
+  }, [product.expand.images]);
 
   useEffect(() => {
-    setProductImage(product.images.length > 0 ? pocketbase.getFileUrl(product, product.images[0]) : "/images/no_image.png");
+    setProductImage(
+      product.images.length > 0 ? pocketbase.getFileUrl(product.expand.images![0], product.expand.images![0].image) : "/images/no_image.png",
+    );
   }, [product]);
 
   useEffect(() => {
@@ -129,7 +133,8 @@ export default function Product() {
     if (!customImage) return;
 
     userImage.src = URL.createObjectURL(customImage);
-    backgroundImage.src = product.images.length > 0 ? pocketbase.getFileUrl(product, product.images[0]) : "/images/no_image.png";
+    backgroundImage.src =
+      product.images.length > 0 ? pocketbase.getFileUrl(product.expand.images![0], product.expand.images![0].image) : "/images/no_image.png";
     backgroundImage.onload = () => (userImage.onload = () => preview(backgroundImage, userImage, boundaryPoints));
   }, [modalState.open, customImage, product, boundaryPoints]);
 
@@ -149,12 +154,16 @@ export default function Product() {
 
   const setImageWithColor = (color: ProductColor) => {
     form.setFieldValue("color", color);
-    const imageWithColor = product.images.filter((image) => image.includes(color.id));
-    if (imageWithColor.length < 0) return;
-    const imageFile = imageWithColor[0];
-    setProductImage(imageFile ? pocketbase.getFileUrl(product, imageFile) : "/images/no_image.png");
+    const imageWithColor = product.expand.images!.filter((image) => image.color == color.id);
+    if (imageWithColor.length < 0) return setProductImage("/images/no_image.png");
+    setProductImage(pocketbase.getFileUrl(imageWithColor[0], imageWithColor[0].image));
     setImages(imageWithColor);
   };
+
+  function startATLPopover() {
+    popATLOver(false);
+    popATLOver(true);
+  }
 
   return (
     <Box w="80%" ml="auto" mr="auto">
@@ -210,8 +219,8 @@ export default function Product() {
               <Box display={"flex"} mb="md">
                 {images.map((image) => (
                   <Image
-                    src={pocketbase.getFileUrl(product, image, { thumb: "0x100" })}
-                    onClick={() => setProductImage(pocketbase.getFileUrl(product, image))}
+                    src={pocketbase.getFileUrl(image, image.image, { thumb: "0x100" })}
+                    onClick={() => setProductImage(pocketbase.getFileUrl(image, image.image))}
                     style={{ height: "100px", width: "auto", marginRight: "10px", cursor: "pointer", border: "1px solid #cccccc" }}
                   />
                 ))}
@@ -248,14 +257,8 @@ export default function Product() {
                 fileInput,
               });
               updateList(newList);
-              notifications.show({
-                title: "Success",
-                message: "Item added to list!",
-                color: "emochoice-green",
-                icon: <IconShoppingCartPlus stroke={2}></IconShoppingCartPlus>,
-                autoClose: 3000,
-                withCloseButton: true,
-              });
+              startATLPopover();
+              scrollToTop();
             })}
           >
             {product.colors.length > 0 && (
@@ -293,10 +296,6 @@ export default function Product() {
                     const type = product.expand?.types?.find((type) => type.name === e.currentTarget.value);
                     if (!type) return;
                     form.setFieldValue("type", type);
-                    // const imageWithType = product.images.filter((image) => image.includes(replaceAll(type.name, " ", "_"))); <= replace by id later
-                    // if (imageWithType.length < 0) return;
-                    // const imageFile = imageWithType[0];
-                    // setProductImage(imageFile ? pocketbase.getFileUrl(product, imageFile) : "/images/no_image.png");
                   }}
                 />
               </Box>

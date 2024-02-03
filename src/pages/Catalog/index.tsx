@@ -4,13 +4,12 @@ import { Box, Button, InputBase, Modal, Pill, Text, Title, UnstyledButton } from
 import { useDisclosure, useMediaQuery } from "@mantine/hooks";
 import { IconFilter, IconSearchOff } from "@tabler/icons-react";
 import { useEffect, useState } from "preact/hooks";
-import { useNavigate } from "react-router";
-import ProductCard from "../../components/Card";
-import FilterNavBar from "../../components/Filters/NavBar";
+import { useNavigate } from "react-router-dom";
 import { Filter, filterProducts, getFilters, outOfStockToEnd } from "../../components/Filters/utils";
+import ProductCard from "../../components/ProductCard";
 import { getProducts } from "../../lib/database";
 import { Product } from "../../lib/database/models";
-import LoaderBox, { setDocumentTitle } from "../../lib/utils";
+import { setDocumentTitle } from "../../lib/utils";
 import classes from "./index.module.css";
 
 export default function Catalog() {
