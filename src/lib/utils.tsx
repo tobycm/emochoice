@@ -178,6 +178,13 @@ export function isNotEmpty(obj: unknown) {
   return obj !== null && typeof obj === "object" && Object.keys(obj).length > 0;
 }
 
-export const scrollToTop = () => {
+export function scrollToTop() {
   window.scrollTo({ top: 0, behavior: "smooth" });
-};
+}
+
+export function shuffleArray<T>(array: T[]): T[] {
+  return array
+    .map((value) => ({ value, sort: Math.random() }))
+    .sort((a, b) => a.sort - b.sort)
+    .map(({ value }) => value);
+}
