@@ -58,7 +58,7 @@ export default function Gallery(props: { home: boolean }) {
                 ml="auto"
                 mr="auto"
                 style={{ aspectRatio: "calc(9/11)", cursor: "pointer" }}
-                src={pocketbase.getFileUrl(gallary, link, { thumb: "600x0" })}
+                src={pocketbase.getFileUrl(gallary, link, { thumb: "0x600" })}
                 fetchpriority={index == 0 ? "high" : "low"}
               />
             </Box>
