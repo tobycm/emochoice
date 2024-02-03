@@ -1,4 +1,5 @@
 import { Box, Container, Divider, Title } from "@mantine/core";
+import { useMediaQuery } from "@mantine/hooks";
 import { useEffect, useState } from "react";
 import Banner from "../../components/Banner";
 import DefaultHelmet from "../../components/Helmets/DefaultHelmet";
@@ -9,6 +10,7 @@ import Gallery from "../Gallery";
 import classes from "./index.module.css";
 
 export default function Home() {
+  const isMobile = useMediaQuery("(max-width: 48em)");
   const [threeCards, setThreeCards] = useState<string[]>([]);
 
   useEffect(() => {
@@ -20,10 +22,10 @@ export default function Home() {
   }, []);
 
   return (
-    <>
+    <Box>
       <Box style={{ display: "flex", alignItems: "center", flexDirection: "column" }}>
         <DefaultHelmet />
-        <Banner />
+        <Banner isMobile={isMobile} />
       </Box>
       <Container style={{ display: "flex", alignItems: "center", flexDirection: "column" }}>
         <Divider mb="xl" size="xs" w={"100%"}></Divider>
@@ -38,6 +40,6 @@ export default function Home() {
         <Divider my="xl" size="xs" w={"100%"}></Divider>
       </Container>
       <Gallery home={true} />
-    </>
+    </Box>
   );
 }
