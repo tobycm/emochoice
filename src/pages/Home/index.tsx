@@ -1,4 +1,4 @@
-import { Box, Container, Divider, Title } from "@mantine/core";
+import { Box, Container, Divider, Skeleton, Title } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import { useEffect, useState } from "react";
 import Banner from "../../components/Banner";
@@ -12,6 +12,7 @@ import classes from "./index.module.css";
 export default function Home() {
   const isMobile = useMediaQuery("(max-width: 48em)");
   const [threeCards, setThreeCards] = useState<string[]>([]);
+  const [bannerLoaded, setBannerLoaded] = useState(false);
 
   useEffect(() => {
     getGallery("3_cards").then((gallery) => setThreeCards(gallery.pictures.map((link) => pocketbase.getFileUrl(gallery, link, { thumb: "0x350" }))));
@@ -25,7 +26,9 @@ export default function Home() {
     <Box>
       <Box style={{ display: "flex", alignItems: "center", flexDirection: "column" }}>
         <DefaultHelmet />
-        <Banner isMobile={isMobile} />
+        <Skeleton visible={!bannerLoaded} height={isMobile ? "20vh" : "30vh"}>
+          <Banner isMobile={isMobile} onLoad={() => setBannerLoaded(true)} />
+        </Skeleton>
       </Box>
       <Container style={{ display: "flex", alignItems: "center", flexDirection: "column" }}>
         <Divider mb="xl" size="xs" w={"100%"}></Divider>
