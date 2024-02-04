@@ -1,6 +1,8 @@
 import { Carousel, Embla } from "@mantine/carousel";
 import { Box, Image, Title } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
+import { notifications } from "@mantine/notifications";
+import { IconInfoCircle } from "@tabler/icons-react";
 import { useEffect, useState } from "preact/hooks";
 import { JSX } from "preact/jsx-runtime";
 import SmallChangeHelmet from "../../components/Helmets/SmallChangeHelmet";
@@ -26,6 +28,7 @@ export default function Gallery(props: { home: boolean }) {
   const [zoomImage, setZoomImage] = useState<string>("");
   const [bigImage, openBigImage] = useState(false);
   const [scrollHeight, setScrollHeight] = useState(0);
+  const [tapAlert, setTapAlert] = useState(true);
 
   const reInitEmblas = async () => {
     // eslint-disable-next-line no-constant-condition
@@ -50,7 +53,10 @@ export default function Gallery(props: { home: boolean }) {
             <Box w="100%" mr={!isMobile ? 5 : 0} ml={!isMobile ? 5 : 0}>
               <Image
                 onClick={() => {
-                  if (isMobile) return;
+                  if (isMobile) {
+                    window.open(pocketbase.getFileUrl(gallary, link), "_blank");
+                    return;
+                  }
                   setZoomImage(pocketbase.getFileUrl(gallary, link));
                   openBigImage(true);
                 }}
@@ -79,7 +85,23 @@ export default function Gallery(props: { home: boolean }) {
 
   useEffect(() => {
     const handleScroll = () => {
-      setScrollHeight(window.scrollY);
+      const windowHeight = window.innerHeight;
+      const documentHeight = document.documentElement.scrollHeight;
+      const scrollPosition = window.scrollY;
+
+      setScrollHeight(scrollPosition);
+
+      if (!isMobile || !window.location.href.includes("/gallery")) return;
+      if (scrollPosition > documentHeight / 3 - windowHeight / 3 && tapAlert) {
+        notifications.show({
+          title: "Tap on an image to view it in full size!",
+          message: "You can also swipe left and right to view more images.",
+          color: "emochoice-green",
+          autoClose: 10000,
+          icon: <IconInfoCircle />,
+        });
+        setTapAlert(false);
+      }
     };
 
     window.addEventListener("scroll", handleScroll);
@@ -112,7 +134,7 @@ export default function Gallery(props: { home: boolean }) {
       </Title>
       {["gallery_1", "gallery_2", "gallery_3"].map((type) => (
         <Box mb={1} display={"flex"} style={{ flexDirection: "column", alignItems: "center" }} key={type} mih={100}>
-          <Title ta="center" order={2} c="emochoice-blue" mb="md">
+          <Title ta="center" order={2} c="emochoice-blue" mb="md" mr="md" ml="md">
             {type === "gallery_1" ? "Clothing & Accessories Printing" : type === "gallery_2" ? "Digital Printing" : "Souvenirs & Gifts Printing"}
           </Title>
           <Carousel
