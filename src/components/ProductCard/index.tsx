@@ -35,7 +35,7 @@ export default function ProductCard(props: { product: Product; inProductPage?: b
               <Image
                 src={
                   product.images
-                    ? pocketbase.getFileUrl(product.expand.images![0], product.expand.images![0].image, { thumb: "0x146" })
+                    ? pocketbase.getFileUrl(product.expand.images![0], product.expand.images![0].image, { thumb: "0x320" })
                     : "/images/no_image.png"
                 }
                 h="calc(4/10*85vw)"
@@ -102,7 +102,7 @@ export default function ProductCard(props: { product: Product; inProductPage?: b
           <Image
             src={
               product.images
-                ? pocketbase.getFileUrl(product.expand.images![0], product.expand.images![0].image, { thumb: "0x244" })
+                ? pocketbase.getFileUrl(product.expand.images![0], product.expand.images![0].image, { thumb: "0x320" })
                 : "/images/no_image.png"
             }
             h="100%"

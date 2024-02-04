@@ -7,11 +7,11 @@ import { ChangeEvent } from "preact/compat";
 import { useEffect, useMemo, useState } from "preact/hooks";
 import { Helmet } from "react-helmet-async";
 import { useLoaderData, useLocation, useNavigate } from "react-router-dom";
-import ProductCard from "../../components/Card";
 import MultiColorButton from "../../components/ColorButton/Multi";
 import SingleColorButton from "../../components/ColorButton/Single";
 import ImageZoom from "../../components/ImageZoom";
 import CustomImageModal from "../../components/Modal/CustomImage";
+import ProductCard from "../../components/ProductCard";
 import { useATLState } from "../../lib/atl_popover";
 import pocketbase, { getProducts } from "../../lib/database";
 import { Color, Product as DProduct, ProductColor, ProductImage, Type } from "../../lib/database/models";
@@ -54,7 +54,7 @@ function preview(backgroundImage: HTMLImageElement, userImage: HTMLImageElement,
 }
 
 export default function Product() {
-  const { setATLPopover } = useATLState();
+  const { set: popATLOver } = useATLState();
   const { product } = useLoaderData() as { product: DProduct };
   const [customImage, setCustomImage] = useState<File | null>(null);
   const [image, setImage] = useState<File | null>(null);
@@ -161,8 +161,8 @@ export default function Product() {
   };
 
   function startATLPopover() {
-    setATLPopover(false);
-    setATLPopover(true);
+    popATLOver(false);
+    popATLOver(true);
   }
 
   return (

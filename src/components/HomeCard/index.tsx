@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import classes from "./index.module.css";
 
 export default function HomeCard(props: { name: string; image: string; id: string }) {
-  const isMobile = useMediaQuery("(max-width: 972px)");
+  const isMobile = useMediaQuery("(max-width: 1000px)");
 
   if (isMobile)
     return (
@@ -35,7 +35,7 @@ export default function HomeCard(props: { name: string; image: string; id: strin
 
   return (
     <Link to={`/catalog?filters=category:${props.id}`} className={classes.card}>
-      <Card shadow="sm" radius="md" w={270} h={456} withBorder>
+      <Card shadow="sm" radius="md" w={280} h={456} withBorder>
         <Card.Section h={"20%"} m="4%">
           <Title order={3} style={{ textAlign: "center" }} c="emochoice-blue">
             {props.name}

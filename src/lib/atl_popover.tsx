@@ -1,52 +1,43 @@
 import React, { ReactNode, createContext, useContext, useEffect, useState } from "react";
 
-type ATLStateType = {
-  isATLPopover: boolean;
-  setATLPopover: (value: boolean) => void;
+type ATLState = {
+  current: boolean;
+  set: (state: boolean) => void;
 };
 
-const ATLStateContext = createContext<ATLStateType | undefined>(undefined);
+const ATLStateContext = createContext<ATLState | undefined>(undefined);
 
 export const ATLStateProvider: React.FC<ReactNode> = ({ children }) => {
-  const [isATLPopover, setIsATLPopover] = useState<boolean>(false);
+  const [isPoppingOver, popATL] = useState(false);
   const timeoutRef = React.useRef<NodeJS.Timeout | null>(null);
 
-  const setATLPopover = (value: boolean) => {
+  function popATLOver(newState: boolean) {
     if (timeoutRef.current !== null) {
       clearTimeout(timeoutRef.current);
       timeoutRef.current = null;
     }
 
-    setIsATLPopover(value);
+    popATL(newState);
 
-    if (value) {
-      timeoutRef.current = setTimeout(() => {
-        setIsATLPopover(false);
-      }, 5000);
-    }
-  };
+    if (!newState) return;
 
-  const contextValue: ATLStateType = {
-    isATLPopover,
-    setATLPopover,
-  };
-  useEffect(() => {
-    return () => {
-      if (timeoutRef.current !== null) {
-        clearTimeout(timeoutRef.current);
-      }
-    };
-  }, []);
-
-  return <ATLStateContext.Provider value={contextValue}>{children}</ATLStateContext.Provider>;
-};
-
-export const useATLState = () => {
-  const context = useContext(ATLStateContext);
-  if (!context) {
-    throw new Error("useATLState must be used within an ATLStateProvider");
+    timeoutRef.current = setTimeout(() => popATL(false), 5000);
   }
-  return context;
+
+  useEffect(
+    () => () => {
+      if (timeoutRef.current !== null) clearTimeout(timeoutRef.current);
+    },
+    [],
+  );
+
+  return <ATLStateContext.Provider value={{ current: isPoppingOver, set: popATLOver }}>{children}</ATLStateContext.Provider>;
 };
+
+export function useATLState() {
+  const context = useContext(ATLStateContext);
+  if (!context) throw new Error("useATLState must be used within an ATLStateProvider");
+  return context;
+}
 
 // hail chatgpt
