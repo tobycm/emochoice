@@ -12,7 +12,7 @@ import classes from "./index.module.css";
 export default function Home() {
   const isMobile = useMediaQuery("(max-width: 48em)");
   const [threeCards, setThreeCards] = useState<string[]>([]);
-  const [bannerLoaded, setBannerLoaded] = useState(false);
+  const [bannersLoaded, setBannersLoaded] = useState(false);
 
   useEffect(() => {
     getGallery("3_cards").then((gallery) => setThreeCards(gallery.pictures.map((link) => pocketbase.getFileUrl(gallery, link, { thumb: "0x350" }))));
@@ -26,8 +26,8 @@ export default function Home() {
     <Box>
       <Box style={{ display: "flex", alignItems: "center", flexDirection: "column" }}>
         <DefaultHelmet />
-        <Skeleton visible={!bannerLoaded} height={isMobile ? "20vh" : "30vh"}>
-          <Banner isMobile={isMobile} onLoad={() => setBannerLoaded(true)} />
+        <Skeleton visible={!bannersLoaded} height={isMobile ? "20vh" : "30vh"}>
+          <Banner isMobile={isMobile} onLoad={() => setBannersLoaded(true)} />
         </Skeleton>
       </Box>
       <Container style={{ display: "flex", alignItems: "center", flexDirection: "column" }}>
