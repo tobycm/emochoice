@@ -1,21 +1,20 @@
 import { Box, Image } from "@mantine/core";
+import { useMediaQuery } from "@mantine/hooks";
 import { useEffect, useState } from "preact/hooks";
 import pocketbase, { getGallery } from "../../lib/database";
 
-export default function Banner({ isMobile, onLoad }: { isMobile?: boolean; onLoad?: () => void }) {
+export default function Banner({ onLoad }: { onLoad?: () => void }) {
+  const isMobile = useMediaQuery("(max-width: 48em)");
   const [banners, setBanners] = useState<string[]>([]);
 
   useEffect(() => {
     getGallery("home_carousel").then((gallery) => {
       setBanners(gallery.pictures.map((link) => pocketbase.getFileUrl(gallery, link)));
 
-      if (isMobile) setBanners((state) => state.slice(2, 6));
       if (onLoad) onLoad();
-    });
-  }, []);
 
-  useEffect(() => {
-    setInterval(() => setBanners((state) => state.slice(1).concat(state[0])), 2500);
+      setInterval(() => setBanners((banners) => banners.slice(1).concat(banners[0])), 1250);
+    });
   }, []);
 
   return (
