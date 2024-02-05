@@ -8,18 +8,14 @@ export default function Banner({ isMobile, onLoad }: { isMobile?: boolean; onLoa
   useEffect(() => {
     getGallery("home_carousel").then((gallery) => {
       setBanners(gallery.pictures.map((link) => pocketbase.getFileUrl(gallery, link)));
+
+      if (isMobile) setBanners((state) => state.slice(2, 6));
       if (onLoad) onLoad();
     });
   }, []);
 
   useEffect(() => {
-    setInterval(() => {
-      setBanners((state) => {
-        const newState = [...state];
-        newState.push(newState.shift()!);
-        return newState;
-      });
-    }, 2500);
+    setInterval(() => setBanners((state) => state.slice(1).concat(state[0])), 2500);
   }, []);
 
   return (
