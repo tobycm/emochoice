@@ -26,7 +26,7 @@ export default function Home() {
     <Box>
       <Box style={{ display: "flex", alignItems: "center", flexDirection: "column" }}>
         <DefaultHelmet />
-        <Skeleton visible={!bannersLoaded} height={isMobile ? "20vh" : "30vh"}>
+        <Skeleton visible={!bannersLoaded} height={isMobile ? "20vh" : "30vh"} style={{ transform: "translate(0, -5vh)" }}>
           <Banner isMobile={isMobile} onLoad={() => setBannersLoaded(true)} />
         </Skeleton>
       </Box>
