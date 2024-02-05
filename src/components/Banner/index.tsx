@@ -1,21 +1,20 @@
 import { Box, Image } from "@mantine/core";
-import { useListState } from "@mantine/hooks";
-import { useEffect } from "preact/hooks";
+import { useEffect, useState } from "preact/hooks";
 import pocketbase, { getGallery } from "../../lib/database";
 
 export default function Banner({ isMobile, onLoad }: { isMobile?: boolean; onLoad?: () => void }) {
-  const [banners, bannersHandlers] = useListState<string>();
+  const [banners, setBanners] = useState<string[]>([]);
 
   useEffect(() => {
     getGallery("home_carousel").then((gallery) => {
-      bannersHandlers.setState(gallery.pictures.map((link) => pocketbase.getFileUrl(gallery, link)));
+      setBanners(gallery.pictures.map((link) => pocketbase.getFileUrl(gallery, link)));
       if (onLoad) onLoad();
     });
   }, []);
 
   useEffect(() => {
     setInterval(() => {
-      bannersHandlers.setState((state) => {
+      setBanners((state) => {
         const newState = [...state];
         newState.push(newState.shift()!);
         return newState;
