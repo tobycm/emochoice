@@ -20,7 +20,7 @@ export default function Banner({ isMobile, onLoad }: { isMobile?: boolean; onLoa
         newState.push(newState.shift()!);
         return newState;
       });
-    }, 1000);
+    }, 2500);
   }, []);
 
   return (
