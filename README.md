@@ -6,7 +6,7 @@
 
 <p align="center">Because <strong>If you can think it, we can print it!</strong></p>
 
-<img src="https://pocketbase.emochoice.ca/api/files/sg2k8zp13z5s5id/fyed19zwcnk6fqw/slide_3_bNpdEjeqb2.jpg" />
+<img src="https://pocketbase.emochoice.ca/api/files/sg2k8zp13z5s5id/3rzvamh3b5ckqcp/readme_0_1HvlKI174Z.jpg" />
 
 ## About us
 
@@ -24,7 +24,7 @@ Phone number: +1 (778) 531-6161
 
 Email: sales@emochoice.ca
 
-<img src="https://pocketbase.emochoice.ca/api/files/sg2k8zp13z5s5id/fyed19zwcnk6fqw/slide_2_yvymmlPhvT.jpg" />
+<img src="https://pocketbase.emochoice.ca/api/files/sg2k8zp13z5s5id/3rzvamh3b5ckqcp/readme_1_aUdsoLEGOL.jpg" />
 
 ## About this repository
 
