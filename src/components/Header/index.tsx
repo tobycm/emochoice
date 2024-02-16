@@ -22,6 +22,7 @@ import { useEffect, useState } from "preact/hooks";
 import { Link, useNavigate } from "react-router-dom";
 import { useATLState } from "../../lib/atl_popover";
 import pocketbase, { getDropdownMenuList, getProducts } from "../../lib/database";
+import { Product, ProductColor } from "../../lib/database/models";
 import { Item, useList } from "../../lib/list";
 import { Tree, makeDropdownTree, toTitleCase } from "../../lib/utils";
 import DesktopDropdown from "../Dropdown/Desktop";
@@ -35,6 +36,28 @@ export default function Header() {
   const [showIndicator, setShowIndicator] = useState(false);
   const [productsNames, setProductsNames] = useState<string[]>([]);
   const { list } = useList();
+
+  const [products, setProducts] = useState<Product[]>([]);
+  const [colors, setColors] = useState<ProductColor[]>([]);
+
+  useEffect(() => {
+    getProducts().then(setProducts);
+  }, []);
+
+  useEffect(() => {
+    const colors: ProductColor[] = [];
+
+    products.forEach((product) => {
+      product.expand.colors?.forEach((color) => {
+        if (!colors.some((c) => c.id == color.id)) colors.push(color);
+      });
+    });
+
+    setColors(colors);
+  }, [products]);
+
+  const [searchQuery, setSearchQuery] = useState("");
+
   const navigate = useNavigate();
   const isMobile = useMediaQuery("(max-width: 36em)");
 
@@ -57,27 +80,47 @@ export default function Header() {
     });
   }, []);
 
-  function search(wide: boolean) {
-    const element = document.getElementById(wide ? "searchbarWide" : "searchbarMobile");
-    const searchQuery = (element as HTMLInputElement)?.value;
+  function search() {
     if (!searchQuery) return;
     navigate(`/catalog?search=${searchQuery}`);
     if (isMobile) toggleSearchbar();
-    element?.blur();
   }
 
   const [searchResults, setSearchResults] = useState<string[]>([]);
 
-  useEffect(() => {
-    getProducts().then((products) => {
-      products.forEach((product) => {
-        if (!searchResults.includes(`${product.name}${product.custom_id && ` - ${product.custom_id}`}`)) {
-          setProductsNames((prev) => [...prev, `${product.name}${product.custom_id && ` - ${product.custom_id}`}`]);
-          setSearchResults((prev) => [...prev, `${product.name}${product.custom_id && ` - ${product.custom_id}`}`]);
-        }
-      });
+  function updateSearchResults(withColor = false) {
+    if (products.length == 0) return;
+
+    products.forEach((product) => {
+      const searchString = `${product.name}${product.custom_id && ` - ${product.custom_id}`}`;
+
+      if (withColor) {
+        product.expand.colors?.forEach((color) => {
+          const searchStringWithColor = `${searchString} - ${color.name}`;
+          if (searchResults.includes(searchStringWithColor)) return;
+
+          setProductsNames((prev) => [...prev, searchStringWithColor]);
+          setSearchResults((prev) => [...prev, searchStringWithColor]);
+        });
+        return;
+      }
+
+      if (searchResults.includes(searchString)) return;
+
+      setProductsNames((prev) => [...prev, searchString]);
+      setSearchResults((prev) => [...prev, searchString]);
     });
-  }, []);
+  }
+
+  useEffect(() => {
+    if (products.length == 0) return;
+
+    updateSearchResults();
+  }, [products]);
+
+  useEffect(() => {
+    updateSearchResults(colors.map((color) => color.name).includes(searchQuery));
+  }, [searchQuery]);
 
   const [product, setProduct] = useState<Item | null>(null);
 
@@ -110,21 +153,16 @@ export default function Header() {
               id={"searchbarMobile"}
               data={productsNames}
               onKeyDown={(e: KeyboardEvent) => {
-                if (e.key == "Enter") search(false);
+                if (!(e.key == "Enter")) return;
+                search();
+                // i hope it is the right way to do it
+                (e.currentTarget as HTMLInputElement).blur();
               }}
+              onChange={setSearchQuery}
               limit={10}
             />
 
-            <ActionIcon
-              variant="filled"
-              radius="lg"
-              size="lg"
-              mr={10}
-              ml={isMobile ? "auto" : "none"}
-              onClick={() => {
-                search(false);
-              }}
-            >
+            <ActionIcon variant="filled" radius="lg" size="lg" mr={10} ml={isMobile ? "auto" : "none"} onClick={search}>
               <IconSearch style={{ width: "60%", height: "60%" }} stroke={3} />
             </ActionIcon>
           </Box>
@@ -166,8 +204,11 @@ export default function Header() {
               visibleFrom={"xs"}
               data={productsNames}
               onKeyDown={(e: KeyboardEvent) => {
-                if (e.key == "Enter") search(true);
+                if (!(e.key == "Enter")) return;
+                search();
+                (e.currentTarget as HTMLInputElement).blur();
               }}
+              onChange={setSearchQuery}
               limit={10}
             />
             <ActionIcon
@@ -176,7 +217,7 @@ export default function Header() {
               size="lg"
               mr={10}
               ml={isMobile ? "auto" : "none"}
-              onClick={isMobile ? toggleSearchbar : () => search(true)}
+              onClick={isMobile ? toggleSearchbar : search}
               visibleFrom="mn"
             >
               <IconSearch style={{ width: "60%", height: "60%" }} stroke={3} />
