@@ -22,9 +22,9 @@ import { useEffect, useState } from "preact/hooks";
 import { Link, useNavigate } from "react-router-dom";
 import { useATLState } from "../../lib/atl_popover";
 import pocketbase, { getDropdownMenuList, getProducts } from "../../lib/database";
-import { Product, ProductColor } from "../../lib/database/models";
 import { Item, useList } from "../../lib/list";
 import { Tree, makeDropdownTree, toTitleCase } from "../../lib/utils";
+import { ProductWithKeywords, searchProducts } from "../../lib/utils/search";
 import DesktopDropdown from "../Dropdown/Desktop";
 import MobileDropdown from "../Dropdown/Mobile";
 import classes from "./index.module.css";
@@ -34,24 +34,29 @@ export default function Header() {
   const [drawerOpened, { toggle: toggleDrawer }] = useDisclosure(false);
   const [searchbarOpened, { toggle: toggleSearchbar }] = useDisclosure(false);
   const [showIndicator, setShowIndicator] = useState(false);
-  const [productsNames, setProductsNames] = useState<string[]>([]);
   const { list } = useList();
 
-  const [products, setProducts] = useState<Product[]>([]);
-  const [colors, setColors] = useState<ProductColor[]>([]);
+  const [products, setProducts] = useState<ProductWithKeywords[]>([]);
+  const [colors, setColors] = useState<string[]>([]);
 
   useEffect(() => {
-    getProducts().then(setProducts);
+    getProducts().then((products) =>
+      setProducts(
+        products.map((product) => {
+          product.keywords =
+            `${product.name} ${(product.expand.colors ?? []).map((color) => color.name).join(" ")} ${product.custom_id} ${(product.expand.types ?? []).map((type) => type.name).join(" ")} ${(product.expand.category ?? []).map((category) => category.name).join(" ")} ${product.expand.brand.name}`.toLowerCase();
+          return product;
+        }) as ProductWithKeywords[],
+      ),
+    );
   }, []);
 
   useEffect(() => {
-    const colors: ProductColor[] = [];
+    if (!products) return;
 
-    products.forEach((product) => {
-      product.expand.colors?.forEach((color) => {
-        if (!colors.some((c) => c.id == color.id)) colors.push(color);
-      });
-    });
+    const colors: string[] = [];
+
+    products.forEach((product) => product.expand.colors?.forEach((color) => colors.includes(color.name) && colors.push(color.name)));
 
     setColors(colors);
   }, [products]);
@@ -80,47 +85,21 @@ export default function Header() {
     });
   }, []);
 
-  function search() {
-    if (!searchQuery) return;
-    navigate(`/catalog?search=${searchQuery}`);
+  function search(search: string = searchQuery) {
+    search = search.trim();
+    navigate("/catalog" + (search ? `?search=${search}` : ""));
     if (isMobile) toggleSearchbar();
   }
 
   const [searchResults, setSearchResults] = useState<string[]>([]);
 
-  function updateSearchResults(withColor = false) {
-    if (products.length == 0) return;
-
-    products.forEach((product) => {
-      const searchString = `${product.name}${product.custom_id && ` - ${product.custom_id}`}`;
-
-      if (withColor) {
-        product.expand.colors?.forEach((color) => {
-          const searchStringWithColor = `${searchString} - ${color.name}`;
-          if (searchResults.includes(searchStringWithColor)) return;
-
-          setProductsNames((prev) => [...prev, searchStringWithColor]);
-          setSearchResults((prev) => [...prev, searchStringWithColor]);
-        });
-        return;
-      }
-
-      if (searchResults.includes(searchString)) return;
-
-      setProductsNames((prev) => [...prev, searchString]);
-      setSearchResults((prev) => [...prev, searchString]);
-    });
-  }
+  useEffect(() => {
+    console.log(searchResults);
+  }, [searchResults]);
 
   useEffect(() => {
-    if (products.length == 0) return;
-
-    updateSearchResults();
-  }, [products]);
-
-  useEffect(() => {
-    updateSearchResults(colors.map((color) => color.name).includes(searchQuery));
-  }, [searchQuery]);
+    setSearchResults(searchProducts(products, searchQuery, colors));
+  }, [searchQuery, products, colors]);
 
   const [product, setProduct] = useState<Item | null>(null);
 
@@ -151,13 +130,14 @@ export default function Header() {
               mr={10}
               placeholder="What are you looking for?"
               id={"searchbarMobile"}
-              data={productsNames}
+              data={searchResults}
+              filter={() => searchResults.map((result) => ({ value: result, label: result }))}
               onKeyDown={(e: KeyboardEvent) => {
                 if (!(e.key == "Enter")) return;
                 search();
-                // i hope it is the right way to do it
                 (e.currentTarget as HTMLInputElement).blur();
               }}
+              onOptionSubmit={search}
               onChange={setSearchQuery}
               limit={10}
             />
@@ -202,12 +182,14 @@ export default function Header() {
               placeholder="What are you looking for?"
               id={"searchbarWide"}
               visibleFrom={"xs"}
-              data={productsNames}
+              data={searchResults}
+              filter={() => searchResults.map((result) => ({ value: result, label: result }))}
               onKeyDown={(e: KeyboardEvent) => {
                 if (!(e.key == "Enter")) return;
                 search();
                 (e.currentTarget as HTMLInputElement).blur();
               }}
+              onOptionSubmit={search}
               onChange={setSearchQuery}
               limit={10}
             />

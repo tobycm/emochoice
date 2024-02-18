@@ -1,6 +1,6 @@
 /* eslint-disable react-refresh/only-export-components */
 import { Box, Loader } from "@mantine/core";
-import { Color, DropdownMenuItem, Product, ProductCategory } from "./database/models";
+import { Color, DropdownMenuItem, Product, ProductCategory } from "../database/models";
 
 export function toTitleCase(str: string = "") {
   return str.replace(/\w\S*/g, function (txt) {
@@ -54,13 +54,18 @@ export function pasteImage(
   );
 }
 
-export default function LoaderBox() {
+export default function LoaderBox({ text }: { text: string }) {
   return (
     <Box h="50vh" w="100%" display={"flex"} style={{ alignItems: "center", justifyContent: "center" }}>
       <Loader size="lg" />
+      <Box ml={10}>{text}</Box>
     </Box>
   );
 }
+
+LoaderBox.defaultProps = {
+  text: "Loading...",
+};
 
 function hexToRgb(hex: string) {
   const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex.replaceAll("#", ""));

@@ -19,6 +19,7 @@ export async function searchQuery(collection: string, query: string) {
   return await pocketbase.collection(collection).getFirstListItem<ProductCategory>(`name = "${query}"`);
 }
 
+// bad idea but ok
 let products: Product[] | undefined;
 
 export async function getProducts() {

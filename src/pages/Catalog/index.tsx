@@ -6,8 +6,9 @@ import { useNavigate } from "react-router-dom";
 import SmallChangeHelmet from "../../components/Helmets/SmallChangeHelmet";
 import ProductCard from "../../components/ProductCard";
 import { getFilter, getProducts, searchQuery } from "../../lib/database";
-import { Product } from "../../lib/database/models";
+import { Product, ProductColor } from "../../lib/database/models";
 import LoaderBox, { setDocumentTitle, toTitleCase } from "../../lib/utils";
+import { convertToKeywords } from "../../lib/utils/search";
 import classes from "./index.module.css";
 
 type FilterTypes = "color" | "category" | "brand";
@@ -17,14 +18,39 @@ interface Filter {
   value: string;
 }
 
+enum PageState {
+  Loading,
+  Searching,
+  Filtering,
+  Loaded,
+}
+
 export default function Catalog() {
   const [products, setProducts] = useState<Product[]>([]);
-  const [isLoaded, setIsLoaded] = useState(false);
+  const [colors, setColors] = useState<ProductColor[]>([]);
+
+  useEffect(() => {
+    if (!products) return;
+
+    const colors: ProductColor[] = [];
+
+    products.forEach((product) => {
+      product.expand.colors?.forEach((color) => {
+        if (!colors.every((c) => c.id != color.id)) return;
+        colors.push(color);
+      });
+    });
+
+    setColors(colors);
+  }, [products]);
+
+  const [pageState, setPageState] = useState<PageState>(PageState.Loading);
   const [filters, setFilters] = useState<Filter[]>([]);
   const [modalOpened, setModalOpened] = useState<boolean>(false);
-  const [isFiltered, setIsFiltered] = useState(true);
   const isMobile = useMediaQuery("(max-width: 36em)");
   const navigate = useNavigate();
+
+  const [searchedColor, setSearchedColor] = useState<string>("");
 
   const setSortedProducts = (products: Product[]) => {
     setProducts(
@@ -34,18 +60,34 @@ export default function Catalog() {
     );
   };
 
-  const searchProducts = () => {
+  function searchProducts() {
+    setPageState(PageState.Searching);
+
     const url = new URL(window.location.href);
     const search = url.searchParams.get("search")?.toLowerCase();
-    if (!search) return;
+    if (!search) return setPageState(PageState.Loaded);
+
+    const keywords = convertToKeywords(search);
+
+    const keywordForColor = keywords.find((keyword) => colors.some((color) => color.name.toLowerCase().includes(keyword)));
+
+    const color = keywordForColor ? colors.find((color) => color.name.toLowerCase().includes(keywordForColor)) : "";
+
+    if (color) setSearchedColor(color.id);
 
     getProducts().then((products) =>
       setSortedProducts(
-        products.filter((product) => `${product.name}${product.custom_id && ` - ${product.custom_id}`}`.toLowerCase().includes(search)),
+        products.filter((product) =>
+          keywords.every((keyword) =>
+            `${product.name} | ${(product.expand.colors ?? []).map((color) => color.name).join(" ")} | ${product.custom_id} | ${(product.expand.types ?? []).map((type) => type.name).join(" ")} | ${(product.expand.category ?? []).map((category) => category.name).join(" ")} | ${product.expand.brand.name}`
+              .toLowerCase()
+              .includes(keyword),
+          ),
+        ),
       ),
     );
-    setIsLoaded(true);
-  };
+    setPageState(PageState.Loaded);
+  }
 
   useEffect(() => {
     setDocumentTitle("Catalog");
@@ -57,7 +99,7 @@ export default function Catalog() {
     if (!url.searchParams.get("filters"))
       getProducts().then((products) => {
         setSortedProducts(products);
-        setIsLoaded(true);
+        setPageState(PageState.Loaded);
       });
   }, []);
 
@@ -78,8 +120,7 @@ export default function Catalog() {
       }
 
       setSortedProducts(products);
-      setIsFiltered(true);
-      !isLoaded && setIsLoaded(true);
+      pageState !== PageState.Loaded && setPageState(PageState.Loaded);
 
       if (fromFilterList && newFilters.length > 0) {
         const categoryFilters = newFilters
@@ -101,18 +142,30 @@ export default function Catalog() {
             ...(resolvedBrandFilters.length > 0 ? [`brand:${resolvedBrandFilters.join("+")}`] : []),
           ].join(",");
           navigate(`/catalog?filters=${filtersQueryString}`);
-        } catch (error) {}
+        } catch (error) {
+          // lmeo
+        }
       }
       if (fromFilterList && newFilters.length === 0) navigate("/catalog");
     });
   }
 
   useEffect(() => {
-    const handleHrefChange = async () => {
+    async function handleHrefChange() {
       const urlSearchParams = new URL(window.location.href).searchParams;
       const filtersParam = urlSearchParams.get("filters");
       const searchParam = urlSearchParams.get("search");
+
+      if (!filtersParam && !searchParam) {
+        setPageState(PageState.Loaded);
+        setFilters([]);
+        filterProducts([], false);
+        return;
+      }
+
       if (filtersParam) {
+        setPageState(PageState.Filtering);
+
         const allFilters = filtersParam.split(",");
         const categoryFilters = await Promise.all(
           allFilters
@@ -169,19 +222,12 @@ export default function Catalog() {
             filters.push({ type: "brand", value: brand });
           });
         });
-        setIsFiltered(false);
+        setPageState(PageState.Loaded);
         setFilters(filters);
         filterProducts(filters, false);
-      } else if (searchParam) {
-        // note: assuming no filtering and searching at the same time
-        setFilters([]);
-        searchProducts();
-      } else {
-        setIsFiltered(false);
-        setFilters([]);
-        filterProducts([], false);
       }
-    };
+      if (searchParam) searchProducts();
+    }
 
     handleHrefChange();
   }, [window.location.href]);
@@ -193,7 +239,7 @@ export default function Catalog() {
 
       for (const value of values) newFilters.push({ type, value });
 
-      setIsFiltered(false);
+      setPageState(PageState.Filtering);
       setFilters(newFilters);
       filterProducts(newFilters);
     };
@@ -201,11 +247,11 @@ export default function Catalog() {
 
   const getFilterValues = (type: FilterTypes) => filters.filter((filter) => filter.type === type).map((value) => value.value);
 
-  useEffect(() => {
-    console.log(getFilterValues("category"));
-    console.log(getFilterValues("color"));
-    console.log(getFilterValues("brand"));
-  }, [filters]);
+  // useEffect(() => {
+  //   console.log(getFilterValues("category"));
+  //   console.log(getFilterValues("color"));
+  //   console.log(getFilterValues("brand"));
+  // }, [filters]);
 
   const [openCategoryFilter, categoryFilter] = useDisclosure(true);
   const [openBrandFilter, brandFilter] = useDisclosure(true);
@@ -281,7 +327,7 @@ export default function Catalog() {
     );
   }
 
-  if (!isLoaded) return <LoaderBox />;
+  if (pageState === PageState.Loading) return <LoaderBox />;
 
   return (
     <Box className={classes.container}>
@@ -338,8 +384,10 @@ export default function Catalog() {
             </Pill.Group>
           </InputBase>
         </Box>
-        {!isFiltered ? (
-          <LoaderBox />
+        {pageState === PageState.Filtering ? (
+          <LoaderBox text="Filtering..." />
+        ) : pageState === PageState.Searching ? (
+          <LoaderBox text="Searching..." />
         ) : products.length === 0 ? (
           <Box display="flex" style={{ justifyContent: "center", alignItems: "center", flexDirection: "column" }} w="100%" h="50vh">
             <IconSearchOff style={{ width: "30%", height: "30%", marginBottom: "1em" }} stroke={1} />
@@ -364,7 +412,7 @@ export default function Catalog() {
             {products
               .filter((p) => !p.hidden)
               .map((product) => (
-                <ProductCard product={product} key={product.id} isMobile={isMobile} />
+                <ProductCard product={product} key={product.id} isMobile={isMobile} searchedColor={searchedColor} />
               ))}
           </Box>
         )}
