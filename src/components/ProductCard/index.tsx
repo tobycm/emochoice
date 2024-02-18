@@ -8,7 +8,7 @@ export default function ProductCard({
   product,
   inProductPage,
   isMobile,
-  searchedColor = "",
+  searchedColor,
 }: {
   product: Product;
   inProductPage?: boolean;
@@ -160,4 +160,5 @@ export default function ProductCard({
 
 ProductCard.defaultProps = {
   inProductPage: false,
+  searchedColor: "",
 };
