@@ -73,7 +73,7 @@ export default function Catalog() {
 
     const color = keywordForColor ? colors.find((color) => color.name.toLowerCase().includes(keywordForColor)) : "";
 
-    if (color) setSearchedColor(color.id);
+    if (color) setSearchedColor(color.name);
 
     getProducts().then((products) =>
       setSortedProducts(

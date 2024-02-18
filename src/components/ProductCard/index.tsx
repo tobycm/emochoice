@@ -1,7 +1,8 @@
 import { Badge, Box, Card, Center, Group, Image, Overlay, Text, Title } from "@mantine/core";
+import { useState } from "preact/hooks";
 import { Link } from "react-router-dom";
 import pocketbase from "../../lib/database";
-import { Product, ProductImage } from "../../lib/database/models";
+import { Product } from "../../lib/database/models";
 import { linearBackgroundProperties } from "../../lib/utils";
 
 export default function ProductCard({
@@ -35,11 +36,12 @@ export default function ProductCard({
     );
   }
 
-  let image: ProductImage | undefined;
+  const [image, setImage] = useState(product.expand.images?.[0]);
 
-  if (product.expand.images) {
-    if (searchedColor) image = product.expand.images.find((image) => image.color === searchedColor);
-    else image = product.expand.images[0];
+  if (product.expand.images && searchedColor) {
+    const color = product.expand.colors?.find((color) => color.name.toLowerCase().includes(searchedColor));
+    const imageWithColor = product.expand.images.find((image) => image.color === color?.id);
+    if (imageWithColor) setImage(imageWithColor);
   }
 
   if (isMobile && !inProductPage)
@@ -108,14 +110,7 @@ export default function ProductCard({
         withBorder
       >
         <Card.Section h="77%">
-          <Image
-            src={
-              product.images
-                ? pocketbase.getFileUrl(product.expand.images![0], product.expand.images![0].image, { thumb: "0x320" })
-                : "/images/no_image.png"
-            }
-            h="100%"
-          />
+          <Image src={image ? pocketbase.getFileUrl(image, image.image, { thumb: "0x320" }) : "/images/no_image.png"} h="100%" />
           {product.tags.includes("out_of_stock") && (
             <Overlay h="66.15%" backgroundOpacity={0.4}>
               <Center h="100%">
