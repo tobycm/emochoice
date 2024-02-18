@@ -1,5 +1,5 @@
 /* eslint-disable react-refresh/only-export-components */
-import { Box, Loader } from "@mantine/core";
+import { Box, Loader, Title } from "@mantine/core";
 import { Color, DropdownMenuItem, Product, ProductCategory } from "../database/models";
 
 export function toTitleCase(str: string = "") {
@@ -56,9 +56,11 @@ export function pasteImage(
 
 export default function LoaderBox({ text }: { text: string }) {
   return (
-    <Box h="50vh" w="100%" display={"flex"} style={{ alignItems: "center", justifyContent: "center" }}>
+    <Box h="50vh" w="100%" display={"flex"} style={{ alignItems: "center", justifyContent: "center", flexDirection: "column" }}>
       <Loader size="lg" />
-      <Box ml={10}>{text}</Box>
+      <Title mt="sm" order={2}>
+        {text}
+      </Title>
     </Box>
   );
 }

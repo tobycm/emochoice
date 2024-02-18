@@ -94,10 +94,6 @@ export default function Header() {
   const [searchResults, setSearchResults] = useState<string[]>([]);
 
   useEffect(() => {
-    console.log(searchResults);
-  }, [searchResults]);
-
-  useEffect(() => {
     setSearchResults(searchProducts(products, searchQuery, colors));
   }, [searchQuery, products, colors]);
 
@@ -142,7 +138,7 @@ export default function Header() {
               limit={10}
             />
 
-            <ActionIcon variant="filled" radius="lg" size="lg" mr={10} ml={isMobile ? "auto" : "none"} onClick={search}>
+            <ActionIcon variant="filled" radius="lg" size="lg" mr={10} ml={isMobile ? "auto" : "none"} onClick={() => search()}>
               <IconSearch style={{ width: "60%", height: "60%" }} stroke={3} />
             </ActionIcon>
           </Box>
@@ -199,7 +195,7 @@ export default function Header() {
               size="lg"
               mr={10}
               ml={isMobile ? "auto" : "none"}
-              onClick={isMobile ? toggleSearchbar : search}
+              onClick={isMobile ? toggleSearchbar : () => search()}
               visibleFrom="mn"
             >
               <IconSearch style={{ width: "60%", height: "60%" }} stroke={3} />
