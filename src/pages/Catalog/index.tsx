@@ -18,6 +18,8 @@ export default function Catalog() {
   const isMobile = useMediaQuery("(max-width: 36em)");
   const navigate = useNavigate();
 
+  const [searchedColor, setSearchedColor] = useState<string>("");
+
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [filters, setFilters] = useState<Filter[]>([]);
 

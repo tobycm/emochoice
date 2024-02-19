@@ -9,7 +9,7 @@ import { linearBackgroundProperties, setDocumentTitle, toTitleCase } from "../..
 
 export default function Success() {
   const navigate = useNavigate();
-  const isMobile = useMediaQuery(`(max-width: 36em)`);
+  const isMobile = useMediaQuery("(max-width: 48em)");
   let user: { quote?: List; name?: string; contact?: string; address?: string } = {};
 
   const location = useLocation();

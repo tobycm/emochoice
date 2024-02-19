@@ -1,11 +1,21 @@
 import { Badge, Box, Card, Center, Group, Image, Overlay, Text, Title } from "@mantine/core";
+import { useState } from "preact/hooks";
 import { Link } from "react-router-dom";
 import pocketbase from "../../lib/database";
 import { Product } from "../../lib/database/models";
 import { linearBackgroundProperties } from "../../lib/utils";
 
-export default function ProductCard(props: { product: Product; inProductPage?: boolean; isMobile?: boolean }) {
-  const { product, isMobile } = props;
+export default function ProductCard({
+  product,
+  inProductPage,
+  isMobile,
+  searchedColor,
+}: {
+  product: Product;
+  inProductPage?: boolean;
+  isMobile?: boolean;
+  searchedColor: string;
+}) {
   const productUrl = `/product/${product.id}`;
 
   let colors = null;
@@ -26,20 +36,21 @@ export default function ProductCard(props: { product: Product; inProductPage?: b
     );
   }
 
-  if (isMobile && !props.inProductPage)
+  const [image, setImage] = useState(product.expand.images?.[0]);
+
+  if (product.expand.images && searchedColor) {
+    const color = product.expand.colors?.find((color) => color.name.toLowerCase().includes(searchedColor));
+    const imageWithColor = product.expand.images.find((image) => image.color === color?.id);
+    if (imageWithColor) setImage(imageWithColor);
+  }
+
+  if (isMobile && !inProductPage)
     return (
       <Link to={productUrl} style={{ textDecoration: "none" }}>
         <Card w="85vw" h="calc(4/10*85vw)" maw={750} mah={1600} shadow="sm" padding="sm" radius="md" pb="xl" mb="lg" display={"flex"} withBorder>
           <Card.Section display={"flex"}>
             <Box w="30%">
-              <Image
-                src={
-                  product.images
-                    ? pocketbase.getFileUrl(product.expand.images![0], product.expand.images![0].image, { thumb: "0x146" })
-                    : "/images/no_image.png"
-                }
-                h="calc(4/10*85vw)"
-              />
+              <Image src={image ? pocketbase.getFileUrl(image, image.image, { thumb: "0x320" }) : "/images/no_image.png"} h="calc(4/10*85vw)" />
               {product.tags.includes("out_of_stock") && (
                 <Overlay w="30%" backgroundOpacity={0.4}>
                   <Center h="100%" w="100%">
@@ -85,7 +96,7 @@ export default function ProductCard(props: { product: Product; inProductPage?: b
   return (
     <Link to={productUrl} style={{ textDecoration: "none" }}>
       <Card
-        style={{ margin: !props.inProductPage ? "1vw 0 1vw 1vw" : "0.3vw 0.3vw 0 0" }}
+        style={{ margin: !inProductPage ? "1vw 0 1vw 1vw" : "0.3vw 0.3vw 0 0" }}
         w={`43rem/3`}
         h={`${((1 + Math.sqrt(5)) / 2) * (43 / 3)}rem`}
         maw={750}
@@ -93,20 +104,13 @@ export default function ProductCard(props: { product: Product; inProductPage?: b
         shadow="sm"
         padding="lg"
         radius="md"
-        mb={props.inProductPage ? "md" : "0"}
+        mb={inProductPage ? "md" : "0"}
         pb="xl"
-        mr={props.inProductPage ? "10" : "0"}
+        mr={inProductPage ? "10" : "0"}
         withBorder
       >
         <Card.Section h="77%">
-          <Image
-            src={
-              product.images
-                ? pocketbase.getFileUrl(product.expand.images![0], product.expand.images![0].image, { thumb: "0x320" })
-                : "/images/no_image.png"
-            }
-            h="100%"
-          />
+          <Image src={image ? pocketbase.getFileUrl(image, image.image, { thumb: "0x320" }) : "/images/no_image.png"} h="100%" />
           {product.tags.includes("out_of_stock") && (
             <Overlay h="66.15%" backgroundOpacity={0.4}>
               <Center h="100%">
@@ -151,4 +155,5 @@ export default function ProductCard(props: { product: Product; inProductPage?: b
 
 ProductCard.defaultProps = {
   inProductPage: false,
+  searchedColor: "",
 };

@@ -1,6 +1,6 @@
 /* eslint-disable react-refresh/only-export-components */
-import { Box, Loader } from "@mantine/core";
-import { Color, DropdownMenuItem, Product, ProductCategory } from "./database/models";
+import { Box, Loader, Title } from "@mantine/core";
+import { Color, DropdownMenuItem, Product, ProductCategory } from "../database/models";
 
 export function toTitleCase(str: string = "") {
   return str.replace(/\w\S*/g, function (txt) {
@@ -54,13 +54,20 @@ export function pasteImage(
   );
 }
 
-export default function LoaderBox() {
+export default function LoaderBox({ text }: { text: string }) {
   return (
-    <Box h="50vh" w="100%" display={"flex"} style={{ alignItems: "center", justifyContent: "center" }}>
+    <Box h="50vh" w="100%" display={"flex"} style={{ alignItems: "center", justifyContent: "center", flexDirection: "column" }}>
       <Loader size="lg" />
+      <Title mt="sm" order={2}>
+        {text}
+      </Title>
     </Box>
   );
 }
+
+LoaderBox.defaultProps = {
+  text: "Loading...",
+};
 
 function hexToRgb(hex: string) {
   const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex.replaceAll("#", ""));
@@ -178,6 +185,13 @@ export function isNotEmpty(obj: unknown) {
   return obj !== null && typeof obj === "object" && Object.keys(obj).length > 0;
 }
 
-export const scrollToTop = () => {
+export function scrollToTop() {
   window.scrollTo({ top: 0, behavior: "smooth" });
-};
+}
+
+export function shuffleArray<T>(array: T[]): T[] {
+  return array
+    .map((value) => ({ value, sort: Math.random() }))
+    .sort((a, b) => a.sort - b.sort)
+    .map(({ value }) => value);
+}
