@@ -1,5 +1,5 @@
-import { getProducts } from "../../lib/database";
-import { Product, ProductBrand, ProductCategory, ProductColor } from "../../lib/database/models";
+import { getProducts } from "../database";
+import { Product, ProductBrand, ProductCategory, ProductColor } from "../database/models";
 
 export function outOfStockToEnd(products: Product[]) {
   return products
