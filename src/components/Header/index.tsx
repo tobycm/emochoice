@@ -9,7 +9,6 @@ import {
   Group,
   Image,
   Indicator,
-  Modal,
   NavLink,
   Popover,
   Space,
@@ -32,7 +31,6 @@ import classes from "./index.module.css";
 export default function Header() {
   const ATL = useATLState();
   const [drawerOpened, { toggle: toggleDrawer }] = useDisclosure(false);
-  const [searchbarOpened, { toggle: toggleSearchbar }] = useDisclosure(false);
   const [showIndicator, setShowIndicator] = useState(false);
   const { list } = useList();
 
@@ -95,7 +93,6 @@ export default function Header() {
     url.searchParams.set("search", search);
 
     navigate("/catalog" + url.search);
-    if (isMobile) toggleSearchbar();
   }
 
   const [searchResults, setSearchResults] = useState<string[]>([]);
@@ -124,43 +121,8 @@ export default function Header() {
   return (
     <Box className={classes.header}>
       <Container className={classes.mainSection}>
-        <Modal opened={searchbarOpened} onClose={toggleSearchbar} title={"Search"} size="md">
-          {/** Search modal on mobile */}
-          <Box display={"flex"} style={{ justifyContent: "space-between" }}>
-            <Autocomplete
-              radius="xl"
-              w={"80%"}
-              mr={10}
-              placeholder="What are you looking for?"
-              id={"searchbarMobile"}
-              data={searchResults}
-              filter={() => searchResults.map((result) => ({ value: result, label: result }))}
-              onKeyDown={(e: KeyboardEvent) => {
-                if (!(e.key == "Enter")) return;
-                search();
-                (e.currentTarget as HTMLInputElement).blur();
-              }}
-              onOptionSubmit={search}
-              onChange={setSearchQuery}
-              limit={10}
-            />
-
-            <ActionIcon variant="filled" radius="lg" size="lg" mr={10} ml={isMobile ? "auto" : "none"} onClick={() => search()}>
-              <IconSearch style={{ width: "60%", height: "60%" }} stroke={3} />
-            </ActionIcon>
-          </Box>
-        </Modal>
         <Drawer opened={drawerOpened} onClose={toggleDrawer} title={"Menu"} size="xs">
           {/** Categories "dropdown" on mobile */}
-          <NavLink
-            leftSection={<IconSearch size="1rem" stroke={1.5} />}
-            label="Search"
-            onClick={() => {
-              toggleDrawer();
-              toggleSearchbar();
-            }}
-            hiddenFrom="mn"
-          />
           <MobileDropdown closeDrawer={toggleDrawer} tree={dropdownTree} />
           <Link to="/gallery" style={{ textDecoration: "none", color: "black" }} onClick={toggleDrawer}>
             <NavLink label="Gallery" leftSection={<IconPhoto size="1rem" stroke={1.5} />} />
@@ -169,98 +131,118 @@ export default function Header() {
             <NavLink label="Contact" leftSection={<IconPhone size="1rem" stroke={1.5} />} />
           </Link>
         </Drawer>
-        <Group justify="space-between" display="flex" style={{ alignItems: "center" }}>
-          <Box display={"flex"} hiddenFrom="xs">
-            <Burger opened={drawerOpened} onClick={toggleDrawer} size="sm" maw={isMobile ? "28px" : "auto"} />
-            <Space w="44px" visibleFrom="mn" />
+        <Group justify="space-between" display="flex" style={{ alignItems: "center", flexDirection: "column" }}>
+          <Box w={"100%"} display={"flex"} hiddenFrom="xs" style={{ alignItems: "center" }}>
+            <Box display={"flex"}>
+              <Burger opened={drawerOpened} onClick={toggleDrawer} size="sm" maw={isMobile ? "28px" : "auto"} />
+              <Space w="44px" visibleFrom="mn" />
+            </Box>
+            <Link to={"/"} style={{ display: "flex", justifyContent: "center", marginLeft: "6px" }}>
+              <Image src={"/images/full_logo.svg"} mih={60} mah={70} h="7vh" w={"auto"} style={{ pointerEvents: "none" }} />
+            </Link>
           </Box>
-          <Link to={"/"} style={{ display: "flex", justifyContent: "center", marginLeft: "6px" }}>
-            <Image src={"/images/full_logo.svg"} mih={60} mah={70} h="7vh" w={"auto"} style={{ pointerEvents: "none" }} />
-          </Link>
-          <Box display={"flex"} style={{ justifyContent: "flex-end", maxWidth: isMobile ? "78px" : "min-content" }}>
-            <Autocomplete
-              radius="xl"
-              w={220}
-              mr={10}
-              placeholder="What are you looking for?"
-              id={"searchbarWide"}
-              visibleFrom={"xs"}
-              data={searchResults}
-              filter={() => searchResults.map((result) => ({ value: result, label: result }))}
-              onKeyDown={(e: KeyboardEvent) => {
-                if (!(e.key == "Enter")) return;
-                search();
-                (e.currentTarget as HTMLInputElement).blur();
-              }}
-              onOptionSubmit={search}
-              onChange={setSearchQuery}
-              limit={10}
-            />
-            <ActionIcon
-              variant="filled"
-              radius="lg"
-              size="lg"
-              mr={10}
-              ml={isMobile ? "auto" : "none"}
-              onClick={isMobile ? toggleSearchbar : () => search()}
-              visibleFrom="mn"
-            >
-              <IconSearch style={{ width: "60%", height: "60%" }} stroke={3} />
-            </ActionIcon>
-            <Link to="/list">
-              <Popover opened={ATL.current} withArrow arrowSize={15} radius={15}>
-                <Popover.Target>
-                  {showIndicator ? (
-                    <Indicator inline label={list.length} color="red" size={16}>
+
+          <Box w={"100%"} display={"flex"} style={{ justifyContent: "space-between", alignItems: "center" }}>
+            <Box w={"85%"} display={"flex"} hiddenFrom="xs" style={{ justifyContent: "space-between" }}>
+              <Autocomplete
+                radius="xl"
+                w={"100%"}
+                mr={10}
+                placeholder="Model ID, brand, category, color, types, etc..."
+                id={"searchbarMobile"}
+                data={searchResults}
+                filter={() => searchResults.map((result) => ({ value: result, label: result }))}
+                onKeyDown={(e: KeyboardEvent) => {
+                  if (!(e.key == "Enter")) return;
+                  search();
+                  (e.currentTarget as HTMLInputElement).blur();
+                }}
+                onOptionSubmit={search}
+                onChange={setSearchQuery}
+                limit={10}
+              />
+
+              <ActionIcon variant="filled" radius="lg" size="lg" mr={10} ml={isMobile ? "auto" : "none"} onClick={() => search()}>
+                <IconSearch style={{ width: "60%", height: "60%" }} stroke={3} />
+              </ActionIcon>
+            </Box>
+            <Box display={"flex"} style={{ justifyContent: "flex-end", maxWidth: isMobile ? "78px" : "min-content" }}>
+              <Autocomplete
+                radius="xl"
+                w={220}
+                mr={10}
+                placeholder="What are you looking for?"
+                id={"searchbarWide"}
+                visibleFrom={"xs"}
+                data={searchResults}
+                filter={() => searchResults.map((result) => ({ value: result, label: result }))}
+                onKeyDown={(e: KeyboardEvent) => {
+                  if (!(e.key == "Enter")) return;
+                  search();
+                  (e.currentTarget as HTMLInputElement).blur();
+                }}
+                onOptionSubmit={search}
+                onChange={setSearchQuery}
+                limit={10}
+              />
+              <ActionIcon variant="filled" radius="lg" size="lg" mr={10} ml={isMobile ? "auto" : "none"} onClick={() => search()} visibleFrom="mn">
+                <IconSearch style={{ width: "60%", height: "60%" }} stroke={3} />
+              </ActionIcon>
+              <Link to="/list">
+                <Popover opened={ATL.current} withArrow arrowSize={15} radius={15}>
+                  <Popover.Target>
+                    {showIndicator ? (
+                      <Indicator inline label={list.length} color="red" size={16}>
+                        <ActionIcon variant="red" radius="lg" size="lg">
+                          <IconShoppingCart style={{ width: "60%", height: "60%" }} stroke={3} />
+                        </ActionIcon>
+                      </Indicator>
+                    ) : (
                       <ActionIcon variant="red" radius="lg" size="lg">
                         <IconShoppingCart style={{ width: "60%", height: "60%" }} stroke={3} />
                       </ActionIcon>
-                    </Indicator>
-                  ) : (
-                    <ActionIcon variant="red" radius="lg" size="lg">
-                      <IconShoppingCart style={{ width: "60%", height: "60%" }} stroke={3} />
-                    </ActionIcon>
-                  )}
-                </Popover.Target>
-                <Popover.Dropdown>
-                  <Box>
-                    <Group display="flex" style={{ justifyContent: "space-between", alignItems: "center" }} w="100%" mt="xs">
-                      <Box display="flex" style={{ justifyContent: "space-between", alignItems: "center" }}>
-                        <Avatar variant="filled" radius="xl" size="sm" color="emochoice-green">
-                          <IconCheck stroke={3} size="1.5rem" />
-                        </Avatar>
-                        <Title order={4} ml="sm">
-                          Added to List!
-                        </Title>
-                      </Box>
-                      <IconX onClick={() => ATL.set(false)} style={{ marginLeft: "auto", cursor: "pointer" }} />
-                    </Group>
-                    <Group display="flex" style={{ justifyContent: "space-between" }} w="max-content" mt="md">
-                      <Image src={productImage} w={100} />
-                      <Box>
-                        <Text fw={600} maw={200} lineClamp={2}>
-                          {product?.product.name}
-                          {product?.product.custom_id && ` - ${product?.product.custom_id}`}
-                        </Text>
-                        {product?.color && (
-                          <Text c="grey" style={{ fontSize: "15px" }}>
-                            Color: {toTitleCase(product?.color.name)}
+                    )}
+                  </Popover.Target>
+                  <Popover.Dropdown>
+                    <Box>
+                      <Group display="flex" style={{ justifyContent: "space-between", alignItems: "center" }} w="100%" mt="xs">
+                        <Box display="flex" style={{ justifyContent: "space-between", alignItems: "center" }}>
+                          <Avatar variant="filled" radius="xl" size="sm" color="emochoice-green">
+                            <IconCheck stroke={3} size="1.5rem" />
+                          </Avatar>
+                          <Title order={4} ml="sm">
+                            Added to List!
+                          </Title>
+                        </Box>
+                        <IconX onClick={() => ATL.set(false)} style={{ marginLeft: "auto", cursor: "pointer" }} />
+                      </Group>
+                      <Group display="flex" style={{ justifyContent: "space-between" }} w="max-content" mt="md">
+                        <Image src={productImage} w={100} />
+                        <Box>
+                          <Text fw={600} maw={200} lineClamp={2}>
+                            {product?.product.name}
+                            {product?.product.custom_id && ` - ${product?.product.custom_id}`}
                           </Text>
-                        )}
-                        {product?.type && (
+                          {product?.color && (
+                            <Text c="grey" style={{ fontSize: "15px" }}>
+                              Color: {toTitleCase(product?.color.name)}
+                            </Text>
+                          )}
+                          {product?.type && (
+                            <Text c="grey" style={{ fontSize: "15px" }}>
+                              Type: {product?.type.name}
+                            </Text>
+                          )}
                           <Text c="grey" style={{ fontSize: "15px" }}>
-                            Type: {product?.type.name}
+                            Quantity: {product?.quantity}
                           </Text>
-                        )}
-                        <Text c="grey" style={{ fontSize: "15px" }}>
-                          Quantity: {product?.quantity}
-                        </Text>
-                      </Box>
-                    </Group>
-                  </Box>
-                </Popover.Dropdown>
-              </Popover>
-            </Link>
+                        </Box>
+                      </Group>
+                    </Box>
+                  </Popover.Dropdown>
+                </Popover>
+              </Link>
+            </Box>
           </Box>
         </Group>
       </Container>
