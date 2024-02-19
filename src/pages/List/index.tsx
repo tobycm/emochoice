@@ -42,7 +42,7 @@ export default function List() {
     fetchData();
   }, []);
 
-  const isMobile = useMediaQuery(`(max-width: 36em)`);
+  const isMobile = useMediaQuery("(max-width: 48em)");
 
   return (
     <Box className={classes.outerBox}>

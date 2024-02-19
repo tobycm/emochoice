@@ -44,7 +44,7 @@ export default function DesktopDropdown({ tree }: { tree: Tree }) {
         value={activeTab}
         onChange={(tab) => setActiveTab(tab)}
         variant="outline"
-        visibleFrom="xs"
+        visibleFrom="sm"
         classNames={{ root: classes.tabs, list: classes.tabsList, tab: classes.tab }}
       >
         <Tabs.List>
