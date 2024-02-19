@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import classes from "./index.module.css";
 
 export default function HomeCard({ name, image, id }: { name: string; image: string; id: string }) {
-  const isMobile = useMediaQuery("(max-width: 1000px)");
+  const isMobile = useMediaQuery("(max-width: 48em)");
 
   if (isMobile)
     return (

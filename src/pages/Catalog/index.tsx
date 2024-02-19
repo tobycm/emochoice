@@ -47,7 +47,7 @@ export default function Catalog() {
   const [pageState, setPageState] = useState<PageState>(PageState.Loading);
   const [filters, setFilters] = useState<Filter[]>([]);
   const [modalOpened, setModalOpened] = useState<boolean>(false);
-  const isMobile = useMediaQuery("(max-width: 36em)");
+  const isMobile = useMediaQuery("(max-width: 48em)");
   const navigate = useNavigate();
 
   const [searchedColor, setSearchedColor] = useState<string>("");

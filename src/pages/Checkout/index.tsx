@@ -15,7 +15,7 @@ export default function Checkout() {
   const navigate = useNavigate();
   const { list, updateList } = useList();
   const [contactMethod, setContactMethod] = useState("Email & Phone number");
-  const isMobile = useMediaQuery(`(max-width: 36em)`);
+  const isMobile = useMediaQuery("(max-width: 48em)");
   const form = useForm({
     initialValues: {
       name: "",
