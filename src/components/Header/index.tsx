@@ -42,11 +42,13 @@ export default function Header() {
   useEffect(() => {
     getProducts().then((products) =>
       setProducts(
-        products.map((product) => {
-          product.keywords =
-            `${product.name} ${(product.expand.colors ?? []).map((color) => color.name).join(" ")} ${product.custom_id} ${(product.expand.types ?? []).map((type) => type.name).join(" ")} ${(product.expand.category ?? []).map((category) => category.name).join(" ")} ${product.expand.brand.name}`.toLowerCase();
-          return product;
-        }) as ProductWithKeywords[],
+        products.map(
+          (product) => (
+            (product.keywords =
+              `${product.name} ${(product.expand.colors ?? []).map((color) => color.name).join(" ")} ${product.custom_id} ${(product.expand.types ?? []).map((type) => type.name).join(" ")} ${(product.expand.category ?? []).map((category) => category.name).join(" ")} ${product.expand.brand.name}`.toLowerCase()),
+            product
+          ),
+        ) as ProductWithKeywords[],
       ),
     );
   }, []);
@@ -87,7 +89,12 @@ export default function Header() {
 
   function search(search: string = searchQuery) {
     search = search.trim();
-    navigate("/catalog" + (search ? `?search=${search}` : ""));
+
+    const url = new URL(window.location.href);
+
+    url.searchParams.set("search", search);
+
+    navigate("/catalog" + url.search);
     if (isMobile) toggleSearchbar();
   }
 
