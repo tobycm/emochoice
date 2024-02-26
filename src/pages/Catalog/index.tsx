@@ -5,18 +5,12 @@ import { useEffect, useState } from "preact/hooks";
 import { useNavigate } from "react-router-dom";
 import SmallChangeHelmet from "../../components/Helmets/SmallChangeHelmet";
 import ProductCard from "../../components/ProductCard";
-import { getFilter, getProducts, searchQuery } from "../../lib/database";
+import { getProducts } from "../../lib/database";
 import { Product, ProductColor } from "../../lib/database/models";
 import LoaderBox, { setDocumentTitle, toTitleCase } from "../../lib/utils";
+import { Filter } from "../../lib/utils/filters";
 import { convertToKeywords } from "../../lib/utils/search";
 import classes from "./index.module.css";
-
-type FilterTypes = "color" | "category" | "brand";
-
-interface Filter {
-  type: FilterTypes;
-  value: string;
-}
 
 enum PageState {
   Loading,
@@ -29,19 +23,36 @@ export default function Catalog() {
   const [products, setProducts] = useState<Product[]>([]);
   const [colors, setColors] = useState<ProductColor[]>([]);
 
+  const [allFilterValues, setAllFilterValues] = useState<Filter["value"][]>([]);
+
   useEffect(() => {
     if (!products) return;
 
-    const colors: ProductColor[] = [];
+    setColors([]);
+    setAllFilterValues([]);
 
     products.forEach((product) => {
       product.expand.colors?.forEach((color) => {
-        if (!colors.every((c) => c.id != color.id)) return;
-        colors.push(color);
+        setColors((prev) => {
+          if (!prev.every((c) => c.id != color.id)) return prev;
+          return [...prev, color];
+        });
+      });
+
+      product.expand.category?.forEach((category) => {
+        setAllFilterValues((prev) => {
+          if (!prev.every((c) => c.id != category.id)) return prev;
+          return [...prev, category];
+        });
+      });
+
+      setAllFilterValues((prev) => {
+        if (!prev.every((c) => c.id != product.expand.brand.id)) return prev;
+        return [...prev, product.expand.brand];
       });
     });
 
-    setColors(colors);
+    setAllFilterValues((prev) => [...prev, ...colors]);
   }, [products]);
 
   const [pageState, setPageState] = useState<PageState>(PageState.Loading);
@@ -106,52 +117,42 @@ export default function Catalog() {
   function filterProducts(newFilters: Filter[], fromFilterList: boolean = true) {
     getProducts().then(async (products) => {
       for (const filter of newFilters) {
-        switch (filter.type) {
-          case "color":
-            products = products.filter((product) => !!product.expand?.colors?.find((productColor) => productColor.name === filter.value));
-            break;
-          case "category":
-            products = products.filter((product) => !!product.expand?.category?.find((productCategory) => productCategory.name === filter.value));
-            break;
-          case "brand":
-            products = products.filter((product) => product.expand.brand.name === filter.value);
-            break;
-        }
+        if (filter.type === "color")
+          products = products.filter((product) => !!product.expand?.colors?.find((productColor) => productColor.id === filter.value.id));
+        if (filter.type === "category")
+          products = products.filter((product) => !!product.expand?.category?.find((productCategory) => productCategory.id === filter.value.id));
+        if (filter.type === "brand") products = products.filter((product) => product.expand.brand.id === filter.value.id);
       }
 
       setSortedProducts(products);
       pageState !== PageState.Loaded && setPageState(PageState.Loaded);
 
       if (fromFilterList && newFilters.length > 0) {
-        const categoryFilters = newFilters
-          .filter((filter) => filter.type === "category")
-          .map(async (filter) => (await searchQuery("categories", filter.value)).id);
-        const colorFilters = newFilters
-          .filter((filter) => filter.type === "color")
-          .map(async (filter) => (await searchQuery("colors", filter.value)).id);
-        const brandFilters = newFilters
-          .filter((filter) => filter.type === "brand")
-          .map(async (filter) => (await searchQuery("brands", filter.value)).id);
-        try {
-          const resolvedCategoryFilters = await Promise.all(categoryFilters);
-          const resolvedColorFilters = await Promise.all(colorFilters);
-          const resolvedBrandFilters = await Promise.all(brandFilters);
-          const filtersQueryString = [
-            ...(resolvedCategoryFilters.length > 0 ? [`category:${resolvedCategoryFilters.join("+")}`] : []),
-            ...(resolvedColorFilters.length > 0 ? [`color:${resolvedColorFilters.join("+")}`] : []),
-            ...(resolvedBrandFilters.length > 0 ? [`brand:${resolvedBrandFilters.join("+")}`] : []),
-          ].join(",");
-          navigate(`/catalog?filters=${filtersQueryString}`);
-        } catch (error) {
-          // lmeo
+        const filters: Record<string, Filter["value"][]> = {};
+
+        for (const filter of newFilters) {
+          if (!filters[filter.type]) filters[filter.type] = [];
+          filters[filter.type].push(filter.value);
         }
+
+        let filtersQueryString = "";
+
+        for (const type in filters) {
+          filtersQueryString += `${type}:${filters[type].map((filter) => filter.name).join("+")},`;
+        }
+
+        filtersQueryString = filtersQueryString.slice(0, -1);
+
+        navigate(`/catalog?filters=${filtersQueryString}`);
       }
+
       if (fromFilterList && newFilters.length === 0) navigate("/catalog");
     });
   }
 
   useEffect(() => {
     async function handleHrefChange() {
+      setPageState(PageState.Loading);
       const urlSearchParams = new URL(window.location.href).searchParams;
       const filtersParam = urlSearchParams.get("filters");
       const searchParam = urlSearchParams.get("search");
@@ -167,61 +168,21 @@ export default function Catalog() {
         setPageState(PageState.Filtering);
 
         const allFilters = filtersParam.split(",");
-        const categoryFilters = await Promise.all(
-          allFilters
-            .filter((filter) => filter.startsWith("category:"))
-            .map(async (filter) => {
-              const categoryIDs = filter.replace("category:", "").replaceAll(" ", "+").split("+");
-              const categoryPromises = categoryIDs.map(async (id) => {
-                const category = await getFilter("categories", id);
-                return category?.name;
-              });
-              const categories = await Promise.all(categoryPromises);
-              return categories;
-            }),
-        );
-        const colorFilters = await Promise.all(
-          allFilters
-            .filter((filter) => filter.startsWith("color:"))
-            .map(async (filter) => {
-              const colorIDs = filter.replace("color:", "").replace(" ", "+").split("+");
-              const colorPromises = colorIDs.map(async (id) => {
-                const color = await getFilter("colors", id);
-                return color?.name;
-              });
-              const colors = await Promise.all(colorPromises);
-              return colors;
-            }),
-        );
-        const brandFilters = await Promise.all(
-          allFilters
-            .filter((filter) => filter.startsWith("brand:"))
-            .map(async (filter) => {
-              const brandIDs = filter.replace("brand:", "").replace(" ", "+").split("+");
-              const brandPromises = brandIDs.map(async (id) => {
-                const brand = await getFilter("brands", id);
-                return brand?.name;
-              });
-              const brands = await Promise.all(brandPromises);
-              return brands;
-            }),
-        );
+
         const filters: Filter[] = [];
-        categoryFilters.forEach((categories) => {
-          categories.forEach((category) => {
-            filters.push({ type: "category", value: category });
+
+        allFilters.forEach((filter) => {
+          const subFilters = filter.split(",");
+          subFilters.forEach((subFilter) => {
+            const [type, values] = subFilter.split(":");
+            values
+              .split("+")
+              .forEach((value) =>
+                filters.push({ type: type as Filter["type"], value: allFilterValues.find((filterValue) => filterValue.id === value)! }),
+              );
           });
         });
-        colorFilters.forEach((colors) => {
-          colors.forEach((color) => {
-            filters.push({ type: "color", value: color });
-          });
-        });
-        brandFilters.forEach((brands) => {
-          brands.forEach((brand) => {
-            filters.push({ type: "brand", value: brand });
-          });
-        });
+
         setPageState(PageState.Loaded);
         setFilters(filters);
         filterProducts(filters, false);
@@ -232,26 +193,20 @@ export default function Catalog() {
     handleHrefChange();
   }, [window.location.href]);
 
-  const updateFilters = (type: FilterTypes) => {
+  function updateFilters(type: Filter["type"]) {
     return (values: string[]) => {
       const newFilters: Filter[] = [];
       for (const filter of filters) if (filter.type !== type) newFilters.push(filter);
 
-      for (const value of values) newFilters.push({ type, value });
+      for (const value of values) newFilters.push({ type, value: allFilterValues.find((filterValue) => filterValue.name === value)! });
 
       setPageState(PageState.Filtering);
       setFilters(newFilters);
       filterProducts(newFilters);
     };
-  };
+  }
 
-  const getFilterValues = (type: FilterTypes) => filters.filter((filter) => filter.type === type).map((value) => value.value);
-
-  // useEffect(() => {
-  //   console.log(getFilterValues("category"));
-  //   console.log(getFilterValues("color"));
-  //   console.log(getFilterValues("brand"));
-  // }, [filters]);
+  const getFilterValues = (type: Filter["type"]) => filters.filter((filter) => filter.type === type).map((value) => value.value.name);
 
   const [openCategoryFilter, categoryFilter] = useDisclosure(true);
   const [openBrandFilter, brandFilter] = useDisclosure(true);
@@ -332,14 +287,7 @@ export default function Catalog() {
   return (
     <Box className={classes.container}>
       <SmallChangeHelmet title="Catalog" description="Browse through our wide selection of products!" location="catalog" />
-      <Modal
-        opened={modalOpened}
-        onClose={() => {
-          setModalOpened(false);
-        }}
-        title={"Filters"}
-        withCloseButton
-      >
+      <Modal opened={modalOpened} onClose={() => setModalOpened(false)} title={"Filters"} withCloseButton>
         <FilterNavBar />
       </Modal>
       <Box visibleFrom="xs">
@@ -349,14 +297,7 @@ export default function Catalog() {
         <Title ta="center" order={1} mb="5%">
           Catalog
         </Title>
-        <Button
-          leftSection={<IconFilter size="1rem" stroke={1.5} />}
-          variant="light"
-          radius="xl"
-          onClick={() => {
-            setModalOpened(true);
-          }}
-        >
+        <Button leftSection={<IconFilter size="1rem" stroke={1.5} />} variant="light" radius="xl" onClick={() => setModalOpened(true)}>
           Filters
         </Button>
       </Box>
