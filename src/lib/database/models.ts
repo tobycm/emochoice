@@ -30,8 +30,7 @@ export interface Product extends RecordModel {
 export interface Brand {
   name: string;
 }
-
-export type ProductBrand = RecordModel & Brand;
+export interface ProductBrand extends RecordModel, Brand {}
 
 export interface DropdownMenuItem extends RecordModel {
   parent: ID;
@@ -45,8 +44,7 @@ export interface DropdownMenuItem extends RecordModel {
 export interface Type {
   name: string;
 }
-
-export type ProductType = RecordModel & Type;
+export interface ProductType extends RecordModel, Type {}
 
 export interface ProductCategory extends RecordModel {
   name: string;
@@ -57,13 +55,11 @@ export interface Color {
   hex: HexColor;
   texture: Filename;
 }
-
-export type ProductColor = RecordModel & Color;
+export interface ProductColor extends RecordModel, Color {}
 
 export interface Image {
   image: Filename;
   color: ID;
   type: ID;
 }
-
-export type ProductImage = RecordModel & Image;
+export interface ProductImage extends RecordModel, Image {}
