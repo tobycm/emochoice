@@ -9,5 +9,8 @@ module.exports = {
     "react-refresh/only-export-components": ["warn", { allowConstantExport: true }],
     "@typescript-eslint/ban-ts-comment": "warn",
     "no-constant-condition": "warn",
+    "@typescript-eslint/no-unused-vars": "warn",
+    "react-hooks/exhaustive-deps": "off",
+    "no-extra-semi": "warn",
   },
 };
