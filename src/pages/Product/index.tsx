@@ -54,7 +54,7 @@ function preview(backgroundImage: HTMLImageElement, userImage: HTMLImageElement,
 }
 
 export default function Product() {
-  const { set: popATLOver } = useATLState();
+  const atlState = useATLState();
   const { product } = useLoaderData() as { product: DProduct };
   const [customImage, setCustomImage] = useState<File | null>(null);
   const [image, setImage] = useState<File | null>(null);
@@ -161,8 +161,8 @@ export default function Product() {
   };
 
   function startATLPopover() {
-    popATLOver(false);
-    popATLOver(true);
+    atlState.set(false);
+    atlState.set(true);
   }
 
   return (

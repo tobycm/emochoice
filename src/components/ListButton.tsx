@@ -4,7 +4,7 @@ import { useEffect, useState } from "preact/hooks";
 import { Link } from "react-router-dom";
 import { useATLState } from "../lib/atl_popover";
 import pocketbase from "../lib/database";
-import list, { Item } from "../lib/list";
+import { Item, useList } from "../lib/list";
 import { toTitleCase } from "../lib/utils";
 
 export default function ListButton() {
@@ -14,6 +14,8 @@ export default function ListButton() {
   const [productImage, setProductImage] = useState<string | null>(null);
 
   const [showList, setShowList] = useState(false);
+
+  const { list } = useList();
 
   useEffect(() => {
     setShowList(list.length > 0);
