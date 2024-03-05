@@ -59,7 +59,7 @@ export default function ListButton() {
               </Box>
               <IconX onClick={() => ATL.set(false)} style={{ marginLeft: "auto", cursor: "pointer" }} />
             </Group>
-            <Group display="flex" style={{ justifyContent: "space-between" }} w="max-content" mt="md">
+            <Group display="flex" style={{ justifyContent: "space-between", alignItems: "flex-start" }} w="max-content" mt="md">
               <Image src={productImage} w={100} />
               <Box>
                 <Text fw={600} maw={200} lineClamp={2}>

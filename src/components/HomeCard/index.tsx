@@ -24,7 +24,7 @@ export default function HomeCard({ name, image, id }: { name: string; image: str
                   />
                 </Box>
                 <Box w="60%" display="flex">
-                  <Title order={3} style={{ textAlign: "center" }} m="auto" p={5} c="emochoice-blue">
+                  <Title order={3} style={{ textAlign: "center" }} m="auto" p={10} c="emochoice-blue">
                     {name}
                   </Title>
                 </Box>
@@ -39,12 +39,12 @@ export default function HomeCard({ name, image, id }: { name: string; image: str
     <Skeleton className={classes.card} h={456} w={280} radius="md" visible={!image}>
       <Link to={`/catalog?filters=category:${id}`} className={classes.card}>
         <Card shadow="sm" radius="md" w={280} h={456} withBorder>
-          <Card.Section h={"20%"} m="4%">
+          <Card.Section h={"17%"} m="4%">
             <Title order={3} style={{ textAlign: "center" }} c="emochoice-blue">
               {name}
             </Title>
           </Card.Section>
-          <Card.Section>
+          <Card.Section h="83%">
             <Image src={image} alt={`${name}`} maw={"100%"} h={"100%"} />
           </Card.Section>
         </Card>

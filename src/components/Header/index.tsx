@@ -72,16 +72,6 @@ export default function Header() {
               <Image src={"/images/full_logo.svg"} mih={60} mah={70} h="7vh" w={"auto"} style={{ pointerEvents: "none" }} />
             </Link>
           </Flex>
-          {/* i cooked smth if toby wants to check out */}
-          {/* oki wow, nicely cooked */}
-          {/* thanks */}
-          {/* what did u do */}
-          {/* above, flex, flex, flex, flex den hoi tho cuoi cung */}
-          {/* riel */}
-          {/* will this work? yes */}
-          {/* nice, pretty clean */}
-          {/* how didnt i find this before */}
-          {/* lol */}
           <Flex w={"100%"} justify={"flex-right"} align={"center"} mt={isMobile ? "sm" : "0"}>
             <SearchBar products={products} />
             <ListButton />
