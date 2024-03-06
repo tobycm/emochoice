@@ -7,7 +7,7 @@ import { ChangeEvent } from "preact/compat";
 import { useEffect, useState } from "preact/hooks";
 import { Link, useNavigate } from "react-router-dom";
 import DefaultHelmet from "../../components/Helmets/DefaultHelmet";
-import proceedList, { List as ListClass, useList } from "../../lib/list";
+import { List, useList } from "../../lib/list";
 import { fileToBase64, formatPhoneNumber, linearBackgroundProperties, setDocumentTitle, toTitleCase } from "../../lib/utils";
 import classes from "./index.module.css";
 
@@ -36,7 +36,7 @@ export default function Checkout() {
 
   useEffect(() => {
     setDocumentTitle("Checkout");
-    if (proceedList.length === 0) {
+    if (list.length === 0) {
       navigate("/list", { replace: true });
     }
   }, []);
@@ -57,7 +57,7 @@ export default function Checkout() {
               contact: `${form.values.email}${form.values.email && form.values.phone_number && ", "}${form.values.phone_number}`,
               address: `${form.values.address}, ${form.values.city}, ${form.values.state} ${form.values.postalCode}, ${form.values.country}`,
               items: await Promise.all(
-                proceedList.map(async (item) => ({
+                list.map(async (item) => ({
                   id: item.product.id,
                   quantity: item.quantity,
                   color: item.color?.id ?? null,
@@ -73,23 +73,23 @@ export default function Checkout() {
                 body: JSON.stringify(submitData),
               });
               if (res.status !== 200) throw new Error("There was an error placing your quote. Please try again later.");
-              const newList = new ListClass(
+              const newList = new List(
                 ...list.filter((_, index) => {
-                  return !proceedList.includes(list[index]);
+                  return !list.includes(list[index]);
                 }),
               );
               updateList(newList);
               navigate("/success", {
                 replace: true,
                 state: {
-                  quote: proceedList,
+                  quote: list,
                   name: submitData.name,
                   contact: submitData.contact,
                   address: submitData.address,
                 },
               });
               setTimeout(() => {
-                proceedList.length = 0;
+                list.length = 0;
               }, 200);
             } catch (err) {
               notifications.show({
@@ -193,7 +193,7 @@ export default function Checkout() {
                         </Table.Tr>
                       </Table.Thead>
                       <Table.Tbody>
-                        {proceedList.map((item, index) => (
+                        {list.map((item, index) => (
                           <Table.Tr key={index}>
                             <Table.Td>
                               {item.product.name}

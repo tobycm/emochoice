@@ -38,6 +38,3 @@ export const useList = () => {
   }
   return context;
 };
-
-const proceedList = new List();
-export default proceedList;
