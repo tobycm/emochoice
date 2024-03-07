@@ -6,7 +6,7 @@ import { useEffect, useState } from "preact/hooks";
 import { Link, useNavigate } from "react-router-dom";
 import DefaultHelmet from "../../components/Helmets/DefaultHelmet";
 import { getProducts } from "../../lib/database";
-import proceedList, { Item, List as ListClass, useList } from "../../lib/list";
+import { Item, List as ListClass, useList } from "../../lib/list";
 import LoaderBox, { linearBackgroundProperties, setDocumentTitle, toTitleCase } from "../../lib/utils";
 import classes from "./index.module.css";
 
@@ -188,14 +188,12 @@ export default function List() {
                     radius="md"
                     type="submit"
                     onClick={() => {
-                      proceedList.length = 0;
+                      list.length = 0;
                       list.forEach((item, index) => {
                         const checkbox = document.getElementById(`checkbox${index}`) as HTMLInputElement;
-                        if (checkbox.checked) {
-                          proceedList.push(item);
-                        }
+                        if (checkbox.checked) updateList(new ListClass(...list, item));
                       });
-                      proceedList.length > 0
+                      list.length > 0
                         ? navigate("/checkout")
                         : notifications.show({
                             title: "No items selected",
