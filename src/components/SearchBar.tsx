@@ -1,7 +1,7 @@
 import { ActionIcon, Autocomplete, Box } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import { IconSearch } from "@tabler/icons-react";
-import { useEffect, useState } from "preact/hooks";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { ProductWithKeywords, searchProducts } from "../lib/utils/search";
 
@@ -47,7 +47,7 @@ export default function SearchBar({ products }: { products: ProductWithKeywords[
         placeholder="Model ID, brand, category, color, types, etc..."
         data={searchResults}
         filter={() => searchResults.map((result) => ({ value: result, label: result }))}
-        onKeyDown={(e: KeyboardEvent) => {
+        onKeyDown={(e) => {
           if (!(e.key == "Enter")) return;
           search();
           (e.currentTarget as HTMLInputElement).blur();

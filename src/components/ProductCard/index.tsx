@@ -1,5 +1,5 @@
 import { Badge, Box, Card, Center, Group, Image, Overlay, Text, Title } from "@mantine/core";
-import { useState } from "preact/hooks";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import pocketbase from "../../lib/database";
 import { Product } from "../../lib/database/models";

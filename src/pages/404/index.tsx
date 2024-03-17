@@ -1,6 +1,6 @@
 import { Box, Text, Title } from "@mantine/core";
 import { IconShoppingCartQuestion } from "@tabler/icons-react";
-import { useEffect } from "preact/hooks";
+import { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import SmallChangeHelmet from "../../components/Helmets/SmallChangeHelmet";
 

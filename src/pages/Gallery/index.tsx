@@ -4,8 +4,7 @@ import { useMediaQuery } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
 import { IconInfoCircle } from "@tabler/icons-react";
 import Autoplay from "embla-carousel-autoplay";
-import { useEffect, useRef, useState } from "preact/hooks";
-import { JSX } from "preact/jsx-runtime";
+import { JSX, useEffect, useRef, useState } from "react";
 import SmallChangeHelmet from "../../components/Helmets/SmallChangeHelmet";
 import ImageZoom from "../../components/ImageZoom";
 import pocketbase, { getGallery } from "../../lib/database";
@@ -71,7 +70,7 @@ export default function Gallery(props: { home: boolean }) {
                 mr="auto"
                 style={{ aspectRatio: "calc(9/11)", cursor: "pointer" }}
                 src={pocketbase.getFileUrl(gallary, link, { thumb: "0x600" })}
-                fetchpriority={index == 0 ? "high" : "low"}
+                fetchPriority={index == 0 ? "high" : "low"}
               />
             </Box>
           </Carousel.Slide>
@@ -160,8 +159,8 @@ export default function Gallery(props: { home: boolean }) {
             loop
             className={classes.carousel}
             plugins={props.home ? [autoplays[index].current] : []}
-            onMouseEnter={props.home ? stopAllAutoplays : null}
-            onMouseLeave={props.home ? startAllAutoplays : null}
+            onMouseEnter={props.home ? stopAllAutoplays : undefined}
+            onMouseLeave={props.home ? startAllAutoplays : undefined}
             getEmblaApi={(api) => setEmbla((prevEmbla) => ({ ...prevEmbla, [type]: api }))}
             draggable
             slideSize={isMobile ? "100%" : "15%"}

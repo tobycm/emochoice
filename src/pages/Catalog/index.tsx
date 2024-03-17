@@ -1,7 +1,7 @@
 import { Box, Button, Checkbox, InputBase, Modal, NavLink, Pill, ScrollArea, Text, Title, UnstyledButton } from "@mantine/core";
 import { useDisclosure, useMediaQuery } from "@mantine/hooks";
 import { IconCategory, IconColorFilter, IconFilter, IconIcons, IconSearchOff } from "@tabler/icons-react";
-import { useEffect, useState } from "preact/hooks";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import SmallChangeHelmet from "../../components/Helmets/SmallChangeHelmet";
 import ProductCard from "../../components/ProductCard";

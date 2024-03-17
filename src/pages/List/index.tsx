@@ -2,7 +2,7 @@ import { Box, Button, Card, Checkbox, NumberInput, Pill, Table, Text, Title, Too
 import { useMediaQuery } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
 import { IconShoppingCartExclamation, IconShoppingCartSearch, IconX } from "@tabler/icons-react";
-import { useEffect, useState } from "preact/hooks";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import DefaultHelmet from "../../components/Helmets/DefaultHelmet";
 import { getProducts } from "../../lib/database";

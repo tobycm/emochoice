@@ -1,7 +1,7 @@
 import { Avatar, Box, NumberInput, Pill, Table, Text, Title, Tooltip } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import { IconCheck } from "@tabler/icons-react";
-import { useEffect } from "preact/hooks";
+import { useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import DefaultHelmet from "../../components/Helmets/DefaultHelmet";
 import { List } from "../../lib/list";

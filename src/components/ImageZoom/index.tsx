@@ -1,6 +1,6 @@
 import { Avatar, Box, Image, Overlay, ScrollArea } from "@mantine/core";
 import { IconX } from "@tabler/icons-react";
-import { useEffect, useState } from "preact/hooks";
+import { useEffect, useState } from "react";
 import pocketbase from "../../lib/database";
 import { Product, ProductImage } from "../../lib/database/models";
 
@@ -23,7 +23,8 @@ export default function ImageZoom(props: {
     };
   }, []);
 
-  const handleContentClick = (event: MouseEvent) => {
+  // @ts-ignore
+  const handleContentClick = (event) => {
     event.stopPropagation();
   };
 
@@ -128,7 +129,7 @@ export default function ImageZoom(props: {
             <Box display={"flex"}>
               {props.images.map((image) => (
                 <Image
-                  key={image} // Add a unique key for each image in the array
+                  key={image.id} // Add a unique key for each image in the array
                   src={pocketbase.getFileUrl(image, image.image)}
                   onClick={() => props.setProductImage(pocketbase.getFileUrl(image, image.image))}
                   style={{

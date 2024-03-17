@@ -1,5 +1,4 @@
-import { FC, ReactNode, createContext } from "preact/compat";
-import { useContext, useState } from "preact/hooks";
+import { FC, ReactNode, createContext, useContext, useState } from "react";
 import { Product, ProductColor, ProductType } from "./database/models";
 
 export interface Item {

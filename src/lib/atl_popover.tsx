@@ -7,7 +7,7 @@ type ATLState = {
 
 const ATLStateContext = createContext<ATLState | undefined>(undefined);
 
-export const ATLStateProvider: React.FC<ReactNode> = ({ children }) => {
+export function ATLStateProvider({ children }: { children: ReactNode }) {
   const [isPoppingOver, popATL] = useState(false);
   const timeoutRef = React.useRef<NodeJS.Timeout | null>(null);
 
@@ -32,7 +32,7 @@ export const ATLStateProvider: React.FC<ReactNode> = ({ children }) => {
   );
 
   return <ATLStateContext.Provider value={{ current: isPoppingOver, set: popATLOver }}>{children}</ATLStateContext.Provider>;
-};
+}
 
 export function useATLState() {
   const context = useContext(ATLStateContext);
