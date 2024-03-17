@@ -23,17 +23,16 @@ const ListContext = createContext<{ list: List; updateList: (newList: List) => v
 export const ListProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [list, setList] = useState(new List());
 
-  const updateList = (newList: List) => {
+  function updateList(newList: List) {
     setList(newList);
-  };
+  }
 
   return <ListContext.Provider value={{ list, updateList }}>{children}</ListContext.Provider>;
 };
 
-export const useList = () => {
+export function useList() {
   const context = useContext(ListContext);
-  if (!context) {
-    throw new Error("useList must be used within a ListProvider");
-  }
+  if (!context) throw new Error("useList must be used within a ListProvider");
+
   return context;
-};
+}
