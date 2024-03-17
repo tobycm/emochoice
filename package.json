@@ -23,9 +23,11 @@
     "@mantine/spotlight": "^7.5.3",
     "@mantine/tiptap": "^7.5.3",
     "@tabler/icons-react": "^2.47.0",
+    "@vitejs/plugin-react-swc": "^3.6.0",
     "embla-carousel-autoplay": "7.1.0",
     "pocketbase": "0.21.0",
-    "preact": "^10.19.6",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "react-helmet-async": "^2.0.4",
     "react-router": "^6.22.1",
     "react-router-dom": "^6.22.1"
@@ -33,6 +35,8 @@
   "devDependencies": {
     "@preact/preset-vite": "^2.8.1",
     "@types/node": "^20.11.20",
+    "@types/react": "^18.2.66",
+    "@types/react-dom": "^18.2.22",
     "@typescript-eslint/eslint-plugin": "^7.0.2",
     "@typescript-eslint/parser": "^7.0.2",
     "eslint": "^8.57.0",

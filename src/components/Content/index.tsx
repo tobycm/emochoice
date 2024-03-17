@@ -1,5 +1,5 @@
 import { Notifications } from "@mantine/notifications";
-import { useEffect, useState } from "preact/hooks";
+import { useEffect, useState } from "react";
 import { HelmetProvider } from "react-helmet-async";
 import { Outlet } from "react-router";
 import { ScrollRestoration } from "react-router-dom";

@@ -2,8 +2,7 @@ import { Box, Button, NativeSelect, Space, Text, TextInput, Textarea, Title } fr
 import { isEmail, isNotEmpty, useForm } from "@mantine/form";
 import { notifications } from "@mantine/notifications";
 import { IconCheck, IconX } from "@tabler/icons-react";
-import { ChangeEvent } from "preact/compat";
-import { useState } from "preact/hooks";
+import { useState } from "react";
 import SmallChangeHelmet from "../../components/Helmets/SmallChangeHelmet";
 import { formatPhoneNumber } from "../../lib/utils";
 import classes from "./index.module.css";
@@ -84,10 +83,10 @@ export default function Contact() {
             label="Contact Method"
             mb="md"
             value={contactMethod}
-            onChange={(event: ChangeEvent<HTMLInputElement>) => {
-              setContactMethod(event.currentTarget.value);
-              if (event.currentTarget.value === "Email") form.setFieldValue("phone_number", "");
-              if (event.currentTarget.value === "Phone number") form.setFieldValue("email", "");
+            onChange={(e) => {
+              setContactMethod(e.currentTarget.value);
+              if (e.currentTarget.value === "Email") form.setFieldValue("phone_number", "");
+              if (e.currentTarget.value === "Phone number") form.setFieldValue("email", "");
             }}
             data={["Email", "Phone number", "Email & Phone number"]}
           />
@@ -103,7 +102,7 @@ export default function Contact() {
               {...form.getInputProps("phone_number")}
               id="phone_number"
               maxLength={14}
-              onChange={(e: ChangeEvent<HTMLInputElement>) => {
+              onChange={(e) => {
                 if (e.currentTarget.value.length == 0) return form.setFieldValue("phone_number", "");
                 if (!/^[0-9() -]+$/.test(e.currentTarget.value)) return;
                 form.setFieldValue(

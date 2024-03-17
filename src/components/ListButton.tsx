@@ -1,6 +1,6 @@
 import { ActionIcon, Avatar, Box, Group, Image, Indicator, Popover, Text, Title } from "@mantine/core";
 import { IconCheck, IconShoppingCart, IconX } from "@tabler/icons-react";
-import { useEffect, useState } from "preact/hooks";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useATLState } from "../lib/atl_popover";
 import pocketbase from "../lib/database";

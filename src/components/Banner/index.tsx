@@ -1,6 +1,6 @@
 import { Box, Image } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
-import { useEffect, useState } from "preact/hooks";
+import { useEffect, useState } from "react";
 import pocketbase, { getGallery } from "../../lib/database";
 
 export default function Banner({ onLoad }: { onLoad?: () => void }) {
