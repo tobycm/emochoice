@@ -3,7 +3,8 @@ import { Box, Image, Title } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
 import { IconInfoCircle } from "@tabler/icons-react";
-import { useEffect, useState } from "preact/hooks";
+import Autoplay from "embla-carousel-autoplay";
+import { useEffect, useRef, useState } from "preact/hooks";
 import { JSX } from "preact/jsx-runtime";
 import SmallChangeHelmet from "../../components/Helmets/SmallChangeHelmet";
 import ImageZoom from "../../components/ImageZoom";
@@ -29,6 +30,8 @@ export default function Gallery(props: { home: boolean }) {
   const [bigImage, openBigImage] = useState(false);
   const [scrollHeight, setScrollHeight] = useState(0);
   const [tapAlert, setTapAlert] = useState(true);
+
+  const autoplays = [useRef(Autoplay({ delay: 2000 })), useRef(Autoplay({ delay: 2000 })), useRef(Autoplay({ delay: 2000 }))];
 
   const reInitEmblas = async () => {
     // eslint-disable-next-line no-constant-condition
@@ -132,15 +135,18 @@ export default function Gallery(props: { home: boolean }) {
       <Title ta="center" order={1} mb="lg">
         Gallery
       </Title>
-      {["gallery_1", "gallery_2", "gallery_3"].map((type) => (
+      {["gallery_1", "gallery_2", "gallery_3"].map((type, index) => (
         <Box mb={1} display={"flex"} style={{ flexDirection: "column", alignItems: "center" }} key={type} mih={100}>
           <Title ta="center" order={2} c="emochoice-blue" mb="md" mr="md" ml="md">
-            {type === "gallery_1" ? "Clothing & Accessories Printing" : type === "gallery_2" ? "Digital Printing" : "Souvenirs & Gifts Printing"}
+            {["Clothing & Accessories Printing", "Digital Printing", "Souvenirs & Gifts Printing"][index]}
           </Title>
           <Carousel
             w="80vw"
             loop
             className={classes.carousel}
+            plugins={props.home ? [autoplays[index].current] : []}
+            onMouseEnter={props.home ? autoplays[index].current.stop : null}
+            onMouseLeave={props.home ? autoplays[index].current.reset : null}
             getEmblaApi={(api) => setEmbla((prevEmbla) => ({ ...prevEmbla, [type]: api }))}
             draggable
             slideSize={isMobile ? "100%" : "15%"}
