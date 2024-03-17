@@ -40,6 +40,9 @@ export default function Gallery(props: { home: boolean }) {
         if (embla.gallery_1) embla.gallery_1.reInit();
         if (embla.gallery_2) embla.gallery_2.reInit();
         if (embla.gallery_3) embla.gallery_3.reInit();
+        if (autoplays[0].current) autoplays[0].current.reset();
+        if (autoplays[1].current) autoplays[1].current.reset();
+        if (autoplays[2].current) autoplays[2].current.reset();
         break;
       } catch {
         await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -124,6 +127,18 @@ export default function Gallery(props: { home: boolean }) {
       </Box>
     );
 
+  const stopAllAutoplays = () => {
+    [0, 1, 2].map((i) => {
+      autoplays[i].current.stop();
+    });
+  };
+
+  const startAllAutoplays = () => {
+    [0, 1, 2].map((i) => {
+      autoplays[i].current.reset();
+    });
+  };
+
   return (
     <Box display="flex" style={{ flexDirection: "column", alignItems: "center" }}>
       {bigImage && !isMobile && (
@@ -145,8 +160,8 @@ export default function Gallery(props: { home: boolean }) {
             loop
             className={classes.carousel}
             plugins={props.home ? [autoplays[index].current] : []}
-            onMouseEnter={props.home ? autoplays[index].current.stop : null}
-            onMouseLeave={props.home ? autoplays[index].current.reset : null}
+            onMouseEnter={props.home ? stopAllAutoplays : null}
+            onMouseLeave={props.home ? startAllAutoplays : null}
             getEmblaApi={(api) => setEmbla((prevEmbla) => ({ ...prevEmbla, [type]: api }))}
             draggable
             slideSize={isMobile ? "100%" : "15%"}
