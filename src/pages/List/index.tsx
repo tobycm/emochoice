@@ -188,11 +188,15 @@ export default function List() {
                     radius="md"
                     type="submit"
                     onClick={() => {
-                      // list.length = 0; // huh why did i do this???
-                      list.forEach((item, index) => {
-                        const checkbox = document.getElementById(`checkbox${index}`) as HTMLInputElement;
-                        if (checkbox.checked) updateList(new ListClass(...list, item));
-                      });
+                      // TODO: refactor
+                      updateList(
+                        new ListClass(
+                          ...list.filter((_, index) => {
+                            const checkbox = document.getElementById(`checkbox${index}`) as HTMLInputElement;
+                            return checkbox.checked;
+                          }),
+                        ),
+                      );
                       list.length > 0
                         ? navigate("/checkout")
                         : notifications.show({
