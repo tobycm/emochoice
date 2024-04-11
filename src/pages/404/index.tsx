@@ -7,9 +7,11 @@ import SmallChangeHelmet from "../../components/Helmets/SmallChangeHelmet";
 export default function NotFound() {
   const navigate = useNavigate();
   useEffect(() => {
-    setTimeout(() => {
+    const backToHome = setTimeout(() => {
       navigate("/", { replace: true });
     }, 3000);
+
+    return () => clearTimeout(backToHome);
   });
 
   return (
