@@ -10,12 +10,12 @@ const SmallChangeHelmet = (props: { title: string; description: string; location
       <meta property="og:url" content={`https://emochoice.ca/${props.location}`} />
       <meta property="og:title" content={`${props.title} - Emochoice`} />
       <meta property="og:description" content={props.description} />
-      <meta property="og:image" content="https://emochoice.ca/images/thumbnail.png" />
+      <meta property="og:image" content="https://emochoice.ca/images/thumbnail.jpg" />
       <meta property="twitter:card" content="summary_large_image" />
       <meta property="twitter:url" content={`https://emochoice.ca/${props.location}`} />
       <meta property="twitter:title" content={`${props.title} - Emochoice`} />
       <meta property="twitter:description" content={props.description} />
-      <meta property="twitter:image" content="https://emochoice.ca/images/thumbnail.png" />
+      <meta property="twitter:image" content="https://emochoice.ca/images/thumbnail.jpg" />
     </Helmet>
   );
 };
