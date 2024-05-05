@@ -20,31 +20,16 @@ export async function searchQuery(collection: string, query: string) {
 }
 
 // bad idea but ok
-let products: Product[] | undefined;
+// good idea now
+let productsPromise: Promise<Product[]> | undefined;
 
 export async function getProducts() {
-  if (!products) {
-    products = await pocketbase.collection("products").getFullList<Product>(1000, { expand: "category,colors,types,brand,images", sort: "-created" });
-    pocketbase.collection("products").subscribe<Product>(
-      "*",
-      (event) => {
-        switch (event.action) {
-          case "create":
-            products!.unshift(event.record);
-            break;
-          case "update":
-            products = products!.map((product) => (product.id === event.record.id ? event.record : product));
-            break;
-          case "delete":
-            products = products!.filter((product) => product.id !== event.record.id);
-            break;
-        }
-      },
-      { expand: "category,colors,types,brand,images" },
-    );
-  }
+  if (!productsPromise)
+    productsPromise = pocketbase
+      .collection("products")
+      .getFullList<Product>(1000, { expand: "category,colors,types,brand,images", sort: "-created" });
 
-  return products;
+  return await productsPromise;
 }
 
 export async function getDocument(id: string) {
