@@ -340,8 +340,11 @@ export default function Catalog() {
         title={"Filters"}
         withCloseButton
       >
-        <FilterNavBar />
-        <Box display="flex" mt={20} style={{ justifyContent: "center" }}>
+        {/* if it works it works */}
+        <ScrollArea.Autosize mah="calc(var(--_content-max-height,calc(100dvh - var(--modal-y-offset)*2)) - var(--mantine-spacing-md) * 2 - 96px)">
+          <FilterNavBar />
+        </ScrollArea.Autosize>
+        <Box display="flex" mt="md" style={{ justifyContent: "flex-end" }}>
           <Button
             onClick={() => {
               setFilterModalOpen(false);
