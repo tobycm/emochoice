@@ -46,7 +46,7 @@ export default function Catalog() {
 
   const [pageState, setPageState] = useState<PageState>(PageState.Loading);
   const [filters, setFilters] = useState<Filter[]>([]);
-  const [modalOpened, setModalOpened] = useState<boolean>(false);
+  const [filterModalOpen, setFilterModalOpen] = useState<boolean>(false);
   const isMobile = useMediaQuery("(max-width: 48em)");
   const navigate = useNavigate();
 
@@ -333,14 +333,25 @@ export default function Catalog() {
     <Box className={classes.container}>
       <SmallChangeHelmet title="Catalog" description="Browse through our wide selection of products!" location="catalog" />
       <Modal
-        opened={modalOpened}
+        opened={filterModalOpen}
         onClose={() => {
-          setModalOpened(false);
+          setFilterModalOpen(false);
         }}
         title={"Filters"}
         withCloseButton
       >
         <FilterNavBar />
+        <Box display="flex" mt={20} style={{ justifyContent: "center" }}>
+          <Button
+            onClick={() => {
+              setFilterModalOpen(false);
+            }}
+            style={{}}
+            leftSection={<IconFilter size="1rem" stroke={1.5} />}
+          >
+            Apply
+          </Button>
+        </Box>
       </Modal>
       <Box visibleFrom="xs">
         <FilterNavBar />
@@ -354,7 +365,7 @@ export default function Catalog() {
           variant="light"
           radius="xl"
           onClick={() => {
-            setModalOpened(true);
+            setFilterModalOpen(true);
           }}
         >
           Filters
