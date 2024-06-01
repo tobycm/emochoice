@@ -1,4 +1,20 @@
-import { Badge, Box, Button, FileInput, Image, NativeSelect, NumberInput, ScrollArea, Table, Tabs, Text, Textarea, Title, rem } from "@mantine/core";
+import {
+  Badge,
+  Box,
+  Button,
+  FileInput,
+  Flex,
+  Image,
+  NativeSelect,
+  NumberInput,
+  ScrollArea,
+  Table,
+  Tabs,
+  Text,
+  Textarea,
+  Title,
+  rem,
+} from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useMediaQuery } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
@@ -342,11 +358,14 @@ export default function Product() {
                 {...form.getInputProps("request")}
               />
             </Box>
-            <Box>
-              <Button variant="filled" disabled={product.tags.includes("out_of_stock")} className={classes.input} size="md" radius="md" type="submit">
+            <Flex miw="150" maw="225" direction="column">
+              <Button variant="filled" disabled={product.tags.includes("out_of_stock")} mb="xs" size="md" radius="md" type="submit">
                 {product.tags.includes("out_of_stock") ? "Out of Stock" : "Add to list"}
               </Button>
-            </Box>
+              <Text c="gray" ta="center" fz="md">
+                Price will be discussed later
+              </Text>
+            </Flex>
           </Box>
         </Box>
       </Box>
