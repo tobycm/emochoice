@@ -7,7 +7,6 @@ import { RouterProvider } from "react-router";
 import { createBrowserRouter } from "react-router-dom";
 import Content from "./components/Content";
 import { getProducts } from "./lib/database";
-import { Product as DProduct } from "./lib/database/models"; // DProduct stands for Database Product
 import NotFound from "./pages/404";
 import Catalog from "./pages/Catalog";
 import Checkout from "./pages/Checkout";
@@ -20,7 +19,8 @@ import Product from "./pages/Product";
 import Success from "./pages/Success";
 
 export default function App() {
-  const products = useQuery({ queryKey: ["products"], queryFn: getProducts });
+  // prefetch products
+  useQuery({ queryKey: ["products"], queryFn: getProducts });
 
   const router = createBrowserRouter([
     {
@@ -38,59 +38,62 @@ export default function App() {
         {
           path: "/product/:id",
           element: <Product />,
-          loader: async ({ params }): Promise<{ product: DProduct }> => {
-            try {
-              if (!params.id) throw new Error("No product ID provided");
-              const product = products.data?.find((product) => product.id === params.id);
-              if (!product) throw new Error("Product not found");
-              return { product };
-            } catch {
-              return {
-                product: {
-                  collectionId: "kt5o377go6qzzct",
-                  collectionName: "products",
-                  created: Date(),
-                  updated: Date(),
-                  brand: "grj5wxlbdp33xmc",
-                  id: "messikimochi",
-                  name: "Sui-chan wa kyou mo Kawaii~ Mug",
-                  custom_id: "messikimochi",
-                  category: ["upfqqdkkgeff7wj"],
-                  hidden: false,
-                  tags: ["out_of_stock"],
-                  colors: ["oagyo7283zmms2y"],
-                  types: ["jh5d0keidenggzg", "c325dz03i9coqwz"],
-                  images: [],
-                  boundary: "",
-                  description:
-                    "Introducing the ultimate companion for your morning ritual - " +
-                    "Sui-chan wa kyou mo Kawaii~ Mug. " +
-                    "Elevate your coffee or tea experience with this exquisite, " +
-                    "handcrafted vessel designed to cradle your favorite brew. " +
-                    "Crafted from high-quality, lead-free ceramic, it ensures " +
-                    "your beverage's purity and taste remain untarnished. The " +
-                    "ergonomic handle provides a comfortable grip, while the wide " +
-                    "base offers stability. Its double-walled insulation keeps " +
-                    "drinks at the perfect temperature, whether piping hot or " +
-                    "refreshingly cool. The elegant, minimalist design complements " +
-                    "any kitchen or office space. Dishwasher and microwave safe, " +
-                    "it's a breeze to clean and maintain. Indulge in your daily dose " +
-                    "of comfort and style with this exceptional mug!",
-                  custom_data: { "Handcrafted by": "Toby and Eggu" },
-                  expand: {
-                    brand: {
-                      id: "grj5wxlbdp33xmc",
-                      name: "Toby and Eggu",
-                      collectionId: "846j6uvbucbn6pp",
-                      collectionName: "brands",
-                      created: Date(),
-                      updated: Date(),
-                    },
-                  },
-                  customizable: false,
-                },
-              };
-            }
+          loader: ({ params }): { productId: string } => {
+            // try {
+            //   if (!params.id) throw new Error("No product ID provided");
+            //   const product = products.data?.find((product) => product.id === params.id);
+            //   if (!product) throw new Error("Product not found");
+            //   return { product };
+            // } catch {
+            //   return {
+            //     product: {
+            //       collectionId: "kt5o377go6qzzct",
+            //       collectionName: "products",
+            //       created: Date(),
+            //       updated: Date(),
+            //       brand: "grj5wxlbdp33xmc",
+            //       id: "messikimochi",
+            //       name: "Sui-chan wa kyou mo Kawaii~ Mug",
+            //       custom_id: "messikimochi",
+            //       category: ["upfqqdkkgeff7wj"],
+            //       hidden: false,
+            //       tags: ["out_of_stock"],
+            //       colors: ["oagyo7283zmms2y"],
+            //       types: ["jh5d0keidenggzg", "c325dz03i9coqwz"],
+            //       images: [],
+            //       boundary: "",
+            //       description:
+            //         "Introducing the ultimate companion for your morning ritual - " +
+            //         "Sui-chan wa kyou mo Kawaii~ Mug. " +
+            //         "Elevate your coffee or tea experience with this exquisite, " +
+            //         "handcrafted vessel designed to cradle your favorite brew. " +
+            //         "Crafted from high-quality, lead-free ceramic, it ensures " +
+            //         "your beverage's purity and taste remain untarnished. The " +
+            //         "ergonomic handle provides a comfortable grip, while the wide " +
+            //         "base offers stability. Its double-walled insulation keeps " +
+            //         "drinks at the perfect temperature, whether piping hot or " +
+            //         "refreshingly cool. The elegant, minimalist design complements " +
+            //         "any kitchen or office space. Dishwasher and microwave safe, " +
+            //         "it's a breeze to clean and maintain. Indulge in your daily dose " +
+            //         "of comfort and style with this exceptional mug!",
+            //       custom_data: { "Handcrafted by": "Toby and Eggu" },
+            //       expand: {
+            //         brand: {
+            //           id: "grj5wxlbdp33xmc",
+            //           name: "Toby and Eggu",
+            //           collectionId: "846j6uvbucbn6pp",
+            //           collectionName: "brands",
+            //           created: Date(),
+            //           updated: Date(),
+            //         },
+            //       },
+            //       customizable: false,
+            //     },
+            //   };
+            // }
+
+            if (!params.id) throw new Error("No product ID provided");
+            return { productId: params.id };
           },
         },
         {

@@ -4,7 +4,7 @@ import { IconPhone, IconPhoto } from "@tabler/icons-react";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 import { Link } from "react-router-dom";
-import { getDropdownMenuList, getProducts } from "../../lib/database";
+import { getDropdownMenuList } from "../../lib/database";
 import { Tree, makeDropdownTree } from "../../lib/utils";
 import DesktopDropdown from "../Dropdown/Desktop";
 import MobileDropdown from "../Dropdown/Mobile";
@@ -17,8 +17,6 @@ export default function Header() {
 
   const [drawerOpened, { toggle: toggleDrawer }] = useDisclosure(false);
 
-  // Prefetch products
-  useQuery({ queryKey: ["products"], queryFn: getProducts });
   const dropdownMenu = useQuery({ queryKey: ["dropdown_menu"], queryFn: getDropdownMenuList });
 
   const dropdownTree: Tree = useMemo(() => {

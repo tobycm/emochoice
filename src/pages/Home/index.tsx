@@ -46,7 +46,7 @@ export default function Home() {
         </Box>
         <Divider my="xl" size="xs" w={"100%"}></Divider>
       </Container>
-      <Gallery home={true} />
+      <Gallery home />
     </Box>
   );
 }

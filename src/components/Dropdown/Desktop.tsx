@@ -56,7 +56,7 @@ export default function DesktopDropdown({ tree, fetching }: { tree: Tree; fetchi
             </Link>
           </Menu.Target>
           <Menu.Dropdown>
-            <Box display={"flex"}>
+            <Flex>
               {fetching ? (
                 <Flex align="center" direction="column">
                   <Loader mt="md" />
@@ -66,7 +66,7 @@ export default function DesktopDropdown({ tree, fetching }: { tree: Tree; fetchi
                 </Flex>
               ) : (
                 Array.from(tree.entries()).map(([cate, subTree]) => (
-                  <Box mr="xs">
+                  <Box mr="xs" key={cate.id}>
                     <Menu.Item onClick={goToCatalog([cate])}>
                       <Text size="md" className={classes.menuTitle}>
                         {cate.name}
@@ -81,15 +81,10 @@ export default function DesktopDropdown({ tree, fetching }: { tree: Tree; fetchi
                         <Menu.Item key={cate2.id}>
                           <Menu trigger="hover" position="right-start" arrowPosition="center" offset={20} openDelay={250}>
                             <Menu.Target>
-                              <Box
-                                onClick={goToCatalog([cate, cate2])}
-                                display="flex"
-                                style={{ justifyContent: "space-between", alignItems: "center" }}
-                                w="100%"
-                              >
+                              <Flex onClick={goToCatalog([cate, cate2])} justify="space-between" align="center" w="100%">
                                 <Text size="sm">{cate2.name}</Text>
-                                <IconChevronRight style={{ width: "20px" }} />
-                              </Box>
+                                <IconChevronRight width={20} />
+                              </Flex>
                             </Menu.Target>
                             <Menu.Dropdown>
                               {Array.from(subTree.entries()).map(([cate3]) => (
@@ -105,7 +100,7 @@ export default function DesktopDropdown({ tree, fetching }: { tree: Tree; fetchi
                   </Box>
                 ))
               )}
-            </Box>
+            </Flex>
           </Menu.Dropdown>
           <Link to="/gallery" style={{ textDecoration: "none", color: "black" }}>
             <Tabs.Tab value="gallery">Gallery</Tabs.Tab>

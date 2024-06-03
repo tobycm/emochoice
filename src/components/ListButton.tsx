@@ -1,4 +1,4 @@
-import { ActionIcon, Avatar, Box, Group, Image, Indicator, Popover, Text, Title } from "@mantine/core";
+import { ActionIcon, Avatar, Box, Flex, Group, Image, Indicator, Popover, Text, Title } from "@mantine/core";
 import { IconCheck, IconShoppingCart, IconX } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
@@ -48,18 +48,18 @@ export default function ListButton() {
         </Popover.Target>
         <Popover.Dropdown>
           <Box>
-            <Group display="flex" style={{ justifyContent: "space-between", alignItems: "center" }} w="100%" mt="xs">
-              <Box display="flex" style={{ justifyContent: "space-between", alignItems: "center" }}>
+            <Group justify="space-between" align="center" w="100%" mt="xs">
+              <Flex justify="space-between" align="center">
                 <Avatar variant="filled" radius="xl" size="sm" color="emochoice-green">
                   <IconCheck stroke={3} size="1.5rem" />
                 </Avatar>
                 <Title order={4} ml="sm">
                   Added to List!
                 </Title>
-              </Box>
+              </Flex>
               <IconX onClick={() => ATL.set(false)} style={{ marginLeft: "auto", cursor: "pointer" }} />
             </Group>
-            <Group display="flex" style={{ justifyContent: "space-between", alignItems: "flex-start" }} w="max-content" mt="md">
+            <Group justify="space-between" align="flex-start" w="max-content" mt="md">
               <Image src={productImage} w={100} />
               <Box>
                 <Text fw={600} maw={200} lineClamp={2}>
@@ -67,16 +67,16 @@ export default function ListButton() {
                   {product?.product.custom_id && ` - ${product?.product.custom_id}`}
                 </Text>
                 {product?.color && (
-                  <Text c="grey" style={{ fontSize: "15px" }}>
+                  <Text c="grey" fz={15}>
                     Color: {toTitleCase(product?.color.name)}
                   </Text>
                 )}
                 {product?.type && (
-                  <Text c="grey" style={{ fontSize: "15px" }}>
+                  <Text c="grey" fz={15}>
                     Type: {product?.type.name}
                   </Text>
                 )}
-                <Text c="grey" style={{ fontSize: "15px" }}>
+                <Text c="grey" fz={15}>
                   Quantity: {product?.quantity}
                 </Text>
               </Box>

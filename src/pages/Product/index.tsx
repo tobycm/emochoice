@@ -33,9 +33,55 @@ import pocketbase, { getProducts } from "../../lib/database";
 import { Product as DProduct, ProductColor, ProductImage, ProductType } from "../../lib/database/models";
 import { List, useList } from "../../lib/list";
 import { HTMLtoText, filterProducts, pasteImage, scrollToTop, toTitleCase } from "../../lib/utils";
+import { ProductWithKeywords } from "../../lib/utils/search";
 import classes from "./index.module.css";
 
 // TODO: keep refactoring
+
+const exampleProduct: ProductWithKeywords = {
+  collectionId: "kt5o377go6qzzct",
+  collectionName: "products",
+  created: Date(),
+  updated: Date(),
+  brand: "grj5wxlbdp33xmc",
+  id: "messikimochi",
+  name: "Sui-chan wa kyou mo Kawaii~ Mug",
+  custom_id: "messikimochi",
+  category: ["upfqqdkkgeff7wj"],
+  hidden: false,
+  tags: ["out_of_stock"],
+  colors: ["oagyo7283zmms2y"],
+  types: ["jh5d0keidenggzg", "c325dz03i9coqwz"],
+  images: [],
+  boundary: "",
+  description:
+    "Introducing the ultimate companion for your morning ritual - " +
+    "Sui-chan wa kyou mo Kawaii~ Mug. " +
+    "Elevate your coffee or tea experience with this exquisite, " +
+    "handcrafted vessel designed to cradle your favorite brew. " +
+    "Crafted from high-quality, lead-free ceramic, it ensures " +
+    "your beverage's purity and taste remain untarnished. The " +
+    "ergonomic handle provides a comfortable grip, while the wide " +
+    "base offers stability. Its double-walled insulation keeps " +
+    "drinks at the perfect temperature, whether piping hot or " +
+    "refreshingly cool. The elegant, minimalist design complements " +
+    "any kitchen or office space. Dishwasher and microwave safe, " +
+    "it's a breeze to clean and maintain. Indulge in your daily dose " +
+    "of comfort and style with this exceptional mug!",
+  custom_data: { "Handcrafted by": "Toby and Eggu" },
+  keywords: "sui-chan wa kyou mo kawaii~ mug oagyo7283zmms2y messikimochi jh5d0keidenggzg c325dz03i9coqwz upfqqdkkgeff7wj toby and eggu",
+  expand: {
+    brand: {
+      id: "grj5wxlbdp33xmc",
+      name: "Toby and Eggu",
+      collectionId: "846j6uvbucbn6pp",
+      collectionName: "brands",
+      created: Date(),
+      updated: Date(),
+    },
+  },
+  customizable: false,
+};
 
 export interface OrderData {
   color?: ProductColor;
@@ -73,9 +119,11 @@ function preview(backgroundImage: HTMLImageElement, userImage: HTMLImageElement,
 
 export default function Product() {
   const atlState = useATLState();
-  const { product } = useLoaderData() as { product: DProduct };
+  const { productId } = useLoaderData() as { productId: string };
 
   const products = useQuery({ queryKey: ["products"], queryFn: getProducts });
+
+  const product = useMemo(() => products.data?.find((product) => product.id === productId) ?? exampleProduct, [products.data, productId]);
 
   const initialValues: OrderData = { quantity: 1, request: "" };
 
@@ -84,8 +132,8 @@ export default function Product() {
     [product.boundary],
   );
 
-  if (product.colors.length > 0) initialValues.color = product.expand!.colors![0];
-  if (product.types.length > 0) initialValues.type = product.expand!.types![0];
+  if (product.expand?.colors?.length) initialValues.color = product.expand!.colors![0];
+  if (product.expand?.types?.length) initialValues.type = product.expand!.types![0];
   if (product.boundary) {
     boundaryPoints = product.boundary.split(",").map((point) => Number(point)) as BoundaryPoints;
     initialValues.fileInput = null;
@@ -101,12 +149,12 @@ export default function Product() {
   );
 
   const images = useMemo<ProductImage[]>(() => {
-    if (!product.expand.images) return [];
+    let images = product.expand.images ?? [];
 
-    let images = product.expand.images;
+    // console.log("images", images);
 
-    if (form.values.color) images = images.filter((image) => image.color === form.values.color?.id);
-    if (form.values.type) images = images.filter((image) => image.type === form.values.type?.id);
+    if (form.values.color) images = images.filter((image) => image.color === form.values.color!.id);
+    if (form.values.type) images = images.filter((image) => image.type === form.values.type!.id);
 
     if (images.length === 0) setProductImage("/images/no_image.png");
     else setProductImage(pocketbase.getFileUrl(images[0], images[0].image));
@@ -195,7 +243,6 @@ export default function Product() {
           openBigImage={openBigImage}
           images={images}
           setProductImage={setProductImage}
-          product={product}
         />
       )}
       <Helmet>
@@ -237,15 +284,16 @@ export default function Product() {
           />
           {images.length > 1 && (
             <ScrollArea mt="xl" mb="sm">
-              <Box display={"flex"} mb="md">
+              <Flex mb="md">
                 {images.map((image) => (
                   <Image
                     src={pocketbase.getFileUrl(image, image.image, { thumb: "0x100" })}
                     onClick={() => setProductImage(pocketbase.getFileUrl(image, image.image))}
                     style={{ height: "100px", width: "auto", marginRight: "10px", cursor: "pointer", border: "1px solid #cccccc" }}
+                    key={image.id}
                   />
                 ))}
-              </Box>
+              </Flex>
             </ScrollArea>
           )}
         </Box>
@@ -267,7 +315,7 @@ export default function Product() {
             component="form"
             onSubmit={form.onSubmit((values) => {
               const { quantity, request, fileInput } = values;
-              const color = product.expand?.colors?.find((color) => color.hex === values.color?.hex);
+              const color = product.expand?.colors?.find((color) => color.hex === values.color?.hex); // MARK: product.expand.colors 1
               const type = product.expand?.types?.find((type) => type.name === values.type?.name);
               const newList = new List(...list, {
                 product,
@@ -282,10 +330,10 @@ export default function Product() {
               scrollToTop();
             })}
           >
-            {product.colors.length > 0 && (
+            {product.expand?.colors && (
               <Box className={classes.input} style={{ flexDirection: "column", alignItems: "start" }}>
                 <Text mb="md">Color: {toTitleCase(form.values.color?.name) ?? ""}</Text>
-                <Box display={"flex"} style={{ flexWrap: "wrap" }}>
+                <Flex wrap="wrap">
                   {product.expand!.colors!.map((color) =>
                     !color.hex.includes(",") ? (
                       <SingleColorButton key={color.hex} color={color} onClick={() => form.setFieldValue("color", color)} />
@@ -293,7 +341,7 @@ export default function Product() {
                       <MultiColorButton key={color.hex} color={color} onClick={() => form.setFieldValue("color", color)} />
                     ),
                   )}
-                </Box>
+                </Flex>
               </Box>
             )}
             {product.expand?.types && (
@@ -408,7 +456,7 @@ export default function Product() {
                       <strong>Category</strong>
                     </Table.Td>
                     <Table.Td>
-                      {product.category.length > 0 ? product.expand!.category!.map((category) => category.name).join(", ") : "No category"}
+                      {product.expand?.category ? product.expand!.category!.map((category) => category.name).join(", ") : "No category"}
                     </Table.Td>
                   </Table.Tr>
                   {product.custom_data
@@ -433,13 +481,13 @@ export default function Product() {
             You may also like
           </Title>
           <ScrollArea>
-            <Box display={"flex"}>
+            <Flex>
               {relatedProducts
                 .filter((p) => p.id != product.id && !p.hidden)
                 .map((product) => (
-                  <ProductCard inProductPage={true} product={product} />
+                  <ProductCard inProductPage product={product} key={product.id} />
                 ))}
-            </Box>
+            </Flex>
           </ScrollArea>
         </Box>
       )}

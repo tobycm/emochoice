@@ -1,4 +1,4 @@
-import { Box, Button, Card, NativeSelect, NumberInput, Pill, Table, Text, TextInput, Title, Tooltip } from "@mantine/core";
+import { Box, Button, Card, Flex, NativeSelect, NumberInput, Pill, Table, Text, TextInput, Title, Tooltip } from "@mantine/core";
 import { isEmail, isNotEmpty, useForm } from "@mantine/form";
 import { useMediaQuery } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
@@ -113,9 +113,9 @@ export default function Checkout() {
                     <Title order={4} mb="md" hiddenFrom="md">
                       1. Shipping Address
                     </Title>
-                    <Box display="flex" style={{ justifyContent: "space-between" }} mb={"md"}>
-                      <TextInput withAsterisk label="Name" placeholder="John Doe" w={"100%"} {...form.getInputProps("name")} />
-                    </Box>
+                    <Flex justify="space-between" mb="md">
+                      <TextInput withAsterisk label="Name" placeholder="John Doe" w="100%" {...form.getInputProps("name")} />
+                    </Flex>
                     <NativeSelect
                       required
                       withAsterisk
@@ -155,7 +155,7 @@ export default function Checkout() {
                     )}
                     <NativeSelect mb={"md"} {...form.getInputProps("country")} id="country" label="Country" data={["Canada", "United States"]} />
                     <TextInput mb={"md"} label="Address Line" id="address" placeholder="Unit 101-737 Main St" {...form.getInputProps("address")} />
-                    <Box display="flex" style={{ justifyContent: "space-between" }} mb={"md"}>
+                    <Flex justify="space-between" mb="md">
                       <Box w="49%">
                         <TextInput label="City" placeholder="Penticton" {...form.getInputProps("city")} id="city" />
                       </Box>
@@ -165,7 +165,7 @@ export default function Checkout() {
                       <Box w="27%">
                         <TextInput label="Postal Code" placeholder="V2A 5E1" {...form.getInputProps("postalCode")} id="postalCode" />
                       </Box>
-                    </Box>
+                    </Flex>
                   </Table.Td>
                 </Table.Tr>
                 <Table.Tr>
@@ -239,10 +239,10 @@ export default function Checkout() {
           </Box>
           <Box className={classes.card}>
             <Card shadow="sm" padding="lg" radius="md" withBorder>
-              <Box w="100%" display="flex" style={{ justifyContent: "space-between", alignItems: "center" }} mb="md">
+              <Flex w="100%" justify="space-between" align="center" mb="md">
                 <Title order={3}>Get a Quote</Title>
                 <IconLock></IconLock>
-              </Box>
+              </Flex>
               <Text size="sm" c="dimmed">
                 By clicking "Get a Quote" you agree to our{" "}
                 <Link to="/terms-of-service" target="_blank" style={{ textDecoration: "none", color: "#0468B0" }}>

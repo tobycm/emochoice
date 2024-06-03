@@ -12,8 +12,6 @@ import LoaderBox, { setDocumentTitle, toTitleCase } from "../../lib/utils";
 import { convertToKeywords } from "../../lib/utils/search";
 import classes from "./index.module.css";
 
-// TODO: use react-query instead of 🤢🤢🤢🤮🤮🤮
-
 type FilterTypes = "color" | "category" | "brand";
 
 interface Filter {

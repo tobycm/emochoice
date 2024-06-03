@@ -1,4 +1,4 @@
-import { Box, Card, Image, Skeleton, Title } from "@mantine/core";
+import { Box, Card, Flex, Image, Skeleton, Title } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import { Link } from "react-router-dom";
 import classes from "./index.module.css";
@@ -12,7 +12,7 @@ export default function HomeCard({ name, image, id }: { name: string; image: str
         <Link to={`/catalog?filters=category:${id}`} className={classes.card}>
           <Card shadow="sm" radius="md" w="80vw" h="calc(1/2*80vw)" maw="600px" mah="300px" withBorder>
             <Card.Section>
-              <Box display={"flex"}>
+              <Flex>
                 <Box w="40%">
                   <Image
                     src={image}
@@ -23,12 +23,12 @@ export default function HomeCard({ name, image, id }: { name: string; image: str
                     fetchpriority="high"
                   />
                 </Box>
-                <Box w="60%" display="flex">
-                  <Title order={3} style={{ textAlign: "center" }} m="auto" p={10} c="emochoice-blue">
+                <Flex w="60%">
+                  <Title order={3} ta="center" m="auto" p={10} c="emochoice-blue">
                     {name}
                   </Title>
-                </Box>
-              </Box>
+                </Flex>
+              </Flex>
             </Card.Section>
           </Card>
         </Link>
