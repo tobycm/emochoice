@@ -358,14 +358,14 @@ export default function Product() {
                 {...form.getInputProps("request")}
               />
             </Box>
-            <Flex miw="150" maw="225" direction="column">
+            <Flex w="150" direction="column" mt="md">
               <Button variant="filled" disabled={product.tags.includes("out_of_stock")} mb="xs" size="md" radius="md" type="submit">
                 {product.tags.includes("out_of_stock") ? "Out of Stock" : "Add to list"}
               </Button>
-              <Text c="gray" ta="center" fz="md">
-                Price will be discussed later
-              </Text>
             </Flex>
+            <Text c="gray" fz="sm">
+              Price will be discussed later
+            </Text>
           </Box>
         </Box>
       </Box>
