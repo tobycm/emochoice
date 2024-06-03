@@ -1,23 +1,12 @@
 .container {
   @media screen and (min-width: $mantine-breakpoint-xs) {
     padding: 0 5.5% 0 5.5% !important;
-  }
-
-  padding: 0 4% 0 4%;
-  display: flex;
-  flex-wrap: wrap;
-  min-height: 50vh;
-
-  @media screen and (max-width: $mantine-breakpoint-xs) {
     justify-content: center;
     padding: 0;
   }
 }
 
 .cardsBox {
-  display: flex;
-  flex-wrap: wrap;
-
   @media screen and (max-width: $mantine-breakpoint-xs) {
     flex-direction: column;
     flex-wrap: nowrap;

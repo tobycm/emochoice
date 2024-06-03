@@ -1,5 +1,5 @@
 import PocketBase, { RecordModel } from "pocketbase";
-import { DropdownMenuItem, Product, ProductCategory } from "./models";
+import { DropdownMenuItem, Product } from "./models";
 
 import Constants from "../constants";
 import { ProductWithKeywords } from "../utils/search";
@@ -16,8 +16,8 @@ export async function getFilter(collection: string, id: string) {
   return await pocketbase.collection(collection).getOne(id);
 }
 
-export async function searchQuery(collection: string, query: string) {
-  return await pocketbase.collection(collection).getFirstListItem<ProductCategory>(`name = "${query}"`);
+export async function searchQuery<T>(collection: string, query: string) {
+  return await pocketbase.collection(collection).getFirstListItem<T>(`name = "${query}"`);
 }
 
 export async function getProducts(): Promise<ProductWithKeywords[]> {
