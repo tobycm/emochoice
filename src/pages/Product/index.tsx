@@ -19,6 +19,7 @@ import { useForm } from "@mantine/form";
 import { useMediaQuery } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
 import { IconInfoCircle, IconNumber } from "@tabler/icons-react";
+import { useQuery } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { useLoaderData, useLocation, useNavigate } from "react-router-dom";
@@ -29,14 +30,16 @@ import CustomImageModal from "../../components/Modal/CustomImage";
 import ProductCard from "../../components/ProductCard";
 import { useATLState } from "../../lib/atl_popover";
 import pocketbase, { getProducts } from "../../lib/database";
-import { Color, Product as DProduct, ProductColor, ProductImage, Type } from "../../lib/database/models";
+import { Product as DProduct, ProductColor, ProductImage, ProductType } from "../../lib/database/models";
 import { List, useList } from "../../lib/list";
 import { HTMLtoText, filterProducts, pasteImage, scrollToTop, toTitleCase } from "../../lib/utils";
 import classes from "./index.module.css";
 
+// TODO: keep refactoring
+
 export interface OrderData {
-  color?: Color;
-  type?: Type;
+  color?: ProductColor;
+  type?: ProductType;
   quantity: number;
   request: string;
   fileInput?: File | null;
@@ -71,21 +74,8 @@ function preview(backgroundImage: HTMLImageElement, userImage: HTMLImageElement,
 export default function Product() {
   const atlState = useATLState();
   const { product } = useLoaderData() as { product: DProduct };
-  const [customImage, setCustomImage] = useState<File | null>(null);
-  const [image, setImage] = useState<File | null>(null);
-  const [modalState, setModalState] = useState({ open: false, fileUploaded: false });
-  const [productImage, setProductImage] = useState<string>(
-    product.images.length > 0 ? pocketbase.getFileUrl(product.expand.images![0], product.expand.images![0].image) : "/images/no_image.png",
-  );
-  const [images, setImages] = useState<ProductImage[]>([]);
-  const [relatedProducts, setRelatedProducts] = useState<DProduct[]>([]);
-  const [bigImage, openBigImage] = useState(false);
-  const { list, updateList } = useList();
-  const navigate = useNavigate();
 
-  let user: OrderData | null = null;
-
-  const location = useLocation();
+  const products = useQuery({ queryKey: ["products"], queryFn: getProducts });
 
   const initialValues: OrderData = { quantity: 1, request: "" };
 
@@ -103,11 +93,41 @@ export default function Product() {
 
   const form = useForm<OrderData>({ initialValues });
 
-  const isMobile = useMediaQuery(`(max-width: 48em)`);
+  const [customImage, setCustomImage] = useState<File | null>(null);
+  const [image, setImage] = useState<File | null>(null);
+  const [modalState, setModalState] = useState({ open: false, fileUploaded: false });
+  const [productImage, setProductImage] = useState<string>(
+    product.images.length > 0 ? pocketbase.getFileUrl(product.expand.images![0], product.expand.images![0].image) : "/images/no_image.png",
+  );
 
-  useEffect(() => {
-    setImages(product.expand.images ?? []);
-  }, [product.expand.images]);
+  const images = useMemo<ProductImage[]>(() => {
+    if (!product.expand.images) return [];
+
+    let images = product.expand.images;
+
+    if (form.values.color) images = images.filter((image) => image.color === form.values.color?.id);
+    if (form.values.type) images = images.filter((image) => image.type === form.values.type?.id);
+
+    if (images.length === 0) setProductImage("/images/no_image.png");
+    else setProductImage(pocketbase.getFileUrl(images[0], images[0].image));
+
+    return images;
+  }, [product.expand.images, form.values.color, form.values.type]);
+
+  const relatedProducts = useMemo<DProduct[]>(() => {
+    if (!products.data) return [];
+    return filterProducts(products.data, product.category, 1);
+  }, [products.data]);
+
+  const [bigImage, openBigImage] = useState(false);
+  const { list, updateList } = useList();
+  const navigate = useNavigate();
+
+  let user: OrderData | null = null;
+
+  const location = useLocation();
+
+  const isMobile = useMediaQuery(`(max-width: 48em)`);
 
   useEffect(() => {
     setProductImage(
@@ -132,12 +152,6 @@ export default function Product() {
       setImage(user.fileInput);
     }
   }, [user, form]);
-
-  useEffect(() => {
-    getProducts().then((products) => {
-      setRelatedProducts(filterProducts(products, product.category, 1));
-    });
-  }, [product.category]);
 
   useEffect(() => {
     if (!modalState.open) return;
@@ -166,14 +180,6 @@ export default function Product() {
       window.removeEventListener("scroll", handleScroll);
     };
   });
-
-  const setImageWithColor = (color: ProductColor) => {
-    form.setFieldValue("color", color);
-    const imageWithColor = product.expand.images!.filter((image) => image.color == color.id);
-    if (imageWithColor.length < 0) return setProductImage("/images/no_image.png");
-    setProductImage(pocketbase.getFileUrl(imageWithColor[0], imageWithColor[0].image));
-    setImages(imageWithColor);
-  };
 
   function startATLPopover() {
     atlState.set(false);
@@ -282,21 +288,9 @@ export default function Product() {
                 <Box display={"flex"} style={{ flexWrap: "wrap" }}>
                   {product.expand!.colors!.map((color) =>
                     !color.hex.includes(",") ? (
-                      <SingleColorButton
-                        key={color.hex}
-                        color={color}
-                        onClick={() => {
-                          setImageWithColor(color);
-                        }}
-                      />
+                      <SingleColorButton key={color.hex} color={color} onClick={() => form.setFieldValue("color", color)} />
                     ) : (
-                      <MultiColorButton
-                        key={color.hex}
-                        color={color}
-                        onClick={() => {
-                          setImageWithColor(color);
-                        }}
-                      />
+                      <MultiColorButton key={color.hex} color={color} onClick={() => form.setFieldValue("color", color)} />
                     ),
                   )}
                 </Box>
@@ -340,9 +334,9 @@ export default function Product() {
                   value={customImage}
                   onChange={(value) => {
                     setCustomImage(value);
-                    if (value)
-                      if (product.boundary) setModalState({ open: true, fileUploaded: true });
-                      else form.setFieldValue("fileInput", value);
+                    if (!value) return;
+                    if (product.boundary) setModalState({ open: true, fileUploaded: true });
+                    else form.setFieldValue("fileInput", value);
                   }}
                 />
               </Box>

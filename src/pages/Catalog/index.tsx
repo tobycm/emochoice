@@ -1,15 +1,18 @@
 import { Box, Button, Checkbox, InputBase, Modal, NavLink, Pill, ScrollArea, Text, Title, UnstyledButton } from "@mantine/core";
 import { useDisclosure, useMediaQuery } from "@mantine/hooks";
 import { IconCategory, IconColorFilter, IconFilter, IconIcons, IconSearchOff } from "@tabler/icons-react";
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import SmallChangeHelmet from "../../components/Helmets/SmallChangeHelmet";
 import ProductCard from "../../components/ProductCard";
 import { getFilter, getProducts, searchQuery } from "../../lib/database";
-import { Product, ProductColor } from "../../lib/database/models";
+import { Color, Product } from "../../lib/database/models";
 import LoaderBox, { setDocumentTitle, toTitleCase } from "../../lib/utils";
 import { convertToKeywords } from "../../lib/utils/search";
 import classes from "./index.module.css";
+
+// TODO: use react-query instead of 🤢🤢🤢🤮🤮🤮
 
 type FilterTypes = "color" | "category" | "brand";
 
@@ -26,23 +29,35 @@ enum PageState {
 }
 
 export default function Catalog() {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [colors, setColors] = useState<ProductColor[]>([]);
+  const products = useQuery({ queryKey: ["products"], queryFn: getProducts });
 
-  useEffect(() => {
-    if (!products) return;
+  const colors: Color[] = useMemo(() => {
+    const colors: Color[] = [];
 
-    const colors: ProductColor[] = [];
+    products.data?.forEach((product) => product.expand.colors?.forEach((color) => colors.includes(color) && colors.push(color)));
 
-    products.forEach((product) => {
-      product.expand.colors?.forEach((color) => {
-        if (!colors.every((c) => c.id != color.id)) return;
-        colors.push(color);
-      });
-    });
+    return colors;
+  }, [products.data]);
 
-    setColors(colors);
-  }, [products]);
+  // const [products, setProducts] = useState<Product[]>([]);
+  // const [colors, setColors] = useState<ProductColor[]>([]);
+
+  // useEffect(() => {
+  //   if (!products) return;
+
+  //   const colors: ProductColor[] = [];
+
+  //   products.forEach((product) => {
+  //     product.expand.colors?.forEach((color) => {
+  //       if (!colors.every((c) => c.id != color.id)) return;
+  //       colors.push(color);
+  //     });
+  //   });
+
+  //   setColors(colors);
+  // }, [products]);
+
+  const [realProducts, setProducts] = useState<Product[]>(products.data || []);
 
   const [pageState, setPageState] = useState<PageState>(PageState.Loading);
   const [filters, setFilters] = useState<Filter[]>([]);
@@ -52,13 +67,11 @@ export default function Catalog() {
 
   const [searchedColor, setSearchedColor] = useState<string>("");
 
-  const setSortedProducts = (products: Product[]) => {
-    setProducts(
-      products
-        .filter((product) => !product.tags.includes("out_of_stock"))
-        .concat(products.filter((product) => product.tags.includes("out_of_stock"))),
-    );
-  };
+  function sortSpecialProducts(products: Product[]) {
+    return products
+      .filter((product) => !product.tags.includes("out_of_stock"))
+      .concat(products.filter((product) => product.tags.includes("out_of_stock")));
+  }
 
   function searchProducts() {
     setPageState(PageState.Searching);
@@ -75,9 +88,9 @@ export default function Catalog() {
 
     if (color) setSearchedColor(color.name);
 
-    getProducts().then((products) =>
-      setSortedProducts(
-        products.filter((product) =>
+    setProducts(
+      sortSpecialProducts(
+        (products.data ?? []).filter((product) =>
           keywords.every((keyword) =>
             `${product.name} | ${(product.expand.colors ?? []).map((color) => color.name).join(" ")} | ${product.custom_id} | ${(product.expand.types ?? []).map((type) => type.name).join(" ")} | ${(product.expand.category ?? []).map((category) => category.name).join(" ")} | ${product.expand.brand.name}`
               .toLowerCase()
@@ -96,58 +109,61 @@ export default function Catalog() {
 
     if (url.searchParams.get("search")) return searchProducts();
 
-    if (!url.searchParams.get("filters"))
-      getProducts().then((products) => {
-        setSortedProducts(products);
-        setPageState(PageState.Loaded);
-      });
+    if (!url.searchParams.get("filters")) {
+      setProducts(sortSpecialProducts(products.data ?? []));
+      setPageState(PageState.Loaded);
+    }
   }, []);
 
-  function filterProducts(newFilters: Filter[], fromFilterList: boolean = true) {
-    getProducts().then(async (products) => {
-      for (const filter of newFilters) {
-        switch (filter.type) {
-          case "color":
-            products = products.filter((product) => !!product.expand?.colors?.find((productColor) => productColor.name === filter.value));
-            break;
-          case "category":
-            products = products.filter((product) => !!product.expand?.category?.find((productCategory) => productCategory.name === filter.value));
-            break;
-          case "brand":
-            products = products.filter((product) => product.expand.brand.name === filter.value);
-            break;
-        }
-      }
+  async function filterProducts(newFilters: Filter[], fromFilterList: boolean = true) {
+    let filteredProducts = products.data ?? [];
 
-      setSortedProducts(products);
-      pageState !== PageState.Loaded && setPageState(PageState.Loaded);
-
-      if (fromFilterList && newFilters.length > 0) {
-        const categoryFilters = newFilters
-          .filter((filter) => filter.type === "category")
-          .map(async (filter) => (await searchQuery("categories", filter.value)).id);
-        const colorFilters = newFilters
-          .filter((filter) => filter.type === "color")
-          .map(async (filter) => (await searchQuery("colors", filter.value)).id);
-        const brandFilters = newFilters
-          .filter((filter) => filter.type === "brand")
-          .map(async (filter) => (await searchQuery("brands", filter.value)).id);
-        try {
-          const resolvedCategoryFilters = await Promise.all(categoryFilters);
-          const resolvedColorFilters = await Promise.all(colorFilters);
-          const resolvedBrandFilters = await Promise.all(brandFilters);
-          const filtersQueryString = [
-            ...(resolvedCategoryFilters.length > 0 ? [`category:${resolvedCategoryFilters.join("+")}`] : []),
-            ...(resolvedColorFilters.length > 0 ? [`color:${resolvedColorFilters.join("+")}`] : []),
-            ...(resolvedBrandFilters.length > 0 ? [`brand:${resolvedBrandFilters.join("+")}`] : []),
-          ].join(",");
-          navigate(`/catalog?filters=${filtersQueryString}`);
-        } catch (error) {
-          // lmeo
-        }
+    for (const filter of newFilters) {
+      switch (filter.type) {
+        case "color":
+          filteredProducts = filteredProducts.filter(
+            (product) => !!product.expand?.colors?.find((productColor) => productColor.name === filter.value),
+          );
+          break;
+        case "category":
+          filteredProducts = filteredProducts.filter(
+            (product) => !!product.expand?.category?.find((productCategory) => productCategory.name === filter.value),
+          );
+          break;
+        case "brand":
+          filteredProducts = filteredProducts.filter((product) => product.expand.brand.name === filter.value);
+          break;
       }
-      if (fromFilterList && newFilters.length === 0) navigate("/catalog");
-    });
+    }
+
+    setProducts(sortSpecialProducts(filteredProducts));
+    pageState !== PageState.Loaded && setPageState(PageState.Loaded);
+
+    if (fromFilterList && newFilters.length > 0) {
+      const categoryFilters = newFilters
+        .filter((filter) => filter.type === "category")
+        .map(async (filter) => (await searchQuery("categories", filter.value)).id);
+      const colorFilters = newFilters
+        .filter((filter) => filter.type === "color")
+        .map(async (filter) => (await searchQuery("colors", filter.value)).id);
+      const brandFilters = newFilters
+        .filter((filter) => filter.type === "brand")
+        .map(async (filter) => (await searchQuery("brands", filter.value)).id);
+      try {
+        const resolvedCategoryFilters = await Promise.all(categoryFilters);
+        const resolvedColorFilters = await Promise.all(colorFilters);
+        const resolvedBrandFilters = await Promise.all(brandFilters);
+        const filtersQueryString = [
+          ...(resolvedCategoryFilters.length > 0 ? [`category:${resolvedCategoryFilters.join("+")}`] : []),
+          ...(resolvedColorFilters.length > 0 ? [`color:${resolvedColorFilters.join("+")}`] : []),
+          ...(resolvedBrandFilters.length > 0 ? [`brand:${resolvedBrandFilters.join("+")}`] : []),
+        ].join(",");
+        navigate(`/catalog?filters=${filtersQueryString}`);
+      } catch (error) {
+        // lmeo
+      }
+    }
+    if (fromFilterList && newFilters.length === 0) navigate("/catalog");
   }
 
   useEffect(() => {
@@ -257,6 +273,8 @@ export default function Catalog() {
   const [openBrandFilter, brandFilter] = useDisclosure(true);
   const [openColorFilter, colorFilter] = useDisclosure(true);
 
+  if (products.isFetching) return <LoaderBox text="Loading Products..." />;
+
   function FilterNavBar() {
     return (
       <Box mih={"100%"} w={!isMobile ? 200 : "auto"} style={{ flex: "0.5" }}>
@@ -272,7 +290,7 @@ export default function Catalog() {
               {(() => {
                 const categories: string[] = [];
 
-                for (const product of products)
+                for (const product of products.data!)
                   if (product.expand?.category)
                     for (const category of product.expand.category) if (!categories.includes(category.name)) categories.push(category.name);
 
@@ -295,7 +313,7 @@ export default function Catalog() {
               {(() => {
                 const brands: string[] = [];
 
-                for (const product of products)
+                for (const product of products.data!)
                   if (product.expand?.brand && !brands.includes(product.expand?.brand.name)) brands.push(product.expand?.brand.name);
 
                 return brands.map((brand) => <Checkbox mb={5} mt={5} label={brand} value={brand} key={brand} />);
@@ -315,7 +333,7 @@ export default function Catalog() {
               {(() => {
                 const colors: string[] = [];
 
-                for (const product of products)
+                for (const product of products.data!)
                   if (product.expand?.colors) for (const color of product.expand.colors) if (!colors.includes(color.name)) colors.push(color.name);
 
                 return colors.map((color) => <Checkbox mb={5} mt={5} label={toTitleCase(color)} value={color} key={color} />);
@@ -402,7 +420,7 @@ export default function Catalog() {
           <LoaderBox text="Filtering..." />
         ) : pageState === PageState.Searching ? (
           <LoaderBox text="Searching..." />
-        ) : products.length === 0 ? (
+        ) : products.data?.length === 0 ? (
           <Box display="flex" style={{ justifyContent: "center", alignItems: "center", flexDirection: "column" }} w="100%" h="50vh">
             <IconSearchOff style={{ width: "30%", height: "30%", marginBottom: "1em" }} stroke={1} />
             <Title ta="center" order={1} mb="md">
@@ -411,7 +429,7 @@ export default function Catalog() {
             <Text>
               <UnstyledButton
                 onClick={() => {
-                  getProducts().then(setSortedProducts);
+                  setProducts(sortSpecialProducts(products.data ?? []));
                   setFilters([]);
                 }}
                 style={{ color: "black", textDecoration: "underline" }}
@@ -424,7 +442,7 @@ export default function Catalog() {
         ) : (
           <Box className={classes.cardsBox}>
             {products
-              .filter((p) => !p.hidden)
+              .data!.filter((p) => !p.hidden)
               .map((product) => (
                 <ProductCard product={product} key={product.id} isMobile={isMobile} searchedColor={searchedColor} />
               ))}
