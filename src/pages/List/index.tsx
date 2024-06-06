@@ -1,4 +1,4 @@
-import { Box, Button, Card, Checkbox, NumberInput, Pill, Table, Text, Title, Tooltip, UnstyledButton } from "@mantine/core";
+import { Box, Button, Card, Checkbox, Flex, NumberInput, Pill, Table, Text, Title, Tooltip, UnstyledButton } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
 import { IconShoppingCartExclamation, IconShoppingCartSearch, IconX } from "@tabler/icons-react";
@@ -115,7 +115,7 @@ export default function List() {
                             {item.product.custom_id && ` - ${item.product.custom_id}`}
                           </Link>
                           {(item.product.hidden || item.product.tags.includes("out_of_stock")) && (
-                            <Text fw={600} style={{ fontSize: "15px" }} c="red">
+                            <Text fw={600} fz={15} c="red">
                               This product is currently {item.product.hidden ? "unavailable" : "out of stock"}.
                             </Text>
                           )}
@@ -127,8 +127,8 @@ export default function List() {
                                 <>
                                   <Tooltip label={toTitleCase(item.color.name)}>
                                     <Box
-                                      w={"2vh"}
-                                      h={"2vh"}
+                                      w="2vh"
+                                      h="2vh"
                                       mr={5}
                                       style={{ background: linearBackgroundProperties(item.color), border: "1px solid #777", borderRadius: "3px" }}
                                     ></Box>
@@ -136,15 +136,15 @@ export default function List() {
                                 </>
                               )}
                             </Table.Td>
-                            <Table.Td maw={""}>{item.type?.name}</Table.Td>
-                            <Table.Td maw={""}>{item.fileInput && <Pill>{item.fileInput.name}</Pill>}</Table.Td>
-                            <Table.Td maw={""} style={{ overflow: "hidden", textOverflow: "ellipsis" }}>
+                            <Table.Td maw="">{item.type?.name}</Table.Td>
+                            <Table.Td maw="">{item.fileInput && <Pill>{item.fileInput.name}</Pill>}</Table.Td>
+                            <Table.Td maw="" style={{ overflow: "hidden", textOverflow: "ellipsis" }}>
                               {item.request}
                             </Table.Td>
                           </>
                         )}
                         <Table.Td>
-                          <Box display="flex" style={{ alignItems: "center" }}>
+                          <Flex align="center">
                             <NumberInput
                               w={"12%"}
                               miw={70}
@@ -165,7 +165,7 @@ export default function List() {
                             >
                               <IconX style={{ color: "red" }} stroke={1.5}></IconX>
                             </UnstyledButton>
-                          </Box>
+                          </Flex>
                         </Table.Td>
                       </Table.Tr>
                     ))}

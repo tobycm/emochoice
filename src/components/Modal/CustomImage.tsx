@@ -1,4 +1,4 @@
-import { Box, Button, Modal, Text } from "@mantine/core";
+import { Box, Button, Flex, Modal, Text } from "@mantine/core";
 import { UseFormReturnType } from "@mantine/form";
 import { OrderData } from "../../pages/Product";
 
@@ -30,18 +30,18 @@ export default function CustomImageModal(props: {
       centered
     >
       <Box>
-        <Box display={"flex"} style={{ justifyContent: "center" }} w="100%">
+        <Flex justify="center" w="100%">
           <canvas id="previewCanvas" style={{ maxWidth: "100%" }}></canvas>
-        </Box>
+        </Flex>
         {modalState.fileUploaded && (
           <Box>
-            <Box mb={"md"}>
+            <Box mb="md">
               <Text>
                 If the image is stretched excessively or does not fully occupy the available space, you may want to consider adjusting the scaling on
                 your device.
               </Text>
             </Box>
-            <Box display={"flex"} style={{ justifyContent: "center" }}>
+            <Flex justify="center">
               <Button
                 variant="light"
                 onClick={() => {
@@ -63,7 +63,7 @@ export default function CustomImageModal(props: {
               >
                 Submit
               </Button>
-            </Box>
+            </Flex>
           </Box>
         )}
       </Box>

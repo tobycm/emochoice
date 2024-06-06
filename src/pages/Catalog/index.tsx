@@ -1,12 +1,14 @@
-import { Box, Button, Checkbox, InputBase, Modal, NavLink, Pill, ScrollArea, Text, Title, UnstyledButton } from "@mantine/core";
+import { Box, Button, Checkbox, Flex, InputBase, Modal, NavLink, Pill, ScrollArea, Text, Title, UnstyledButton } from "@mantine/core";
 import { useDisclosure, useMediaQuery } from "@mantine/hooks";
 import { IconCategory, IconColorFilter, IconFilter, IconIcons, IconSearchOff } from "@tabler/icons-react";
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import SmallChangeHelmet from "../../components/Helmets/SmallChangeHelmet";
 import ProductCard from "../../components/ProductCard";
-import { getFilter, getProducts, searchQuery } from "../../lib/database";
-import { Product, ProductColor } from "../../lib/database/models";
+import { getProducts } from "../../lib/database";
+import { Product, ProductBrand, ProductCategory, ProductColor } from "../../lib/database/models";
+import { brandsFromProducts, categoriesFromProducts, colorsFromProducts } from "../../lib/database/utils";
 import LoaderBox, { setDocumentTitle, toTitleCase } from "../../lib/utils";
 import { convertToKeywords } from "../../lib/utils/search";
 import classes from "./index.module.css";
@@ -18,54 +20,36 @@ interface Filter {
   value: string;
 }
 
-enum PageState {
-  Loading,
-  Searching,
-  Filtering,
-  Loaded,
-}
-
 export default function Catalog() {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [colors, setColors] = useState<ProductColor[]>([]);
+  const products = useQuery({ queryKey: ["products"], queryFn: getProducts, placeholderData: [] });
+
+  const categories: ProductCategory[] = useMemo(() => categoriesFromProducts(products.data!), [products.data]);
+  const colors: ProductColor[] = useMemo(() => colorsFromProducts(products.data!), [products.data]);
+  const brands: ProductBrand[] = useMemo(() => brandsFromProducts(products.data!), [products.data]);
+
+  const [realProducts, setProducts] = useState<Product[]>(products.data!);
 
   useEffect(() => {
-    if (!products) return;
+    setProducts(products.data!);
+  }, [products.data]);
 
-    const colors: ProductColor[] = [];
-
-    products.forEach((product) => {
-      product.expand.colors?.forEach((color) => {
-        if (!colors.every((c) => c.id != color.id)) return;
-        colors.push(color);
-      });
-    });
-
-    setColors(colors);
-  }, [products]);
-
-  const [pageState, setPageState] = useState<PageState>(PageState.Loading);
   const [filters, setFilters] = useState<Filter[]>([]);
-  const [filterModalOpen, setFilterModalOpen] = useState<boolean>(false);
+  const filterModal = useDisclosure(false);
   const isMobile = useMediaQuery("(max-width: 48em)");
   const navigate = useNavigate();
 
   const [searchedColor, setSearchedColor] = useState<string>("");
 
-  const setSortedProducts = (products: Product[]) => {
-    setProducts(
-      products
-        .filter((product) => !product.tags.includes("out_of_stock"))
-        .concat(products.filter((product) => product.tags.includes("out_of_stock"))),
-    );
-  };
+  function sortOutOfStock(products: Product[]) {
+    return products
+      .filter((product) => !product.tags.includes("out_of_stock"))
+      .concat(products.filter((product) => product.tags.includes("out_of_stock")));
+  }
 
   function searchProducts() {
-    setPageState(PageState.Searching);
-
     const url = new URL(window.location.href);
     const search = url.searchParams.get("search")?.toLowerCase();
-    if (!search) return setPageState(PageState.Loaded);
+    if (!search) return;
 
     const keywords = convertToKeywords(search);
 
@@ -75,9 +59,9 @@ export default function Catalog() {
 
     if (color) setSearchedColor(color.name);
 
-    getProducts().then((products) =>
-      setSortedProducts(
-        products.filter((product) =>
+    setProducts(
+      sortOutOfStock(
+        products.data!.filter((product) =>
           keywords.every((keyword) =>
             `${product.name} | ${(product.expand.colors ?? []).map((color) => color.name).join(" ")} | ${product.custom_id} | ${(product.expand.types ?? []).map((type) => type.name).join(" ")} | ${(product.expand.category ?? []).map((category) => category.name).join(" ")} | ${product.expand.brand.name}`
               .toLowerCase()
@@ -86,7 +70,6 @@ export default function Catalog() {
         ),
       ),
     );
-    setPageState(PageState.Loaded);
   }
 
   useEffect(() => {
@@ -96,170 +79,142 @@ export default function Catalog() {
 
     if (url.searchParams.get("search")) return searchProducts();
 
-    if (!url.searchParams.get("filters"))
-      getProducts().then((products) => {
-        setSortedProducts(products);
-        setPageState(PageState.Loaded);
-      });
+    if (!url.searchParams.get("filters")) {
+      setProducts(sortOutOfStock(products.data!));
+    }
   }, []);
 
   function filterProducts(newFilters: Filter[], fromFilterList: boolean = true) {
-    getProducts().then(async (products) => {
-      for (const filter of newFilters) {
-        switch (filter.type) {
-          case "color":
-            products = products.filter((product) => !!product.expand?.colors?.find((productColor) => productColor.name === filter.value));
-            break;
-          case "category":
-            products = products.filter((product) => !!product.expand?.category?.find((productCategory) => productCategory.name === filter.value));
-            break;
-          case "brand":
-            products = products.filter((product) => product.expand.brand.name === filter.value);
-            break;
-        }
-      }
+    let filteredProducts = products.data!;
 
-      setSortedProducts(products);
-      pageState !== PageState.Loaded && setPageState(PageState.Loaded);
+    for (const filter of newFilters) {
+      if (filter.type === "category")
+        filteredProducts = filteredProducts.filter(
+          (product) => !!product.expand?.category?.find((productCategory) => productCategory.name === filter.value),
+        );
+      if (filter.type === "color")
+        filteredProducts = filteredProducts.filter((product) => !!product.expand?.colors?.find((productColor) => productColor.name === filter.value));
+      if (filter.type === "brand") filteredProducts = filteredProducts.filter((product) => product.expand.brand.name === filter.value);
+    }
 
-      if (fromFilterList && newFilters.length > 0) {
-        const categoryFilters = newFilters
-          .filter((filter) => filter.type === "category")
-          .map(async (filter) => (await searchQuery("categories", filter.value)).id);
-        const colorFilters = newFilters
-          .filter((filter) => filter.type === "color")
-          .map(async (filter) => (await searchQuery("colors", filter.value)).id);
-        const brandFilters = newFilters
-          .filter((filter) => filter.type === "brand")
-          .map(async (filter) => (await searchQuery("brands", filter.value)).id);
-        try {
-          const resolvedCategoryFilters = await Promise.all(categoryFilters);
-          const resolvedColorFilters = await Promise.all(colorFilters);
-          const resolvedBrandFilters = await Promise.all(brandFilters);
-          const filtersQueryString = [
-            ...(resolvedCategoryFilters.length > 0 ? [`category:${resolvedCategoryFilters.join("+")}`] : []),
-            ...(resolvedColorFilters.length > 0 ? [`color:${resolvedColorFilters.join("+")}`] : []),
-            ...(resolvedBrandFilters.length > 0 ? [`brand:${resolvedBrandFilters.join("+")}`] : []),
-          ].join(",");
-          navigate(`/catalog?filters=${filtersQueryString}`);
-        } catch (error) {
-          // lmeo
-        }
-      }
-      if (fromFilterList && newFilters.length === 0) navigate("/catalog");
-    });
+    setProducts(sortOutOfStock(filteredProducts));
+
+    if (fromFilterList && newFilters.length > 0) {
+      // we should refactor to use whole objects with ids instead of names
+      // kinda dangerous to rely on names -> not unique
+
+      const categoryFilters = newFilters
+        .filter((filter) => filter.type === "category")
+        .map((filter) => categories.find((category) => category.name === filter.value)?.id)
+        .filter((id) => id !== undefined);
+
+      const colorFilters = newFilters
+        .filter((filter) => filter.type === "color")
+        .map((filter) => colors.find((color) => color.name === filter.value)?.id)
+        .filter((id) => id !== undefined);
+
+      const brandFilters = newFilters
+        .filter((filter) => filter.type === "brand")
+        .map((filter) => brands.find((brand) => brand.name === filter.value)?.id)
+        .filter((id) => id !== undefined);
+
+      const filtersQueryStrings: string[] = [];
+
+      if (categoryFilters.length > 0) filtersQueryStrings.push(`category:${categoryFilters.join("+")}`);
+      if (colorFilters.length > 0) filtersQueryStrings.push(`color:${colorFilters.join("+")}`);
+      if (brandFilters.length > 0) filtersQueryStrings.push(`brand:${brandFilters.join("+")}`);
+
+      navigate(`/catalog?filters=${filtersQueryStrings.join(",")}`);
+    }
+    if (fromFilterList && newFilters.length === 0) navigate("/catalog");
   }
 
   useEffect(() => {
-    async function handleHrefChange() {
-      const urlSearchParams = new URL(window.location.href).searchParams;
-      const filtersParam = urlSearchParams.get("filters");
-      const searchParam = urlSearchParams.get("search");
+    const urlSearchParams = new URL(window.location.href).searchParams;
+    const filtersParam = urlSearchParams.get("filters");
+    const searchParam = urlSearchParams.get("search");
 
-      if (!filtersParam && !searchParam) {
-        setPageState(PageState.Loaded);
-        setFilters([]);
-        filterProducts([], false);
-        return;
-      }
-
-      if (filtersParam) {
-        setPageState(PageState.Filtering);
-
-        const allFilters = filtersParam.split(",");
-        const categoryFilters = await Promise.all(
-          allFilters
-            .filter((filter) => filter.startsWith("category:"))
-            .map(async (filter) => {
-              const categoryIDs = filter.replace("category:", "").replaceAll(" ", "+").split("+");
-              const categoryPromises = categoryIDs.map(async (id) => {
-                const category = await getFilter("categories", id);
-                return category?.name;
-              });
-              const categories = await Promise.all(categoryPromises);
-              return categories;
-            }),
-        );
-        const colorFilters = await Promise.all(
-          allFilters
-            .filter((filter) => filter.startsWith("color:"))
-            .map(async (filter) => {
-              const colorIDs = filter.replace("color:", "").replace(" ", "+").split("+");
-              const colorPromises = colorIDs.map(async (id) => {
-                const color = await getFilter("colors", id);
-                return color?.name;
-              });
-              const colors = await Promise.all(colorPromises);
-              return colors;
-            }),
-        );
-        const brandFilters = await Promise.all(
-          allFilters
-            .filter((filter) => filter.startsWith("brand:"))
-            .map(async (filter) => {
-              const brandIDs = filter.replace("brand:", "").replace(" ", "+").split("+");
-              const brandPromises = brandIDs.map(async (id) => {
-                const brand = await getFilter("brands", id);
-                return brand?.name;
-              });
-              const brands = await Promise.all(brandPromises);
-              return brands;
-            }),
-        );
-        const filters: Filter[] = [];
-        categoryFilters.forEach((categories) => {
-          categories.forEach((category) => {
-            filters.push({ type: "category", value: category });
-          });
-        });
-        colorFilters.forEach((colors) => {
-          colors.forEach((color) => {
-            filters.push({ type: "color", value: color });
-          });
-        });
-        brandFilters.forEach((brands) => {
-          brands.forEach((brand) => {
-            filters.push({ type: "brand", value: brand });
-          });
-        });
-        setPageState(PageState.Loaded);
-        setFilters(filters);
-        filterProducts(filters, false);
-      }
-      if (searchParam) searchProducts();
+    if (!filtersParam && !searchParam) {
+      setFilters([]);
+      filterProducts([], false);
+      return;
     }
 
-    handleHrefChange();
-  }, [window.location.href]);
+    if (filtersParam) {
+      const allFilters = filtersParam.split(",");
 
-  const updateFilters = (type: FilterTypes) => {
-    return (values: string[]) => {
-      const newFilters: Filter[] = [];
-      for (const filter of filters) if (filter.type !== type) newFilters.push(filter);
+      const filtersMapping = {
+        category: categories,
+        color: colors,
+        brand: brands,
+      };
 
-      for (const value of values) newFilters.push({ type, value });
+      for (const filter of allFilters) {
+        const [type, values] = filter.split(":");
+        if (!Object.keys(filtersMapping).includes(type)) continue;
+        if (values.length === 0) continue;
+        for (const value of values.replaceAll(" ", "+").split("+")) {
+          if (!filtersMapping[type as keyof typeof filtersMapping].map((filter) => filter.name).includes(value)) continue;
+        }
+      }
 
-      setPageState(PageState.Filtering);
-      setFilters(newFilters);
-      filterProducts(newFilters);
-    };
+      const categoryFilters = allFilters
+        .filter((filter) => filter.startsWith("category:"))
+        .map((filter) => filter.replace("category:", "").replaceAll(" ", "+").split("+"))
+        .flat()
+        .map((id) => categories.find((category) => category.id === id)?.name)
+        .filter((id) => id !== undefined)
+        .map((category) => ({ type: "category", value: category }));
+
+      const colorFilters = allFilters
+        .filter((filter) => filter.startsWith("color:"))
+        .map((filter) => filter.replace("color:", "").replaceAll(" ", "+").split("+"))
+        .flat()
+        .map((id) => colors.find((color) => color.id === id)?.name)
+        .filter((id) => id !== undefined)
+        .map((color) => ({ type: "color", value: color }));
+
+      const brandFilters = allFilters
+        .filter((filter) => filter.startsWith("brand:"))
+        .map((filter) => filter.replace("brand:", "").replace(" ", "+").split("+"))
+        .flat()
+        .map((id) => brands.find((brand) => brand.id === id)?.name)
+        .filter((id) => id !== undefined)
+        .map((brand) => ({ type: "brand", value: brand }));
+
+      const filters = [...categoryFilters, ...colorFilters, ...brandFilters] as Filter[];
+
+      setFilters(filters);
+      filterProducts(filters, false);
+    }
+    if (searchParam) searchProducts();
+  }, [window.location.href, categories, colors, brands]);
+
+  const updateFilters = (type: FilterTypes) => (values: string[]) => {
+    const newFilters: Filter[] = [];
+    for (const filter of filters) if (filter.type !== type) newFilters.push(filter);
+
+    for (const value of values) newFilters.push({ type, value });
+
+    setFilters(newFilters);
+    filterProducts(newFilters);
   };
 
   const getFilterValues = (type: FilterTypes) => filters.filter((filter) => filter.type === type).map((value) => value.value);
-
-  // useEffect(() => {
-  //   console.log(getFilterValues("category"));
-  //   console.log(getFilterValues("color"));
-  //   console.log(getFilterValues("brand"));
-  // }, [filters]);
 
   const [openCategoryFilter, categoryFilter] = useDisclosure(true);
   const [openBrandFilter, brandFilter] = useDisclosure(true);
   const [openColorFilter, colorFilter] = useDisclosure(true);
 
+  if (products.isFetching) return <LoaderBox text="Loading products..." />;
+
   function FilterNavBar() {
+    const categories: ProductCategory[] = useMemo(() => categoriesFromProducts(realProducts), [realProducts]);
+    const colors: ProductColor[] = useMemo(() => colorsFromProducts(realProducts), [realProducts]);
+    const brands: ProductBrand[] = useMemo(() => brandsFromProducts(realProducts), [realProducts]);
+
     return (
-      <Box mih={"100%"} w={!isMobile ? 200 : "auto"} style={{ flex: "0.5" }}>
+      <Box mih="100%" w={!isMobile ? 200 : "auto"} flex={0.5}>
         <NavLink
           label="Categories"
           leftSection={<IconCategory size="1rem" stroke={1.5} />}
@@ -269,17 +224,9 @@ export default function Catalog() {
         >
           <Checkbox.Group value={getFilterValues("category")} onChange={updateFilters("category")}>
             <ScrollArea.Autosize mah={!isMobile ? 250 : "auto"}>
-              {(() => {
-                const categories: string[] = [];
-
-                for (const product of products)
-                  if (product.expand?.category)
-                    for (const category of product.expand.category) if (!categories.includes(category.name)) categories.push(category.name);
-
-                return categories.map((category) => (
-                  <Checkbox mb={5} mt={5} label={category.replaceAll("/", " / ")} value={category} key={category} />
-                ));
-              })()}
+              {categories.map((category) => (
+                <Checkbox mb={5} mt={5} label={category.name.replaceAll("/", " / ")} value={category.name} key={category.id} />
+              ))}
             </ScrollArea.Autosize>
           </Checkbox.Group>
         </NavLink>
@@ -292,14 +239,9 @@ export default function Catalog() {
         >
           <Checkbox.Group value={getFilterValues("brand")} onChange={updateFilters("brand")}>
             <ScrollArea.Autosize mah={!isMobile ? 250 : "auto"}>
-              {(() => {
-                const brands: string[] = [];
-
-                for (const product of products)
-                  if (product.expand?.brand && !brands.includes(product.expand?.brand.name)) brands.push(product.expand?.brand.name);
-
-                return brands.map((brand) => <Checkbox mb={5} mt={5} label={brand} value={brand} key={brand} />);
-              })()}
+              {brands.map((brand) => (
+                <Checkbox mb={5} mt={5} label={brand.name} value={brand.name} key={brand.id} />
+              ))}
             </ScrollArea.Autosize>
           </Checkbox.Group>
         </NavLink>
@@ -312,14 +254,9 @@ export default function Catalog() {
         >
           <Checkbox.Group value={getFilterValues("color")} onChange={updateFilters("color")}>
             <ScrollArea.Autosize mah={!isMobile ? 250 : "auto"}>
-              {(() => {
-                const colors: string[] = [];
-
-                for (const product of products)
-                  if (product.expand?.colors) for (const color of product.expand.colors) if (!colors.includes(color.name)) colors.push(color.name);
-
-                return colors.map((color) => <Checkbox mb={5} mt={5} label={toTitleCase(color)} value={color} key={color} />);
-              })()}
+              {colors.map((color) => (
+                <Checkbox mb={5} mt={5} label={toTitleCase(color.name)} value={color.name} key={color.id} />
+              ))}
             </ScrollArea.Autosize>
           </Checkbox.Group>
         </NavLink>
@@ -327,54 +264,32 @@ export default function Catalog() {
     );
   }
 
-  if (pageState === PageState.Loading) return <LoaderBox />;
-
   return (
-    <Box className={classes.container}>
+    <Flex justify="center" wrap="wrap" p="0 4% 0 4%" mih="50vh" className={classes.container}>
       <SmallChangeHelmet title="Catalog" description="Browse through our wide selection of products!" location="catalog" />
-      <Modal
-        opened={filterModalOpen}
-        onClose={() => {
-          setFilterModalOpen(false);
-        }}
-        title={"Filters"}
-        withCloseButton
-      >
+      <Modal opened={filterModal[0]} onClose={filterModal[1].close} title="Filters" withCloseButton>
         {/* if it works it works */}
         <ScrollArea.Autosize mah="calc(var(--_content-max-height,calc(100dvh - var(--modal-y-offset)*2)) - var(--mantine-spacing-md) * 2 - 96px)">
           <FilterNavBar />
         </ScrollArea.Autosize>
-        <Box display="flex" mt="md" style={{ justifyContent: "flex-end" }}>
-          <Button
-            onClick={() => {
-              setFilterModalOpen(false);
-            }}
-            style={{}}
-            leftSection={<IconFilter size="1rem" stroke={1.5} />}
-          >
+        <Flex mt="md" justify="flex-end">
+          <Button onClick={filterModal[1].close} leftSection={<IconFilter size="1rem" stroke={1.5} />}>
             Apply
           </Button>
-        </Box>
+        </Flex>
       </Modal>
       <Box visibleFrom="xs">
         <FilterNavBar />
       </Box>
-      <Box w="80%" display={"flex"} style={{ alignItems: "center", flexDirection: "column" }} mb="5%" hiddenFrom="xs">
+      <Flex w="80%" align="center" direction="column" mb="5%" hiddenFrom="xs">
         <Title ta="center" order={1} mb="5%">
           Catalog
         </Title>
-        <Button
-          leftSection={<IconFilter size="1rem" stroke={1.5} />}
-          variant="light"
-          radius="xl"
-          onClick={() => {
-            setFilterModalOpen(true);
-          }}
-        >
+        <Button leftSection={<IconFilter size="1rem" stroke={1.5} />} variant="light" radius="xl" onClick={filterModal[1].open}>
           Filters
         </Button>
-      </Box>
-      <Box style={{ flex: "4.5" }}>
+      </Flex>
+      <Box flex={4.5}>
         <Box ml="1vw" visibleFrom="xs">
           <Text mb="1vh" c="dimmed">
             Filters:
@@ -398,12 +313,8 @@ export default function Catalog() {
             </Pill.Group>
           </InputBase>
         </Box>
-        {pageState === PageState.Filtering ? (
-          <LoaderBox text="Filtering..." />
-        ) : pageState === PageState.Searching ? (
-          <LoaderBox text="Searching..." />
-        ) : products.length === 0 ? (
-          <Box display="flex" style={{ justifyContent: "center", alignItems: "center", flexDirection: "column" }} w="100%" h="50vh">
+        {realProducts.length === 0 ? (
+          <Flex justify="center" align="center" direction="column" w="100%" h="50vh">
             <IconSearchOff style={{ width: "30%", height: "30%", marginBottom: "1em" }} stroke={1} />
             <Title ta="center" order={1} mb="md">
               No Products Found
@@ -411,7 +322,7 @@ export default function Catalog() {
             <Text>
               <UnstyledButton
                 onClick={() => {
-                  getProducts().then(setSortedProducts);
+                  setProducts(sortOutOfStock(products.data!));
                   setFilters([]);
                 }}
                 style={{ color: "black", textDecoration: "underline" }}
@@ -420,17 +331,17 @@ export default function Catalog() {
               </UnstyledButton>{" "}
               filters/queries and try again.
             </Text>
-          </Box>
+          </Flex>
         ) : (
-          <Box className={classes.cardsBox}>
-            {products
+          <Flex wrap="wrap" className={classes.cardsBox}>
+            {realProducts
               .filter((p) => !p.hidden)
               .map((product) => (
                 <ProductCard product={product} key={product.id} isMobile={isMobile} searchedColor={searchedColor} />
               ))}
-          </Box>
+          </Flex>
         )}
       </Box>
-    </Box>
+    </Flex>
   );
 }

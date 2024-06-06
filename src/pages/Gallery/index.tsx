@@ -1,5 +1,5 @@
 import { Carousel, Embla } from "@mantine/carousel";
-import { Box, Image, Title } from "@mantine/core";
+import { Box, Flex, Image, Title } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
 import { IconInfoCircle } from "@tabler/icons-react";
@@ -11,7 +11,7 @@ import pocketbase, { getGallery } from "../../lib/database";
 import LoaderBox, { setDocumentTitle } from "../../lib/utils";
 import classes from "./index.module.css";
 
-export default function Gallery(props: { home: boolean }) {
+export default function Gallery({ home = false }: { home?: boolean }) {
   const [embla, setEmbla] = useState<{ [key: string]: Embla | null }>({
     gallery_1: null,
     gallery_2: null,
@@ -70,7 +70,8 @@ export default function Gallery(props: { home: boolean }) {
                 mr="auto"
                 style={{ aspectRatio: "calc(9/11)", cursor: "pointer" }}
                 src={pocketbase.getFileUrl(gallary, link, { thumb: "0x600" })}
-                fetchPriority={index == 0 ? "high" : "low"}
+                // @ts-ignore
+                fetchpriority={index == 0 ? "high" : "low"}
               />
             </Box>
           </Carousel.Slide>
@@ -118,12 +119,12 @@ export default function Gallery(props: { home: boolean }) {
 
   if (!slides.gallery_1.length || !slides.gallery_2.length || !slides.gallery_3.length)
     return (
-      <Box display="flex" style={{ flexDirection: "column", alignItems: "center" }}>
+      <Flex direction="column" align="center">
         <Title ta="center" order={1} mb="lg">
           Gallery
         </Title>
         <LoaderBox />
-      </Box>
+      </Flex>
     );
 
   const stopAllAutoplays = () => {
@@ -139,18 +140,16 @@ export default function Gallery(props: { home: boolean }) {
   };
 
   return (
-    <Box display="flex" style={{ flexDirection: "column", alignItems: "center" }}>
+    <Flex direction="column" align="center">
       {bigImage && !isMobile && (
         <ImageZoom scrollHeight={scrollHeight} productImage={zoomImage} openBigImage={openBigImage} setProductImage={setZoomImage} />
       )}
-      {!props.home && (
-        <SmallChangeHelmet title="Gallery" gallery={true} location="gallery" description="Take a look at some of our great printing products!" />
-      )}
+      {!home && <SmallChangeHelmet title="Gallery" gallery location="gallery" description="Take a look at some of our great printing products!" />}
       <Title ta="center" order={1} mb="lg">
         Gallery
       </Title>
       {["gallery_1", "gallery_2", "gallery_3"].map((type, index) => (
-        <Box mb={1} display={"flex"} style={{ flexDirection: "column", alignItems: "center" }} key={type} mih={100}>
+        <Flex mb={1} direction="column" align="center" key={type} mih={100}>
           <Title ta="center" order={2} c="emochoice-blue" mb="md" mr="md" ml="md">
             {["Clothing & Accessories Printing", "Digital Printing", "Souvenirs & Gifts Printing"][index]}
           </Title>
@@ -158,9 +157,9 @@ export default function Gallery(props: { home: boolean }) {
             w="80vw"
             loop
             className={classes.carousel}
-            plugins={props.home ? [autoplays[index].current] : []}
-            onMouseEnter={props.home ? stopAllAutoplays : undefined}
-            onMouseLeave={props.home ? startAllAutoplays : undefined}
+            plugins={home ? [autoplays[index].current] : []}
+            onMouseEnter={home ? stopAllAutoplays : undefined}
+            onMouseLeave={home ? startAllAutoplays : undefined}
             getEmblaApi={(api) => setEmbla((prevEmbla) => ({ ...prevEmbla, [type]: api }))}
             draggable
             slideSize={isMobile ? "100%" : "15%"}
@@ -168,12 +167,8 @@ export default function Gallery(props: { home: boolean }) {
           >
             {slides[type]}
           </Carousel>
-        </Box>
+        </Flex>
       ))}
-    </Box>
+    </Flex>
   );
 }
-
-Gallery.defaultProps = {
-  home: false,
-};

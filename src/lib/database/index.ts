@@ -1,7 +1,8 @@
 import PocketBase, { RecordModel } from "pocketbase";
-import { DropdownMenuItem, Product, ProductCategory } from "./models";
+import { DropdownMenuItem, Product } from "./models";
 
 import Constants from "../constants";
+import { ProductWithKeywords } from "../utils/search";
 
 const pocketbase = new PocketBase(Constants.PocketBaseURL);
 
@@ -15,29 +16,24 @@ export async function getFilter(collection: string, id: string) {
   return await pocketbase.collection(collection).getOne(id);
 }
 
-export async function searchQuery(collection: string, query: string) {
-  return await pocketbase.collection(collection).getFirstListItem<ProductCategory>(`name = "${query}"`);
+export async function searchQuery<T>(collection: string, query: string) {
+  return await pocketbase.collection(collection).getFirstListItem<T>(`name = "${query}"`);
 }
 
-// bad idea but ok
-// good idea now
-let productsPromise: Promise<Product[]> | undefined;
-
-export async function getProducts() {
-  if (!productsPromise)
-    productsPromise = pocketbase
-      .collection("products")
-      .getFullList<Product>(1000, { expand: "category,colors,types,brand,images", sort: "-created" });
-
-  return await productsPromise;
+export async function getProducts(): Promise<ProductWithKeywords[]> {
+  return (await pocketbase.collection("products").getFullList<Product>(1000, { expand: "category,colors,types,brand,images", sort: "-created" })).map(
+    (product) => {
+      product.keywords =
+        `${product.name} ${(product.expand.colors ?? []).map((color) => color.name).join(" ")} ${product.custom_id} ${(product.expand.types ?? []).map((type) => type.name).join(" ")} ${(product.expand.category ?? []).map((category) => category.name).join(" ")} ${product.expand.brand.name}`.toLowerCase();
+      return product;
+    },
+  ) as ProductWithKeywords[];
 }
 
 export async function getDocument(id: string) {
   return await pocketbase.collection("documents").getOne(id);
 }
 
-let dropdownMenuList: DropdownMenuItem[] | undefined;
 export async function getDropdownMenuList() {
-  if (!dropdownMenuList) dropdownMenuList = await pocketbase.collection("dropdown_menu").getFullList<DropdownMenuItem>({ expand: "parent,children" });
-  return dropdownMenuList;
+  return await pocketbase.collection("dropdown_menu").getFullList<DropdownMenuItem>({ expand: "parent,children" });
 }

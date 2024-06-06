@@ -1,25 +1,27 @@
-import { ActionIcon, Autocomplete, Box } from "@mantine/core";
+import { ActionIcon, Autocomplete, Flex } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import { IconSearch } from "@tabler/icons-react";
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useMemo, useState } from "react";
 import { useNavigate } from "react-router";
-import { ProductWithKeywords, searchProducts } from "../lib/utils/search";
+import { getProducts } from "../lib/database";
+import { searchProducts } from "../lib/utils/search";
 
-export default function SearchBar({ products }: { products: ProductWithKeywords[] }) {
+export default function SearchBar() {
   const [searchQuery, setSearchQuery] = useState("");
-  const [searchResults, setSearchResults] = useState<string[]>([]);
+  // const [searchResults, setSearchResults] = useState<string[]>([]);
 
-  const [colors, setColors] = useState<string[]>([]);
+  const products = useQuery({ queryKey: ["products"], queryFn: getProducts });
 
-  useEffect(() => {
-    if (!products) return;
-
+  const colors: string[] = useMemo(() => {
     const colors: string[] = [];
 
-    products.forEach((product) => product.expand.colors?.forEach((color) => colors.includes(color.name) && colors.push(color.name)));
+    products.data?.forEach((product) => product.expand.colors?.forEach((color) => colors.includes(color.name) && colors.push(color.name)));
 
-    setColors(colors);
-  }, [products]);
+    return colors;
+  }, [products.data]);
+
+  const searchResults = useMemo(() => searchProducts(products.data || [], searchQuery, colors), [products.data, searchQuery, colors]);
 
   const isMobile = useMediaQuery("(max-width: 48em)");
   const navigate = useNavigate();
@@ -34,12 +36,8 @@ export default function SearchBar({ products }: { products: ProductWithKeywords[
     navigate("/catalog" + url.search);
   }
 
-  useEffect(() => {
-    setSearchResults(searchProducts(products, searchQuery, colors));
-  }, [searchQuery, products, colors]);
-
   return (
-    <Box w={isMobile ? "85%" : 400} display={"flex"} style={{ justifyContent: "space-between" }}>
+    <Flex w={isMobile ? "85%" : 400} justify="space-between">
       <Autocomplete
         radius="xl"
         w={"100%"}
@@ -60,6 +58,6 @@ export default function SearchBar({ products }: { products: ProductWithKeywords[
       <ActionIcon variant="filled" radius="lg" size="lg" mr={10} onClick={() => search()}>
         <IconSearch style={{ width: "60%", height: "60%" }} stroke={3} />
       </ActionIcon>
-    </Box>
+    </Flex>
   );
 }

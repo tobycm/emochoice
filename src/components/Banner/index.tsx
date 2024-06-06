@@ -1,25 +1,26 @@
-import { Box, Image } from "@mantine/core";
+import { Image, Skeleton } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useEffect, useMemo, useState } from "react";
 import pocketbase, { getGallery } from "../../lib/database";
 
-export default function Banner({ onLoad }: { onLoad?: () => void }) {
+export default function Banner() {
   const isMobile = useMediaQuery("(max-width: 48em)");
-  const [banners, setBanners] = useState<string[]>([]);
+  const gallery = useQuery({ queryKey: ["home_carousel"], queryFn: async () => await getGallery("home_carousel") });
+
+  const banners = useMemo(() => gallery.data?.pictures.map((link) => pocketbase.getFileUrl(gallery.data, link)) || [], [gallery.data]);
+
+  const [currentBanner, setBanner] = useState(0);
 
   useEffect(() => {
-    getGallery("home_carousel").then((gallery) => {
-      setBanners(gallery.pictures.map((link) => pocketbase.getFileUrl(gallery, link)));
+    const interval = setInterval(() => setBanner((banner) => (banner + 1) % banners.length), 1250);
 
-      if (onLoad) onLoad();
-
-      setInterval(() => setBanners((banners) => banners.slice(1).concat(banners[0])), 1250);
-    });
-  }, []);
+    return () => clearInterval(interval);
+  }, [banners]);
 
   return (
-    <Box style={{ height: isMobile ? "20vh" : "30vh" }}>
-      <Image src={banners[0]} h="100%" />
-    </Box>
+    <Skeleton visible={gallery.isFetching} height={isMobile ? "20vh" : "30vh"} style={{ transform: "translate(0, -5vh)" }}>
+      <Image src={banners[currentBanner]} h="100%" />
+    </Skeleton>
   );
 }

@@ -1,15 +1,20 @@
-import { Avatar, Box, Image, Overlay, ScrollArea } from "@mantine/core";
+import { Avatar, Box, Flex, Image, Overlay, ScrollArea } from "@mantine/core";
 import { IconX } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import pocketbase from "../../lib/database";
-import { Product, ProductImage } from "../../lib/database/models";
+import { ProductImage } from "../../lib/database/models";
 
-export default function ImageZoom(props: {
+export default function ImageZoom({
+  productImage,
+  openBigImage,
+  images = [],
+  setProductImage,
+  scrollHeight = 0,
+}: {
   productImage: string;
   openBigImage: (open: boolean) => void;
-  images: ProductImage[];
+  images?: ProductImage[];
   setProductImage: (image: string) => void;
-  product: Product;
   scrollHeight: number;
 }) {
   const [isFocused, setIsFocused] = useState(false);
@@ -49,7 +54,7 @@ export default function ImageZoom(props: {
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
-        props.openBigImage(false);
+        openBigImage(false);
       }
     };
 
@@ -63,23 +68,14 @@ export default function ImageZoom(props: {
   return (
     <Overlay
       onClick={() => {
-        props.openBigImage(false);
+        openBigImage(false);
       }}
-      style={{ transform: `translateY(${props.scrollHeight}px` }}
+      style={{ transform: `translateY(${scrollHeight}px` }}
     >
-      <Box
-        h="100vh"
-        display={"flex"}
-        style={{
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "flex-end",
-          cursor: "pointer",
-        }}
-      >
+      <Flex h="100vh" direction="column" align="center" justify="flex-end" style={{ cursor: "pointer" }}>
         <Image
           style={{ height: "100vh", width: isFirefox ? "auto" : "min-content", cursor: "default" }}
-          src={props.productImage}
+          src={productImage}
           onClick={handleContentClick}
         />
         <Box
@@ -89,7 +85,7 @@ export default function ImageZoom(props: {
           onClick={handleContentClick}
           onMouseEnter={handleClosingFocus}
           onMouseLeave={handleClosingBlur}
-        ></Box>
+        />
         <Avatar
           size={50}
           mr="auto"
@@ -97,27 +93,27 @@ export default function ImageZoom(props: {
           color="white"
           onMouseEnter={handleClosingFocus}
           onClick={() => {
-            props.openBigImage(false);
+            openBigImage(false);
           }}
+          bg="#00000070"
+          pos="absolute"
           style={{
-            backgroundColor: "#00000070",
-            position: "absolute",
             transform: needToClose ? "translateY(-92vh)" : "translateY(-100vh)",
             transition: "transform 0.3s ease",
           }}
         >
           <IconX size={30} />
         </Avatar>
-        {props.images.length > 1 && (
+        {images.length > 1 && (
           <ScrollArea
             w="60%"
             maw={800}
             p={15}
+            pos="absolute"
+            bg="#00000070"
             style={{
-              backgroundColor: "#00000070",
               borderRadius: "20px",
               cursor: "default",
-              position: "absolute",
               transform: "translateY(-15px)",
               transition: "opacity 0.3s ease",
             }}
@@ -126,29 +122,22 @@ export default function ImageZoom(props: {
             onMouseEnter={handleScrollAreaFocus}
             onMouseLeave={handleScrollAreaBlur}
           >
-            <Box display={"flex"}>
-              {props.images.map((image) => (
+            <Flex>
+              {images.map((image) => (
                 <Image
                   key={image.id} // Add a unique key for each image in the array
                   src={pocketbase.getFileUrl(image, image.image)}
-                  onClick={() => props.setProductImage(pocketbase.getFileUrl(image, image.image))}
-                  style={{
-                    height: "80px",
-                    width: "auto",
-                    marginRight: "10px",
-                    cursor: "pointer",
-                  }}
+                  onClick={() => setProductImage(pocketbase.getFileUrl(image, image.image))}
+                  h={80}
+                  w="auto"
+                  mr={10}
+                  style={{ cursor: "pointer" }}
                 />
               ))}
-            </Box>
+            </Flex>
           </ScrollArea>
         )}
-      </Box>
+      </Flex>
     </Overlay>
   );
 }
-
-ImageZoom.defaultProps = {
-  images: [],
-  product: {},
-};

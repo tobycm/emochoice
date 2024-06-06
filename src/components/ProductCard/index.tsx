@@ -1,4 +1,4 @@
-import { Badge, Box, Card, Center, Group, Image, Overlay, Text, Title } from "@mantine/core";
+import { Badge, Box, Card, Center, Flex, Group, Image, Overlay, Text, Title } from "@mantine/core";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import pocketbase from "../../lib/database";
@@ -7,14 +7,14 @@ import { linearBackgroundProperties } from "../../lib/utils";
 
 export default function ProductCard({
   product,
-  inProductPage,
+  inProductPage = false,
   isMobile,
-  searchedColor,
+  searchedColor = "",
 }: {
   product: Product;
   inProductPage?: boolean;
   isMobile?: boolean;
-  searchedColor: string;
+  searchedColor?: string;
 }) {
   const productUrl = `/product/${product.id}`;
 
@@ -22,17 +22,19 @@ export default function ProductCard({
 
   if (product.expand?.colors) {
     colors = (
-      <Box display={"flex"} style={{ alignItems: "center" }} mih={24.8}>
+      <Flex align="center" mih={24.8}>
         {product.expand.colors.slice(0, 8).map((color) => (
           <Box
             w="15px"
             h="15px"
             mr={5}
-            style={{ background: linearBackgroundProperties(color), border: "1px solid #777", borderRadius: "3px", aspectRatio: 1 / 1 }}
-          ></Box>
+            bg={linearBackgroundProperties(color)}
+            style={{ border: "1px solid #777", borderRadius: "3px", aspectRatio: 1 / 1 }}
+            key={color.id}
+          />
         ))}
         {product.expand.colors.length > 8 && <Text c="grey">+{product.expand.colors.length - 8}</Text>}
-      </Box>
+      </Flex>
     );
   }
 
@@ -47,8 +49,8 @@ export default function ProductCard({
   if (isMobile && !inProductPage)
     return (
       <Link to={productUrl} style={{ textDecoration: "none" }}>
-        <Card w="85vw" h="calc(4/10*85vw)" maw={750} mah={1600} shadow="sm" padding="sm" radius="md" pb="xl" mb="lg" display={"flex"} withBorder>
-          <Card.Section display={"flex"}>
+        <Card w="85vw" h="calc(4/10*85vw)" maw={750} mah={1600} shadow="sm" padding="sm" radius="md" pb="xl" mb="lg" display="flex" withBorder>
+          <Card.Section display="flex">
             <Box w="30%">
               <Image src={image ? pocketbase.getFileUrl(image, image.image, { thumb: "0x320" }) : "/images/no_image.png"} h="calc(4/10*85vw)" />
               {product.tags.includes("out_of_stock") && (
@@ -63,11 +65,11 @@ export default function ProductCard({
             </Box>
             <Box w="70%">
               <Box m={"4%"}>
-                <Box display="flex" style={{ justifyContent: "space-between" }}>
-                  <Text c={"emochoice-blue"} style={{ fontSize: "13px" }} fw={600} lineClamp={1}>
+                <Flex justify="space-between">
+                  <Text c="emochoice-blue" fz={13} fw={600} lineClamp={1}>
                     {product.expand.brand.name}
                   </Text>
-                  <Box display="flex">
+                  <Flex>
                     {product.tags.includes("on_sale") && (
                       <Badge color="red" size="sm">
                         On Sale
@@ -78,10 +80,10 @@ export default function ProductCard({
                         {product.custom_id}
                       </Badge>
                     )}
-                  </Box>
-                </Box>
+                  </Flex>
+                </Flex>
                 <Group justify="space-between">
-                  <Text lineClamp={2} mt={1} mb={3} fw="600" style={{ fontSize: "17px" }}>
+                  <Text lineClamp={2} mt={1} mb={3} fw="600" fz={17}>
                     {product.name}
                   </Text>
                 </Group>
@@ -123,11 +125,11 @@ export default function ProductCard({
         </Card.Section>
         <Card.Section>
           <Box m={"5%"}>
-            <Box display="flex" style={{ justifyContent: "space-between" }}>
-              <Text c={"emochoice-blue"} style={{ fontSize: "13px" }} fw={600} lineClamp={1}>
+            <Flex justify="space-between">
+              <Text c="emochoice-blue" fz={13} fw={600} lineClamp={1}>
                 {product.expand.brand.name}
               </Text>
-              <Box display="flex">
+              <Flex>
                 {product.tags.includes("on_sale") && (
                   <Badge color="red" size="sm">
                     On Sale
@@ -138,10 +140,10 @@ export default function ProductCard({
                     {product.custom_id}
                   </Badge>
                 )}
-              </Box>
-            </Box>
+              </Flex>
+            </Flex>
             <Group justify="space-between">
-              <Text lineClamp={2} mt={5} mb={5} fw="600" style={{ fontSize: "17px" }}>
+              <Text lineClamp={2} mt={5} mb={5} fw="600" fz={17}>
                 {product.name}
               </Text>
             </Group>
@@ -152,8 +154,3 @@ export default function ProductCard({
     </Link>
   );
 }
-
-ProductCard.defaultProps = {
-  inProductPage: false,
-  searchedColor: "",
-};

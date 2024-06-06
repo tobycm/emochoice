@@ -1,4 +1,4 @@
-import { Avatar, Box, NumberInput, Pill, Table, Text, Title, Tooltip } from "@mantine/core";
+import { Avatar, Box, Flex, NumberInput, Pill, Table, Text, Title, Tooltip } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import { IconCheck } from "@tabler/icons-react";
 import { useEffect } from "react";
@@ -23,33 +23,28 @@ export default function Success() {
   });
 
   return (
-    <Box w="100%" mih="50vh" display="flex" style={{ flexDirection: "column", alignItems: "center" }}>
+    <Flex w="100%" mih="50vh" direction="column" align="center">
       <DefaultHelmet />
       {user.quote && user.name && user.contact && user.address && (
         <>
-          <Box
-            w="90%"
-            mt="xl"
-            display="flex"
-            style={{ flexDirection: "column", textAlign: "center", justifyContent: "center", alignItems: "center" }}
-          >
+          <Flex w="90%" mt="xl" direction="column" align="center" justify="center" ta="center">
             <Avatar variant="filled" radius="xl" size="lg" color="emochoice-green" mb="md">
               <IconCheck stroke={3} size="2rem" />
             </Avatar>
-            <Title ta="center" mb={"md"}>
+            <Title ta="center" mb="md">
               You've Successfully Placed Your Quote!
             </Title>
             <Text mb="xl">
               We'll be in touch with you shortly to confirm your quote and to arrange payment. If you have any questions, please contact us{" "}
               <Link to="/contact" style={{ textDecoration: "none" }}>
-                <Text component="span" style={{ textDecoration: "underline", color: "black" }}>
+                <Text component="span" td="underline" c="black">
                   here
                 </Text>
               </Link>
               .
             </Text>
-          </Box>
-          <Title ta="center" order={4} mt={"xl"} mb="md">
+          </Flex>
+          <Title ta="center" order={4} mt="xl" mb="md">
             Quote Details
           </Title>
           <Box w={isMobile ? "90%" : "70%"}>
@@ -82,8 +77,8 @@ export default function Success() {
                             <>
                               <Tooltip label={toTitleCase(item.color.name)}>
                                 <Box
-                                  w={"2vh"}
-                                  h={"2vh"}
+                                  w="2vh"
+                                  h="2vh"
                                   mr={5}
                                   style={{ background: linearBackgroundProperties(item.color), border: "1px solid #777", borderRadius: "3px" }}
                                 ></Box>
@@ -91,15 +86,15 @@ export default function Success() {
                             </>
                           )}
                         </Table.Td>
-                        <Table.Td maw={""}>{item.type?.name}</Table.Td>
-                        <Table.Td maw={""}>{item.fileInput && <Pill>{item.fileInput.name}</Pill>}</Table.Td>
-                        <Table.Td maw={""} style={{ overflow: "hidden", textOverflow: "ellipsis" }}>
+                        <Table.Td maw="">{item.type?.name}</Table.Td>
+                        <Table.Td maw="">{item.fileInput && <Pill>{item.fileInput.name}</Pill>}</Table.Td>
+                        <Table.Td maw="" style={{ overflow: "hidden", textOverflow: "ellipsis" }}>
                           {item.request} {/* don't delete the blank maw */}
                         </Table.Td>
                       </>
                     )}
                     <Table.Td>
-                      <NumberInput w={"12%"} miw={70} mr={10} hideControls disabled clampBehavior="strict" value={item.quantity} />
+                      <NumberInput w="12%" miw={70} mr={10} hideControls disabled clampBehavior="strict" value={item.quantity} />
                     </Table.Td>
                   </Table.Tr>
                 ))}
@@ -113,15 +108,15 @@ export default function Success() {
             <Table verticalSpacing="md">
               <Table.Tbody>
                 <Table.Tr>
-                  <Table.Td fw={"bold"}>Name</Table.Td>
+                  <Table.Td fw="bold">Name</Table.Td>
                   <Table.Td>{user.name}</Table.Td>
                 </Table.Tr>
                 <Table.Tr>
-                  <Table.Td fw={"bold"}>Contact</Table.Td>
+                  <Table.Td fw="bold">Contact</Table.Td>
                   <Table.Td>{user.contact}</Table.Td>
                 </Table.Tr>
                 <Table.Tr>
-                  <Table.Td fw={"bold"}>Address</Table.Td>
+                  <Table.Td fw="bold">Address</Table.Td>
                   <Table.Td>{user.address}</Table.Td>
                 </Table.Tr>
               </Table.Tbody>
@@ -129,6 +124,6 @@ export default function Success() {
           </Box>
         </>
       )}
-    </Box>
+    </Flex>
   );
 }
