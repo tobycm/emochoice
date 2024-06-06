@@ -21,16 +21,16 @@ interface Filter {
 }
 
 export default function Catalog() {
-  const products = useQuery({ queryKey: ["products"], queryFn: getProducts, initialData: [] });
+  const products = useQuery({ queryKey: ["products"], queryFn: getProducts, placeholderData: [] });
 
-  const categories: ProductCategory[] = useMemo(() => categoriesFromProducts(products.data), [products.data]);
-  const colors: ProductColor[] = useMemo(() => colorsFromProducts(products.data), [products.data]);
-  const brands: ProductBrand[] = useMemo(() => brandsFromProducts(products.data), [products.data]);
+  const categories: ProductCategory[] = useMemo(() => categoriesFromProducts(products.data!), [products.data]);
+  const colors: ProductColor[] = useMemo(() => colorsFromProducts(products.data!), [products.data]);
+  const brands: ProductBrand[] = useMemo(() => brandsFromProducts(products.data!), [products.data]);
 
-  const [realProducts, setProducts] = useState<Product[]>(products.data);
+  const [realProducts, setProducts] = useState<Product[]>(products.data!);
 
   useEffect(() => {
-    setProducts(products.data);
+    setProducts(products.data!);
   }, [products.data]);
 
   const [filters, setFilters] = useState<Filter[]>([]);
@@ -61,7 +61,7 @@ export default function Catalog() {
 
     setProducts(
       sortOutOfStock(
-        products.data.filter((product) =>
+        products.data!.filter((product) =>
           keywords.every((keyword) =>
             `${product.name} | ${(product.expand.colors ?? []).map((color) => color.name).join(" ")} | ${product.custom_id} | ${(product.expand.types ?? []).map((type) => type.name).join(" ")} | ${(product.expand.category ?? []).map((category) => category.name).join(" ")} | ${product.expand.brand.name}`
               .toLowerCase()
@@ -80,12 +80,12 @@ export default function Catalog() {
     if (url.searchParams.get("search")) return searchProducts();
 
     if (!url.searchParams.get("filters")) {
-      setProducts(sortOutOfStock(products.data));
+      setProducts(sortOutOfStock(products.data!));
     }
   }, []);
 
   function filterProducts(newFilters: Filter[], fromFilterList: boolean = true) {
-    let filteredProducts = products.data;
+    let filteredProducts = products.data!;
 
     for (const filter of newFilters) {
       if (filter.type === "category")
@@ -154,7 +154,7 @@ export default function Catalog() {
         if (!Object.keys(filtersMapping).includes(type)) continue;
         if (values.length === 0) continue;
         for (const value of values.replaceAll(" ", "+").split("+")) {
-          if (!filtersMapping[type as keyof typeof filtersMapping].map((filter) => filter.name).includes(value)) return;
+          if (!filtersMapping[type as keyof typeof filtersMapping].map((filter) => filter.name).includes(value)) continue;
         }
       }
 
@@ -265,7 +265,7 @@ export default function Catalog() {
   }
 
   return (
-    <Flex wrap="wrap" p="0 4% 0 4%" mih="50vh" className={classes.container}>
+    <Flex justify="center" wrap="wrap" p="0 4% 0 4%" mih="50vh" className={classes.container}>
       <SmallChangeHelmet title="Catalog" description="Browse through our wide selection of products!" location="catalog" />
       <Modal opened={filterModal[0]} onClose={filterModal[1].close} title="Filters" withCloseButton>
         {/* if it works it works */}
@@ -313,41 +313,34 @@ export default function Catalog() {
             </Pill.Group>
           </InputBase>
         </Box>
-        {
-          // pageState === PageState.Filtering ? (
-          //   <LoaderBox text="Filtering..." />
-          // ) : pageState === PageState.Searching ? (
-          //   <LoaderBox text="Searching..." />
-          // ) :
-          realProducts.length === 0 ? (
-            <Flex justify="center" align="center" direction="column" w="100%" h="50vh">
-              <IconSearchOff style={{ width: "30%", height: "30%", marginBottom: "1em" }} stroke={1} />
-              <Title ta="center" order={1} mb="md">
-                No Products Found
-              </Title>
-              <Text>
-                <UnstyledButton
-                  onClick={() => {
-                    setProducts(sortOutOfStock(products.data));
-                    setFilters([]);
-                  }}
-                  style={{ color: "black", textDecoration: "underline" }}
-                >
-                  Clear
-                </UnstyledButton>{" "}
-                filters/queries and try again.
-              </Text>
-            </Flex>
-          ) : (
-            <Flex wrap="wrap" className={classes.cardsBox}>
-              {realProducts
-                .filter((p) => !p.hidden)
-                .map((product) => (
-                  <ProductCard product={product} key={product.id} isMobile={isMobile} searchedColor={searchedColor} />
-                ))}
-            </Flex>
-          )
-        }
+        {realProducts.length === 0 ? (
+          <Flex justify="center" align="center" direction="column" w="100%" h="50vh">
+            <IconSearchOff style={{ width: "30%", height: "30%", marginBottom: "1em" }} stroke={1} />
+            <Title ta="center" order={1} mb="md">
+              No Products Found
+            </Title>
+            <Text>
+              <UnstyledButton
+                onClick={() => {
+                  setProducts(sortOutOfStock(products.data!));
+                  setFilters([]);
+                }}
+                style={{ color: "black", textDecoration: "underline" }}
+              >
+                Clear
+              </UnstyledButton>{" "}
+              filters/queries and try again.
+            </Text>
+          </Flex>
+        ) : (
+          <Flex wrap="wrap" className={classes.cardsBox}>
+            {realProducts
+              .filter((p) => !p.hidden)
+              .map((product) => (
+                <ProductCard product={product} key={product.id} isMobile={isMobile} searchedColor={searchedColor} />
+              ))}
+          </Flex>
+        )}
       </Box>
     </Flex>
   );

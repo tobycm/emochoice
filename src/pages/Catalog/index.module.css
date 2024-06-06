@@ -2,7 +2,6 @@
   @media screen and (min-width: $mantine-breakpoint-xs) {
     padding: 0 5.5% 0 5.5% !important;
     justify-content: center;
-    padding: 0;
   }
 }
 

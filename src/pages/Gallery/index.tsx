@@ -70,7 +70,8 @@ export default function Gallery({ home = false }: { home?: boolean }) {
                 mr="auto"
                 style={{ aspectRatio: "calc(9/11)", cursor: "pointer" }}
                 src={pocketbase.getFileUrl(gallary, link, { thumb: "0x600" })}
-                fetchPriority={index == 0 ? "high" : "low"}
+                // @ts-ignore
+                fetchpriority={index == 0 ? "high" : "low"}
               />
             </Box>
           </Carousel.Slide>
