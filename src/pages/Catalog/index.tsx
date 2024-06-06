@@ -8,6 +8,7 @@ import SmallChangeHelmet from "../../components/Helmets/SmallChangeHelmet";
 import ProductCard from "../../components/ProductCard";
 import { getProducts } from "../../lib/database";
 import { Product, ProductBrand, ProductCategory, ProductColor } from "../../lib/database/models";
+import { brandsFromProducts, categoriesFromProducts, colorsFromProducts } from "../../lib/database/utils";
 import LoaderBox, { setDocumentTitle, toTitleCase } from "../../lib/utils";
 import { convertToKeywords } from "../../lib/utils/search";
 import classes from "./index.module.css";
@@ -20,46 +21,16 @@ interface Filter {
 }
 
 export default function Catalog() {
-  const products = useQuery({ queryKey: ["products"], queryFn: getProducts });
+  const products = useQuery({ queryKey: ["products"], queryFn: getProducts, initialData: [] });
 
-  const categories: ProductCategory[] = useMemo(() => {
-    const categories: ProductCategory[] = [];
+  const categories: ProductCategory[] = useMemo(() => categoriesFromProducts(products.data), [products.data]);
+  const colors: ProductColor[] = useMemo(() => colorsFromProducts(products.data), [products.data]);
+  const brands: ProductBrand[] = useMemo(() => brandsFromProducts(products.data), [products.data]);
 
-    products.data?.forEach((product) =>
-      product.expand.category?.forEach((category) => categories.every((c) => c.id != category.id) && categories.push(category)),
-    );
-
-    return categories;
-  }, [products.data]);
-
-  const colors: ProductColor[] = useMemo(() => {
-    const colors: ProductColor[] = [];
-
-    products.data?.forEach((product) => product.expand.colors?.forEach((color) => colors.every((c) => c.id != color.id) && colors.push(color)));
-
-    return colors;
-  }, [products.data]);
-
-  // const types: ProductType[] = useMemo(() => {
-  //   const types: ProductType[] = [];
-
-  //   products.data?.forEach((product) => product.expand.types?.forEach((type) => types.every((t) => t.id != type.id) && types.push(type)));
-
-  //   return types;
-  // }, [products.data]);
-
-  const brands: ProductBrand[] = useMemo(() => {
-    const brands: ProductBrand[] = [];
-
-    products.data?.forEach((product) => brands.every((b) => b.id != product.expand.brand.id) && brands.push(product.expand.brand));
-
-    return brands;
-  }, [products.data]);
-
-  const [realProducts, setProducts] = useState<Product[]>(products.data || []);
+  const [realProducts, setProducts] = useState<Product[]>(products.data);
 
   useEffect(() => {
-    setProducts(products.data ?? []);
+    setProducts(products.data);
   }, [products.data]);
 
   const [filters, setFilters] = useState<Filter[]>([]);
@@ -90,7 +61,7 @@ export default function Catalog() {
 
     setProducts(
       sortOutOfStock(
-        (products.data ?? []).filter((product) =>
+        products.data.filter((product) =>
           keywords.every((keyword) =>
             `${product.name} | ${(product.expand.colors ?? []).map((color) => color.name).join(" ")} | ${product.custom_id} | ${(product.expand.types ?? []).map((type) => type.name).join(" ")} | ${(product.expand.category ?? []).map((category) => category.name).join(" ")} | ${product.expand.brand.name}`
               .toLowerCase()
@@ -109,12 +80,12 @@ export default function Catalog() {
     if (url.searchParams.get("search")) return searchProducts();
 
     if (!url.searchParams.get("filters")) {
-      setProducts(sortOutOfStock(products.data ?? []));
+      setProducts(sortOutOfStock(products.data));
     }
   }, []);
 
   function filterProducts(newFilters: Filter[], fromFilterList: boolean = true) {
-    let filteredProducts = products.data ?? [];
+    let filteredProducts = products.data;
 
     for (const filter of newFilters) {
       if (filter.type === "category")
@@ -172,20 +143,20 @@ export default function Catalog() {
     if (filtersParam) {
       const allFilters = filtersParam.split(",");
 
-      // const filtersMapping = {
-      //   category: categories,
-      //   color: colors,
-      //   brand: brands,
-      // };
+      const filtersMapping = {
+        category: categories,
+        color: colors,
+        brand: brands,
+      };
 
-      // for (const filter of allFilters) {
-      //   const [type, values] = filter.split(":");
-      //   if (!Object.keys(filtersMapping).includes(type)) return;
-      //   if (values.length === 0) return;
-      //   for (const value of values.replaceAll(" ", "+").split("+")) {
-      //     if (!filtersMapping[type as keyof typeof filtersMapping].map((filter) => filter.name).includes(value)) return;
-      //   }
-      // }
+      for (const filter of allFilters) {
+        const [type, values] = filter.split(":");
+        if (!Object.keys(filtersMapping).includes(type)) continue;
+        if (values.length === 0) continue;
+        for (const value of values.replaceAll(" ", "+").split("+")) {
+          if (!filtersMapping[type as keyof typeof filtersMapping].map((filter) => filter.name).includes(value)) return;
+        }
+      }
 
       const categoryFilters = allFilters
         .filter((filter) => filter.startsWith("category:"))
@@ -238,6 +209,10 @@ export default function Catalog() {
   if (products.isFetching) return <LoaderBox text="Loading products..." />;
 
   function FilterNavBar() {
+    const categories: ProductCategory[] = useMemo(() => categoriesFromProducts(realProducts), [realProducts]);
+    const colors: ProductColor[] = useMemo(() => colorsFromProducts(realProducts), [realProducts]);
+    const brands: ProductBrand[] = useMemo(() => brandsFromProducts(realProducts), [realProducts]);
+
     return (
       <Box mih="100%" w={!isMobile ? 200 : "auto"} flex={0.5}>
         <NavLink
@@ -353,7 +328,7 @@ export default function Catalog() {
               <Text>
                 <UnstyledButton
                   onClick={() => {
-                    setProducts(sortOutOfStock(products.data ?? []));
+                    setProducts(sortOutOfStock(products.data));
                     setFilters([]);
                   }}
                   style={{ color: "black", textDecoration: "underline" }}
