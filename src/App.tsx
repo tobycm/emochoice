@@ -6,7 +6,9 @@ import "@mantine/notifications/styles.css";
 import { RouterProvider } from "react-router";
 import { createBrowserRouter } from "react-router-dom";
 import Content from "./components/Content";
+import Constants from "./lib/constants";
 import { getProducts } from "./lib/database";
+import { ProductWithKeywords } from "./lib/utils/search";
 import NotFound from "./pages/404";
 import Catalog from "./pages/Catalog";
 import Checkout from "./pages/Checkout";
@@ -20,7 +22,7 @@ import Success from "./pages/Success";
 
 export default function App() {
   // prefetch products
-  useQuery({ queryKey: ["products"], queryFn: getProducts });
+  const products = useQuery({ queryKey: ["products"], queryFn: getProducts });
 
   const router = createBrowserRouter([
     {
@@ -38,7 +40,12 @@ export default function App() {
         {
           path: "/product/:id",
           element: <Product />,
-          loader: ({ params }): { productId: string } => {
+          loader: async ({ params }): Promise<{ product: ProductWithKeywords }> => {
+            await new Promise<void>((resolve) => setInterval(() => products.isFetched && resolve(), 50));
+
+            const product = products.data?.find((product) => product.id === params.id) ?? Constants.exampleProduct;
+            return { product };
+
             // try {
             //   if (!params.id) throw new Error("No product ID provided");
             //   const product = products.data?.find((product) => product.id === params.id);
@@ -92,8 +99,8 @@ export default function App() {
             //   };
             // }
 
-            if (!params.id) throw new Error("No product ID provided");
-            return { productId: params.id };
+            // if (!params.id) throw new Error("No product ID provided");
+            // return { productId: params.id };
           },
         },
         {

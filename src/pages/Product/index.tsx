@@ -34,54 +34,10 @@ import { Product as DProduct, ProductColor, ProductImage, ProductType } from "..
 import { List, useList } from "../../lib/list";
 import { HTMLtoText, filterProducts, pasteImage, scrollToTop, toTitleCase } from "../../lib/utils";
 import { ProductWithKeywords } from "../../lib/utils/search";
+import NotFound from "../404";
 import classes from "./index.module.css";
 
 // TODO: keep refactoring
-
-const exampleProduct: ProductWithKeywords = {
-  collectionId: "kt5o377go6qzzct",
-  collectionName: "products",
-  created: Date(),
-  updated: Date(),
-  brand: "grj5wxlbdp33xmc",
-  id: "messikimochi",
-  name: "Sui-chan wa kyou mo Kawaii~ Mug",
-  custom_id: "messikimochi",
-  category: ["upfqqdkkgeff7wj"],
-  hidden: false,
-  tags: ["out_of_stock"],
-  colors: ["oagyo7283zmms2y"],
-  types: ["jh5d0keidenggzg", "c325dz03i9coqwz"],
-  images: [],
-  boundary: "",
-  description:
-    "Introducing the ultimate companion for your morning ritual - " +
-    "Sui-chan wa kyou mo Kawaii~ Mug. " +
-    "Elevate your coffee or tea experience with this exquisite, " +
-    "handcrafted vessel designed to cradle your favorite brew. " +
-    "Crafted from high-quality, lead-free ceramic, it ensures " +
-    "your beverage's purity and taste remain untarnished. The " +
-    "ergonomic handle provides a comfortable grip, while the wide " +
-    "base offers stability. Its double-walled insulation keeps " +
-    "drinks at the perfect temperature, whether piping hot or " +
-    "refreshingly cool. The elegant, minimalist design complements " +
-    "any kitchen or office space. Dishwasher and microwave safe, " +
-    "it's a breeze to clean and maintain. Indulge in your daily dose " +
-    "of comfort and style with this exceptional mug!",
-  custom_data: { "Handcrafted by": "Toby and Eggu" },
-  keywords: "sui-chan wa kyou mo kawaii~ mug oagyo7283zmms2y messikimochi jh5d0keidenggzg c325dz03i9coqwz upfqqdkkgeff7wj toby and eggu",
-  expand: {
-    brand: {
-      id: "grj5wxlbdp33xmc",
-      name: "Toby and Eggu",
-      collectionId: "846j6uvbucbn6pp",
-      collectionName: "brands",
-      created: Date(),
-      updated: Date(),
-    },
-  },
-  customizable: false,
-};
 
 export interface OrderData {
   color?: ProductColor;
@@ -119,11 +75,11 @@ function preview(backgroundImage: HTMLImageElement, userImage: HTMLImageElement,
 
 export default function Product() {
   const atlState = useATLState();
-  const { productId } = useLoaderData() as { productId: string };
+  const { product } = useLoaderData() as { product: ProductWithKeywords };
 
   const products = useQuery({ queryKey: ["products"], queryFn: getProducts });
 
-  const product = useMemo(() => products.data?.find((product) => product.id === productId) ?? exampleProduct, [products.data, productId]);
+  // const product = useMemo(() => products.data?.find((product) => product.id === productId) ?? Constants.exampleProduct, [products.data, productId]);
 
   const initialValues: OrderData = { quantity: 1, request: "" };
 
@@ -151,10 +107,11 @@ export default function Product() {
   const images = useMemo<ProductImage[]>(() => {
     let images = product.expand.images ?? [];
 
-    // console.log("images", images);
-
     if (form.values.color) images = images.filter((image) => image.color === form.values.color!.id);
-    if (form.values.type) images = images.filter((image) => image.type === form.values.type!.id);
+    if (form.values.type) {
+      const imagesForType = images.filter((image) => image.type === form.values.type!.id);
+      if (imagesForType.length > 0) images = imagesForType;
+    }
 
     if (images.length === 0) setProductImage("/images/no_image.png");
     else setProductImage(pocketbase.getFileUrl(images[0], images[0].image));
@@ -233,6 +190,8 @@ export default function Product() {
     atlState.set(false);
     atlState.set(true);
   }
+
+  if (product.id === "404productnotfound") return <NotFound />;
 
   return (
     <Box w="80%" ml="auto" mr="auto">
@@ -315,7 +274,7 @@ export default function Product() {
             component="form"
             onSubmit={form.onSubmit((values) => {
               const { quantity, request, fileInput } = values;
-              const color = product.expand?.colors?.find((color) => color.hex === values.color?.hex); // MARK: product.expand.colors 1
+              const color = product.expand?.colors?.find((color) => color.hex === values.color?.hex);
               const type = product.expand?.types?.find((type) => type.name === values.type?.name);
               const newList = new List(...list, {
                 product,
