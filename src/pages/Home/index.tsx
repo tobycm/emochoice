@@ -40,9 +40,9 @@ export default function Home() {
           Shop by category
         </Title>
         <Box className={classes.cardsBox}>
-          <HomeCard name={"Clothing & Accessories Printing"} image={threeCards.data[0]} key={0} id={"hksx1e8gqajlaaq"} />
+          <HomeCard name={"Clothing & Accessories"} image={threeCards.data[0]} key={0} id={"hksx1e8gqajlaaq"} />
           <HomeCard name={"Digital Printing"} image={threeCards.data[1]} key={1} id={"l13znpfe1k6yuj6"} />
-          <HomeCard name={"Souvenirs & Gifts Printing"} image={threeCards.data[2]} key={2} id={"kt45aqsnscvtqt5"} />
+          <HomeCard name={"Souvenirs & Gifts"} image={threeCards.data[2]} key={2} id={"kt45aqsnscvtqt5"} />
         </Box>
         <Divider my="xl" size="xs" w={"100%"}></Divider>
       </Container>
