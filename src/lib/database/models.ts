@@ -3,6 +3,7 @@ import { RecordModel } from "pocketbase";
 type HexColor = string;
 type Filename = string;
 type ID = string;
+type HTML = string;
 
 export interface Product extends RecordModel {
   name: string;
@@ -67,3 +68,8 @@ export interface Image {
 }
 
 export type ProductImage = RecordModel & Image;
+
+export interface Document extends RecordModel {
+  title: string;
+  content: HTML;
+}
