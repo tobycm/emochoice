@@ -18,7 +18,7 @@ It is our pleasure to serve you. We wish everyone a lot of success and happiness
 
 ## Contact us
 
-Address: [Unit 101-737 Main St, Penticton, British Columbia, Canada V2A 5E1](https://maps.app.goo.gl/XMkwggAQtaGKr6Jp9)
+Address: [327 Martin Street, Penticton, BC V2A 5K7](https://maps.app.goo.gl/Vwju44b3tc5xqpjN9)
 
 Phone number: +1 (778) 531-6161
 
@@ -30,7 +30,7 @@ Email: sales@emochoice.ca
 
 ### Developers
 
-| <a href="https://github.com/tobycm" target="_blank"> <img src="https://avatars.githubusercontent.com/u/62174797?v=4" alt="" width="96px" height="96px"> </a> | <a href="https://github.com/pdt1806" target="_blank"> <img src="https://avatars.githubusercontent.com/u/78996937?v=4" alt="" width="96px" height="96px"> </a> |
+|    |    |
 | :----------------------------------------------------------------------------------------------------------------------------------------------------------: | :-----------------------------------------------------------------------------------------------------------------------------------------------------------: |
 |                                                                            tobycm                                                                            |                                                                            pdt1806                                                                            |
 

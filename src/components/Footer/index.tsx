@@ -14,8 +14,8 @@ export default function Footer() {
           <Flex align="center" mb={10}>
             <IconMapPin className={classes.icon} />
             <Text ml={5}>
-              <Link to="https://maps.app.goo.gl/XMkwggAQtaGKr6Jp9" target="_blank" style={{ color: "#485665", textDecoration: "none" }}>
-                Unit 101-737 Main St, Penticton, British Columbia, Canada V2A 5E1
+              <Link to="https://maps.app.goo.gl/Vwju44b3tc5xqpjN9" target="_blank" style={{ color: "#485665", textDecoration: "none" }}>
+                327 Martin Street, Penticton, BC V2A 5K7
               </Link>
             </Text>
           </Flex>

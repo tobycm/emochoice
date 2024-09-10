@@ -154,7 +154,7 @@ export default function Checkout() {
                       />
                     )}
                     <NativeSelect mb={"md"} {...form.getInputProps("country")} id="country" label="Country" data={["Canada", "United States"]} />
-                    <TextInput mb={"md"} label="Address Line" id="address" placeholder="Unit 101-737 Main St" {...form.getInputProps("address")} />
+                    <TextInput mb={"md"} label="Address Line" id="address" placeholder="327 Martin Street" {...form.getInputProps("address")} />
                     <Flex justify="space-between" mb="md">
                       <Box w="49%">
                         <TextInput label="City" placeholder="Penticton" {...form.getInputProps("city")} id="city" />
@@ -163,7 +163,7 @@ export default function Checkout() {
                         <TextInput label="State" placeholder="BC" maxLength={2} {...form.getInputProps("state")} id="state" />
                       </Box>
                       <Box w="27%">
-                        <TextInput label="Postal Code" placeholder="V2A 5E1" {...form.getInputProps("postalCode")} id="postalCode" />
+                        <TextInput label="Postal Code" placeholder="V2A 5K7" {...form.getInputProps("postalCode")} id="postalCode" />
                       </Box>
                     </Flex>
                   </Table.Td>

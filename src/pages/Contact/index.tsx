@@ -28,10 +28,10 @@ export default function Contact() {
     <Box className={classes.container}>
       <SmallChangeHelmet title="Contact" description="Get in Touch with Emochoice Canada now!" location="contact" />
       <iframe
-        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2591.5775601812793!2d-119.59203682298623!3d49.49248627142508!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x54826353ea4cc04b%3A0x8f64bf2deb6375fd!2sEmochoice%20Canada!5e0!3m2!1sen!2sus!4v1697402584985!5m2!1sen!2sus"
+        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2591.266085248253!2d-119.59623632444682!3d49.49836897142607!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x54826353ea4cc04b%3A0x8f64bf2deb6375fd!2sEmochoice%20Canada!5e0!3m2!1sen!2sca!4v1725927089435!5m2!1sen!2sca"
         loading="lazy"
         className={classes.map}
-      ></iframe>
+      />
       <Box
         component="form"
         onSubmit={form.onSubmit(async () => {
@@ -41,6 +41,7 @@ export default function Contact() {
               message: form.values.message,
               contact: `${form.values.email}${form.values.email && form.values.phone_number && ", "}${form.values.phone_number}`,
             };
+            // TODO: Refactor ;-;
             await fetch("https://api.emochoice.ca/contact", {
               method: "POST",
               headers: {
