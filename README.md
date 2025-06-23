@@ -30,7 +30,7 @@ Email: sales@emochoice.ca
 
 ### Developers
 
-|    |    |
+| <a href="https://github.com/tobycm" target="_blank"> <img src="https://avatars.githubusercontent.com/u/62174797?v=4" alt="" width="96px" height="96px"> </a> | <a href="https://github.com/pdt1806" target="_blank"> <img src="https://avatars.githubusercontent.com/u/78996937?v=4" alt="" width="96px" height="96px"> </a> |
 | :----------------------------------------------------------------------------------------------------------------------------------------------------------: | :-----------------------------------------------------------------------------------------------------------------------------------------------------------: |
 |                                                                            tobycm                                                                            |                                                                            pdt1806                                                                            |
 
