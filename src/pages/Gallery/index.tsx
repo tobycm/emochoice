@@ -151,7 +151,7 @@ export default function Gallery({ home = false }: { home?: boolean }) {
       {["gallery_1", "gallery_2", "gallery_3"].map((type, index) => (
         <Flex mb={1} direction="column" align="center" key={type} mih={100}>
           <Title ta="center" order={2} c="emochoice-blue" mb="md" mr="md" ml="md">
-            {["Clothing & Accessories", "Digital Printing", "Souvenirs & Gifts"][index]}
+            {["Clothing & Accessories", "Digital Printing", "Awards & Gifts"][index]}
           </Title>
           <Carousel
             w="80vw"
@@ -163,7 +163,8 @@ export default function Gallery({ home = false }: { home?: boolean }) {
             getEmblaApi={(api) => setEmbla((prevEmbla) => ({ ...prevEmbla, [type]: api }))}
             draggable
             slideSize={isMobile ? "100%" : "15%"}
-            mb="xs">
+            mb="xs"
+          >
             {slides[type]}
           </Carousel>
         </Flex>
