@@ -26,6 +26,10 @@ export default function Footer() {
               <Link to="tel:1-778-531-6161" style={{ color: "#485665", textDecoration: "none" }}>
                 +1 (778) 531-6161
               </Link>
+              ,
+              <Link to="tel:1-250-488-6122" style={{ color: "#485665", textDecoration: "none", marginLeft: "10px" }}>
+                +1 (250) 488-6122
+              </Link>
             </Text>
           </Flex>
           <Flex align="center" mb={10}>
